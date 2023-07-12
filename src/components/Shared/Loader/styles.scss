@@ -1,0 +1,31 @@
+// img loaderCss{
+//     margin-top: -36px;
+//      height:80px;
+//       width:80px;
+// }
+
+// .loaderMargin{
+//     margin-top: -36px
+// }
+
+.loader-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1040;
+  // background-color: #fafafa;
+  background-color: rgba(255, 255, 255, 0.7);
+  // opacity: 0.5;
+}
+
+.loader-image {
+  width: 120px;
+  height: 120px;
+  // opacity: 1;
+}

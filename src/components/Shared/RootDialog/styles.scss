@@ -1,0 +1,50 @@
+.root-dialog .MuiModal-backdrop {
+  background-color: rgba(167, 167, 169, 0.25);
+}
+
+.root-dialog .MuiDialog-paper {
+  min-width: 30%;
+  border-radius: 13px;
+}
+
+.root-dialog-header {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.root-dialog-cross-container {
+  padding: 13px;
+  cursor: pointer;
+}
+
+.root-dialog-content {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.root-dialog-sign-container {
+  padding: 15px;
+}
+
+.root-dialog-footer {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.root-dialog-message {
+  padding: 15px 30px 30px 30px;
+
+  font-family: "Nunito Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+
+  text-align: center;
+  color: #6b6b6b;
+}

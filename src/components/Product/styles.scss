@@ -1,0 +1,71 @@
+.h3 {
+    animation: fadeInAnimation ease 3s;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+label {
+    color: red;
+    font-size: x-small;
+    height: 20px;
+}
+
+.productname {
+    margin-top: inherit;
+}
+
+.twobuttonmanage {
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+}
+
+.card-shadow {
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    padding: 10px;
+}
+
+.filtergrid {
+    align-items: end;
+}
+
+.closebuttton {
+    text-align: end;
+}
+
+.closebutton :hover {
+    background-color: rgb(173, 57, 57);
+}
+
+.actionbutton:hover{
+    color: red;
+}
+.actionbutton{
+    cursor: pointer;
+}
+
+.TextFieldcontainer label{
+    height: 20px;
+}
+
+.dialogheaderstyle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.closemodelhoverstyle {
+    cursor: pointer;
+}
+
+/* pagination table */
+/* https://codesandbox.io/s/9238l */
