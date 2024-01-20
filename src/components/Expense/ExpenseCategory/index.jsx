@@ -49,7 +49,7 @@ export default class AddExpenseCategoryModel extends React.Component {
         <DialogTitle>
           {" "}
           <div className="dialogheaderstyle">
-            <Typography variant="h5">Add Expense Category</Typography>
+            <Typography variant="h5">Add Expense Categorys</Typography>
             <Buttons.CloseButton
               onClick={() => {
                 isModelOpen(false);
