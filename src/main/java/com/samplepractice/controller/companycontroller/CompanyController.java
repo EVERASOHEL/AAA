@@ -65,4 +65,15 @@ public class CompanyController {
             return CommonResponse.somethingWentWrong(moduleName, e);
         }
     }
+
+    @GetMapping("/getAllCompanyNameByCompanyType/{companyType}")
+    public ResponseEntity<?> getAllCompanyNameByCompanyType(@PathVariable String companyType) {
+        try {
+            return CommonResponse.getData(companyService.getAllCompanyNameByCompanyType(companyType));
+        }catch (AppException ae) {
+            return CommonResponse.exception(ae.getMessage());
+        } catch (Exception e) {
+            return CommonResponse.somethingWentWrong(moduleName, e);
+        }
+    }
 }

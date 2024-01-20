@@ -16,4 +16,5 @@ public interface SalesOrderService {
 
     List<String> readPdfDocumentsFromFolder(String folderPath) throws IOException;
 
+    String getLastVoucherNo(String companyType,String voucherNo) throws Exception;
 }

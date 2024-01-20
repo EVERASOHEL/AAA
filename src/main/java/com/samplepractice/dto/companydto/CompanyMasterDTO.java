@@ -1,5 +1,7 @@
 package com.samplepractice.dto.companydto;
 
+import com.samplepractice.model.commonmodels.AbstractAuditingEntity;
+import com.samplepractice.model.companymodels.CompanyModel;
 import com.samplepractice.model.companymodels.CompanyModelCount;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +14,7 @@ import java.util.Objects;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CompanyMasterDTO {
+public class CompanyMasterDTO extends AbstractAuditingEntity {
 
     private Long id;
     public String companyName;
@@ -24,6 +26,15 @@ public class CompanyMasterDTO {
     private String companyGstNo;
     private String companyPanNumber;
     private String companyPhoneNumber;
+
+    public CompanyMasterDTO(CompanyModel companyModel) {
+        this.companyName = companyModel.getCompanyName();
+        this.address = companyModel.getAddress();
+        this.phoneNo = companyModel.getPhoneNo();
+        this.stateName = companyModel.getStateName();
+        this.companyGstNo = companyModel.getCompanyGstNo();
+        this.companyPanNumber = companyModel.getCompanyPanNumber();
+    }
 
     public CompanyMasterDTO(CompanyModelCount companyModelCount) {
         this.id= Objects.nonNull(companyModelCount.getId()) ? companyModelCount.getId() :null;

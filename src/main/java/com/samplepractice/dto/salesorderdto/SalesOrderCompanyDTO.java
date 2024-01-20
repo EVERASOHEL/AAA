@@ -45,4 +45,7 @@ public class SalesOrderCompanyDTO{
         this.payAmount = Objects.nonNull(list[10]) ? Float.parseFloat(list[10].toString()) : 0.00f;
     }
 
+    public SalesOrderCompanyDTO(List<SalesOrderProductDetailsDTO> salesOrderCompanyDTO){
+        this.salesOrderProductDetailsDTOList=salesOrderCompanyDTO;
+    }
 }

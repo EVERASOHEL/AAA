@@ -8,6 +8,7 @@ import com.samplepractice.model.salesordermodel.SalesOrderCompanyModel;
 import com.samplepractice.model.salesordermodel.SalesOrderProductDetailsModel;
 import com.samplepractice.repository.salesorderRepository.SalesOrderCompanyRepository;
 import com.samplepractice.services.companyService.CompanyService;
+import com.samplepractice.services.pdfservice.PdfService;
 import com.samplepractice.services.salesorderservice.SalesOrderProductDetailsService;
 import com.samplepractice.services.salesorderservice.SalesOrderService;
 import com.samplepractice.validator.CommonValidatorAppException;
@@ -47,10 +48,14 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    private PdfService pdfService;
+
     @Override
     @Transactional
     public String saveSalesOrder(SalesOrderCompanyDTO salesOrderCompanyDTO) throws Exception {
 
+//        salesOrderCompanyDTO.setTotalTaxAmount(salesOrderCompanyDTO.getTTA());
         salesOrderValidation(salesOrderCompanyDTO);
 
         String companyType = companyService.getCompanyTypeByCompanyName(salesOrderCompanyDTO.getCompanyName());
@@ -63,6 +68,8 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 
         final List<SalesOrderProductDetailsModel> salesOrderProductDetailsModels = salesOrderProductDetailsService.saveSalesOrderProductDetails(salesproductlist, companyType);
 
+        pdfService.salesPdf(salesOrderCompanyDTO,companyType);
+
         return Objects.isNull(salesOrderCompanyDTO.getId()) ? "Sales Order Successfully Created!" : "Sales Order Successfully Updated!";
     }
 
@@ -72,8 +79,8 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         CommonValidatorAppException.stringsIsNullOrEmpty("Voucher No", salesOrderCompanyDTO.getVoucherNo());
         CommonValidatorAppException.stringsIsNullOrEmpty("Company Name", salesOrderCompanyDTO.getCompanyName());
         CommonValidatorAppException.objectsIsNullAndIsDigit("Total Amount", salesOrderCompanyDTO.getTotalAmount());
+        CommonValidatorAppException.objectsIsNullAndIsDigit("Total Taxable Amount", salesOrderCompanyDTO.getTotalTaxableAmount());
         CommonValidatorAppException.objectsIsNullAndIsDigit("Total Tax Amount", salesOrderCompanyDTO.getTotalTaxAmount());
-        CommonValidatorAppException.objectsIsNullAndIsDigit("Total Taxable Amount", salesOrderCompanyDTO.getTotalTaxAmount());
 
     }
 
@@ -131,6 +138,26 @@ public class SalesOrderServiceImpl implements SalesOrderService {
         }
 
         return pdfContents;
+    }
+
+    public String getLastVoucherNo(String companyType, String voucherNo) throws Exception {
+        try {
+            // Ensure non-null companyType
+            CommonValidatorAppException.stringsIsNullOrEmpty("Please enter company name.", companyType);
+
+            // Call the custom repository method
+            String voucherNoDesc = salesOrderCompanyRepository.getLastVoucherNo(
+                    (companyType != null && !companyType.equalsIgnoreCase("null")) ? companyType : null,
+                    (voucherNo != null && !voucherNo.equalsIgnoreCase("null")) ? voucherNo : null
+            );
+
+            // Check if the voucherNoDesc is not null or empty
+            return (voucherNoDesc != null && !voucherNoDesc.isEmpty()) ? voucherNoDesc : "0001";
+        } catch (Exception e) {
+            // Handle exceptions appropriately
+            e.printStackTrace();
+            throw new Exception("Error fetching voucher number.", e);
+        }
     }
 
     private String readPdfContent(File pdfFile) throws IOException {

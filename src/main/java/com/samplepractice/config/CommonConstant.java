@@ -3,6 +3,8 @@ package com.samplepractice.config;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class CommonConstant {
 
@@ -36,12 +38,49 @@ public class CommonConstant {
     }
 
     public static String extractDecimalPart(float value) {
-        String stringValue = Float.toString(value);
-        if (stringValue.contains(".")) {
-            String decimalPart = stringValue.split("\\.")[1];
+
+        DecimalFormat decimalFormat=new DecimalFormat("0.00");
+        String formattedValue = decimalFormat.format(value);
+
+//        String stringValue = Float.toString(value);
+        if (formattedValue.contains(".")) {
+            String decimalPart = formattedValue.split("\\.")[1];
             return "0." + decimalPart;
         }
         return "0.00";
     }
 
+    public static String extractRoundOrFloorValue(double value){
+        String stringValue = String.valueOf(value);
+
+        if (stringValue.matches(".*\\.5$")) {
+            return new DecimalFormat("#.00").format(Math.floor(value));
+        }
+
+        return new DecimalFormat("#.00").format(Math.round(value));
+    }
+
+    public static String formatDate(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+        return sdf.format(date);
+    }
+
+    public static int DecimalValueExtractor(Float totalTaxAmount){
+
+        String numberAsString = Float.toString(totalTaxAmount);
+
+        int decimalIndex = numberAsString.indexOf('.');
+
+        String decimalPart = numberAsString.substring(decimalIndex + 1);
+
+        int decimalValue = Integer.parseInt(decimalPart);
+
+        return decimalValue;
+
+    }
+
+    public static String formatDecimal(double number) {
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return decimalFormat.format(number);
+    }
 }

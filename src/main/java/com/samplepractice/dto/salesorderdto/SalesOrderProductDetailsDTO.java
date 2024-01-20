@@ -2,17 +2,16 @@ package com.samplepractice.dto.salesorderdto;
 
 import com.samplepractice.dto.sample.sampleCompanyDto;
 import com.samplepractice.model.salesordermodel.SalesOrderProductDetailsModel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.List;
 import java.util.Objects;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class SalesOrderProductDetailsDTO {
 
     private Long id;
@@ -23,6 +22,9 @@ public class SalesOrderProductDetailsDTO {
     private Float total;
     private Long salesOrderCompanyId;
     private String hsnCode;
+
+//    this field for gst summary calculation amount
+    private Float totalForSummary;
 
     public SalesOrderProductDetailsDTO(SalesOrderProductDetailsDTO list, Long id) {
         this.id= Objects.nonNull(list.getId()) ? list.getId() : null;
@@ -48,4 +50,5 @@ public class SalesOrderProductDetailsDTO {
         this.productName=productName;
         this.hsnCode=Hsc;
     }
+
 }

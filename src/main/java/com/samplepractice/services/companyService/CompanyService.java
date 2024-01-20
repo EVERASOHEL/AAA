@@ -16,4 +16,7 @@ public interface CompanyService {
     String deleteCompanyById(Long companyId);
     List<TitleValueDTO> getAllCompanyName(String companyType);
     String getCompanyTypeByCompanyName(String companyName);
+
+    CompanyMasterDTO getCompanyDetailsByCompanyName(String companyName);
+    List<TitleValueDTO> getAllCompanyNameByCompanyType(String companyType) throws Exception;
 }

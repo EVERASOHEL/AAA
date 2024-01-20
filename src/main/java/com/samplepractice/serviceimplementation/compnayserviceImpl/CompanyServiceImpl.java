@@ -7,6 +7,7 @@ import com.samplepractice.model.companymodels.CompanyModel;
 import com.samplepractice.model.companymodels.CompanyModelCount;
 import com.samplepractice.repository.companyRepository.CompanyRepository;
 import com.samplepractice.services.companyService.CompanyService;
+import com.samplepractice.validator.AppException;
 import com.samplepractice.validator.CommonValidatorAppException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class CompanyServiceImpl implements CompanyService {
@@ -38,11 +40,11 @@ public class CompanyServiceImpl implements CompanyService {
         CommonValidatorAppException.stringsIsNullOrEmpty("Company Name", companyMasterDTO.getCompanyName());
         CommonValidatorAppException.stringsIsNullOrEmpty("Address", companyMasterDTO.getAddress());
         CommonValidatorAppException.stringsIsNullOrEmpty("State Name", companyMasterDTO.getStateName());
-        CommonValidatorAppException.stringsIsNullOrEmpty("Phone Number", companyMasterDTO.getPhoneNo());
+//        CommonValidatorAppException.stringsIsNullOrEmpty("Phone Number", companyMasterDTO.getPhoneNo());
 
-        if (Objects.isNull(companyMasterDTO.getCompanyGstNo()) && Objects.isNull(companyMasterDTO.getCompanyPanNumber())) {
-            CommonValidatorAppException.throwRequiredException("Please Insert GST Number or Pan Number");
-        }
+//        if (Objects.isNull(companyMasterDTO.getCompanyGstNo()) && Objects.isNull(companyMasterDTO.getCompanyPanNumber())) {
+//            CommonValidatorAppException.throwRequiredException("Please Insert GST Number or Pan Number");
+//        }
 
         companyRepository.save(new CompanyModel(companyMasterDTO));
 
@@ -77,6 +79,7 @@ public class CompanyServiceImpl implements CompanyService {
                 pageable = PageRequest.of(0, companyMasterDTOS.size());
             }
         }
+
         if (io.jsonwebtoken.lang.Collections.isEmpty(companyMasterDTOS)) {
             return new PageImpl<>(new ArrayList<>(), pageable, new ArrayList<>().size());
         }
@@ -104,13 +107,13 @@ public class CompanyServiceImpl implements CompanyService {
         List<TitleValueDTO> titleValueDTOList = new ArrayList<>();
         List<String> allCompnayName = query.getResultList();
 
-        if(!io.jsonwebtoken.lang.Collections.isEmpty(allCompnayName)){
+        if (!io.jsonwebtoken.lang.Collections.isEmpty(allCompnayName)) {
             for (String companyName :
                     allCompnayName) {
                 titleValueDTOList.add(new TitleValueDTO(companyName, companyName));
             }
-        }else{
-            titleValueDTOList.add(new TitleValueDTO("",""));
+        } else {
+            titleValueDTOList.add(new TitleValueDTO("", ""));
         }
         return titleValueDTOList;
     }
@@ -118,5 +121,23 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public String getCompanyTypeByCompanyName(String companyName) {
         return companyRepository.getCompanyTypebyCompanyName(companyName);
+    }
+
+    @Override
+    public CompanyMasterDTO getCompanyDetailsByCompanyName(String companyName) {
+
+        return Optional.ofNullable(
+                new CompanyMasterDTO(companyRepository.findByCompanyName(companyName)))
+                .orElseThrow(() -> new AppException("Company details not by company " + companyName)
+                );
+    }
+
+    @Override
+    public List<TitleValueDTO> getAllCompanyNameByCompanyType(String companyType) throws Exception {
+
+        CommonValidatorAppException.stringsIsNullOrEmpty("Company Type", companyType);
+        List<CompanyModel> allCompany = companyRepository.getAllCompanyByCompanyType(companyType);
+        return allCompany.stream().map(companyModel -> new TitleValueDTO(String.valueOf(companyModel.getId()),companyModel.getCompanyName())).collect(Collectors.toList());
+
     }
 }
