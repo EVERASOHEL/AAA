@@ -1,13 +1,5 @@
 import {ActionTypes} from "./constants";
 
-export function registration(data) {
-    console.log("data : ", data);
-    return {
-        type: ActionTypes.REGISTRATION_FORM,
-        data,
-    };
-}
-
 export function submitProductRquestForm(data) {
     return {
         type: ActionTypes.PRODUCT_REQUEST,
@@ -46,5 +38,11 @@ export const deleteProduct = (data) => {
         payload:{
             data,
         }
+    };
+};
+
+export const getAllProductName = () => {
+    return {
+        type: ActionTypes.PRODUCT_NAME_LIST_REQUEST,
     };
 };

@@ -1,16 +1,16 @@
-.TextFieldcontainer input {
-    height: 40px;
-    padding: 0px 14px;
-}
+/* .TextFieldcontainer input { */
+    /* height: 40px; */
+    /* padding: 0px 14px; */
+/* } */
 
-.TextFieldcontainer label {
-    height: 36px;
-    top: -9px;
-}
+/* .TextFieldcontainer label { */
+    /* height: 36px; */
+    /* top: -9px; */
+/* } */
 
-.TextFieldcontainer label[data-shrink="true"] {
-    top: 0;
-}
+/* .TextFieldcontainer label[data-shrink="true"] { */
+    /* top: 0; */
+/* } */
 
 /* .outlined-basic{
   height: 30px;

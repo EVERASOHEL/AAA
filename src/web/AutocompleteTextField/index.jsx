@@ -4,27 +4,27 @@ import { makeStyles } from "@mui/styles";
 import React from "react";
 import { Component } from "react";
 import "./style.css";
-import {createFilterOptions} from "@mui/material/Autocomplete"
+import { createFilterOptions } from "@mui/material/Autocomplete";
 
-const useStyles = makeStyles((theme) => ({
-  autocomplete: {
-    "& .MuiOutlinedInput-root": {
-      height: "40px", // Adjust the height value as needed
-    },
-    "& .MuiOutlinedInput-input": {
-      padding: "8px 12px", // Adjust the padding value as needed
-    },
-    "& .MuiInputLabel-root": {
-      fontSize: "14px", // Adjust the font size value as needed
-    },
-    '& .MuiAutocomplete-option[data-focus="true"]': {
-      justifyContent: "center",
-    },
-    '& .MuiInputBase-input': {
-      height: '10px',
-    },
-  },
-}));
+// const useStyles = makeStyles((theme) => ({
+//   autocomplete: {
+//     "& .MuiOutlinedInput-root": {
+//       height: "40px", // Adjust the height value as needed
+//     },
+//     "& .MuiOutlinedInput-input": {
+//       padding: "8px 12px", // Adjust the padding value as needed
+//     },
+//     "& .MuiInputLabel-root": {
+//       fontSize: "14px", // Adjust the font size value as needed
+//     },
+//     '& .MuiAutocomplete-option[data-focus="true"]': {
+//       justifyContent: "center",
+//     },
+//     "& .MuiInputBase-input": {
+//       height: "10px",
+//     },
+//   },
+// }));
 
 // class SingleSelect extends Component {
 //   constructor(props) {
@@ -167,15 +167,16 @@ const AutocompleteTextField = (props) => {
     keyOfValue,
   } = props;
 
-  const classes = useStyles();
+  // const classes = useStyles();
   return (
     <React.Fragment>
       <Autocomplete
         // style={{paddingTop:"0.5",paddingBottom:"0.5",height:"32px"}}
-        className={classes.autocomplete}
+        // className={classes.autocomplete}
         disablePortal
+        blurOnSelect={true}
         id="combo-box-demo"
-        options={props.options || []}
+        options={options || []}
         getOptionLabel={(option) => {
           if (keyOfData && option[keyOfData]) {
             return option[keyOfData] === null
@@ -215,6 +216,8 @@ const AutocompleteTextField = (props) => {
             }}
           />
         )}
+        size={size || "small"}
+        value={value || null}
       />
     </React.Fragment>
   );

@@ -63,6 +63,28 @@ export default class index extends Component {
     }
   };
 
+  ElementHeaderFunction = (innerElement) => {
+    if (innerElement.evalFunction) {
+      if (innerElement.evalFunction instanceof Function) {
+        if (innerElement.key) {
+          return innerElement.evalFunction(innerElement.title);
+        } else {
+          return innerElement.evalFunction(innerElement);
+        }
+      } else {
+        return eval(
+          "props.functions." +
+            innerElement.evalFunction +
+            "('" +
+            innerElement.title +
+            "')"
+        );
+      }
+    } else {
+      return innerElement.title;
+    }
+  };
+
   render() {
     const { headers, dataList, keyMapping, currentPage, currentPageSize } =
       this.props;
@@ -88,7 +110,8 @@ export default class index extends Component {
                     ? headers.map((x) => {
                         return (
                           <TableCell align="left" key={x.title}>
-                            {x.title}
+                            {/* {x.title} */}
+                            {this.ElementHeaderFunction(x)}
                           </TableCell>
                         );
                       })

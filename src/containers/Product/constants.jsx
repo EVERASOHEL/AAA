@@ -4,7 +4,6 @@ export const pageName = "ProductPage";
 
 export const ActionTypes = keyMirrorRecursive(
     {
-        REGISTRATION_FORM: undefined,
         classDTO: undefined,
         PRODUCT_REQUEST: undefined,
         PRODUCT_RESPONSE:undefined,
@@ -15,6 +14,8 @@ export const ActionTypes = keyMirrorRecursive(
         PRODUCT_LIST_REQUEST:undefined,
         PRODUCT_LIST_RESPONSE:undefined,
         DELETE_PRODUCT:undefined,
+        PRODUCT_NAME_LIST_REQUEST:undefined,
+        PRODUCT_NAME_LIST_RESPONSE:undefined,
     },
     pageName
 );

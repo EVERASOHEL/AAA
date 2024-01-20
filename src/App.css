@@ -24,9 +24,9 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
+/* .App-link {
+    color: #61dafb;
+} */
 
 @keyframes App-logo-spin {
   from {
@@ -36,3 +36,40 @@
     transform: rotate(360deg);
   }
 }
+.css-1wvake5 {
+  width: 0px;
+}
+
+.sidebarlink {
+  font-family: auto;
+  font-size: 17px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.ps-sidebar-container,
+.css-dip3t8 {
+  width: -webkit-fill-available;
+}
+.app {
+  background-color: #efefef;
+}
+
+.ps-submenu-content,
+.ps-open,
+.css-z5rm24 {
+  background-color: #efefef;
+}
+
+.cursive-text {
+  font-family: "Pacifico", cursive;
+}
+.sidebarlink:hover,
+.sidebarlink:hover > a { /* Target the link inside the .sidebarlink class */
+  color: #165a72; /* Replace with the color you want on hover */
+}
+SubMenu:hover{
+  color: #165a72;
+}
+
+

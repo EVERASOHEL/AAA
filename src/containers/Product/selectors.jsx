@@ -20,3 +20,6 @@ export const currentPage = () =>
 
 export const currentPageSize = () =>
   createSelector(stateSelector, (bstate) => bstate.currentPageSize);
+
+export const productNameList = () =>
+  createSelector(stateSelector, (bstate) => bstate.productNameList);

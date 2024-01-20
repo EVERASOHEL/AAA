@@ -10,6 +10,7 @@ import { getBusinessException } from "../root/actions";
 import { getToken } from "./SessionService";
 import { SERVER_ADDR } from "../configuration/constants";
 import { getMachineID } from "./MachineIdentifier";
+import { toast } from "react-toastify";
 
 export const asResponse = (response) =>
   Promise.resolve({
@@ -71,9 +72,9 @@ const dispatchException = (response, errorAction, recoverable) => {
 const hideProgressBar = () => {
   fetchInProgress.pop();
   const progressCount = fetchInProgress.length;
-  console.log(
-    `onRequestSuccess${fetchInProgress.length}, progressCount ${progressCount}`
-  );
+  // console.log(
+  //   `onRequestSuccess${fetchInProgress.length}, progressCount ${progressCount}`
+  // );
   setTimeout(() => {
     // console.log(
     //   `onTimeout${fetchInProgress.length}, progressCount ${progressCount}`
@@ -135,15 +136,44 @@ const getAuthWithMultipartHeader = () => {
 const BASE_URL = "http://localhost:8888";
 
 export const FetchApi = (data) => {
-  return fetch("http://localhost:8888" + data.url, {
+  return fetch(BASE_URL + data.url, {
     method: data.method,
     body: data.payload,
     headers: {
-    //   Accept: "application/json",
+      Accept: "application/json",
       "Content-Type": "application/json",
     },
-  }).then((response) => response.json());
+  }).then((response) => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    if (response.status === 204) {
+      return null; // Return null or any other appropriate value
+    }
+    return response.json().catch((error) => {
+      // Handle JSON parsing error (e.g., empty response, non-JSON response)
+      console.error("Error parsing JSON data:", error.message);
+      throw error; // Re-throw the error to be handled by the calling function
+    });
+  })
+  .catch((error) => {
+    console.error("Error fetching data:", error.message);
+    throw error; // Re-throw the error to be handled by the calling function
+  });
 };
+
+// export const FetchApi = (data) => {
+//   return fetch(BASE_URL + data.url, {
+//     method: data.method,
+//     body: data.payload,
+//     headers: {
+//       Accept: "application/json",
+//       "Content-Type": "application/json",
+//     },
+//   }).then((response) => {
+//     return response.json();
+//   });
+// };
 
 //-----------------------START: API SAVE-------------------------
 function getResponse(data) {
@@ -170,7 +200,7 @@ function getList(data) {
 
 // ----------------------START: API DELETE-----------------------
 function deleteCompany(data) {
-  console.log("method : ", data.url);
+  // console.log("method : ", data.url);
   return fetch("http://localhost:8888" + data.url, {
     method: data.method,
     headers: {
