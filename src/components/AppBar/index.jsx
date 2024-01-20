@@ -38,7 +38,7 @@ const App = () => {
               />
             }
           >
-            <h2> Alpha</h2>
+            <h2 style={{marginBottom:"0px"}}> Vexon</h2>
           </MenuItem>
           {routes.map((route) => (
             <MenuItem key={route.path}>

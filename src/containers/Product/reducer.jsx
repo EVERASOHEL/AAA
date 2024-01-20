@@ -25,6 +25,7 @@ const reducer = (stateDTO = initialState, action) => {
 
     case ActionTypes.MODEL_OPEN_REQUEST: {
       state.open = action.payload || false;
+      state.classDTO=defaultClassDTO;
       return { ...state };
       // return JSON.parse(JSON.stringify(state));
     }
@@ -48,15 +49,22 @@ const reducer = (stateDTO = initialState, action) => {
           productHsn: x.productHsn,
           gstPercentage: x.gstPercentage,
           productType: x.productType,
+          totalStock:x.totalStock
         });
       });
 
       const lastObject = newData[newData.length - 1];
-      const { No } = lastObject;
+      const { No } = lastObject || 0;
       state.productlist = newData;
       state.currentPage = 0;
       state.currentPageSize = No || 20;
       return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.PRODUCT_NAME_LIST_RESPONSE: {
+      state.productNameList = action.payload.data || [];
+      return { ...state };
+      // return JSON.parse(JSON.stringify(state));
     }
     default:
       return state;

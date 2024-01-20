@@ -4,7 +4,6 @@
 const DeviceUUID = require("device-uuid");
 
 export const getAllMACaddress = () => {
-    console.log(`getAllMACaddress`);
 
     //   macaddress.one((err, mac) => {
     //     console.log("Mac address for this host: %s", mac);
@@ -28,7 +27,6 @@ export const getAllMACaddress = () => {
 // };
 
 export const getMachineID = () => {
-    console.log(`getMachineID`);
 
     // getMachineId();
 

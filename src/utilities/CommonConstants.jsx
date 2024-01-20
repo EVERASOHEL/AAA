@@ -25,13 +25,35 @@ export const EMAIL_MATCH = /^[A-Za-z_.0-9-]+@{1}[a-z]+([.]{1}[a-z]{2,4})+$/;
 export const MOBILE_NO_MATCH = /^[+-]?(?:\d+\.?\d*|\d*\.?\d+)[\r\n]*$/;
 
 export const PASSWORD_MATCH =
-    /^(?=.*[A-Z])(?=.*[!@#$%^&*()'"])[A-Za-z\d!@#$%^&*()'"](?!\s).{5,19}$/;
+  /^(?=.*[A-Z])(?=.*[!@#$%^&*()'"])[A-Za-z\d!@#$%^&*()'"](?!\s).{5,19}$/;
 
 // --------------- END : Regex ---------------
 
 // --------------- START: Messages ---------------
 
 export const MSG_UNIVERSAL_ERROR =
-    "The task you are trying to perform is temporarily unavailable. Kindly contact administrator.";
+  "The task you are trying to perform is temporarily unavailable. Kindly contact administrator.";
 
 // --------------- END: Messages ---------------
+
+export const GST_TYPE = [
+  { value: "IGST18[18%]", display: "IGST18[18%]" },
+  { value: "IGST12[12%]", display: "IGST12[12%]" },
+  { value: "IGST5[5%]", display: "IGST5[5%]" },
+  { value: "LGST18[18%]", display: "LGST18[18%]" },
+  { value: "LGST12[12%]", display: "LGST12[12%]" },
+  { value: "LGST5[5%]", display: "LGST5[5%]" },
+];
+
+export const PRODUCT_TYPE = [
+  { value: "DOZEN", display: "DOZEN" },
+  { value: "GRAMS", display: "GRAMS" },
+  { value: "PCS", display: "PCS" },
+  { value: "BOX", display: "BOX" },
+  { value: "METRES", display: "METRES" },
+];
+
+export const PAYMENT_MODE = [
+  { value: "Cash", display: "Cash" },
+  { value: "Bank", display: "Bank" },
+];

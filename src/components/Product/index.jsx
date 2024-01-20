@@ -28,6 +28,9 @@ import SingleSelect from "../../web/AutocompleteTextField";
 import * as commonFunction from "../../utilities/CommonValidator";
 import { element } from "prop-types";
 import "react-toastify/dist/ReactToastify.css";
+import { GST_TYPE, PRODUCT_TYPE } from "../../utilities/CommonConstants";
+import Close from "../../components/images/cross.gif";
+import * as Buttons from "../../web/Buttons";
 
 export default class AddproductModel extends React.Component {
   constructor(props) {
@@ -38,17 +41,13 @@ export default class AddproductModel extends React.Component {
       flag: 0,
       editProductFlag: -1,
       open: true,
-      updateId:null,
+      updateId: null,
     };
   }
 
   componentDidMount() {
-    console.log(
-      "this.props.productListForEdit : ",
-      this.props.productListForEdit
-    );
     let data = this.props.productListForEdit || [];
-    this.setState({ productList: data});
+    this.setState({ productList: data });
   }
 
   resetProductList = () => {
@@ -73,9 +72,21 @@ export default class AddproductModel extends React.Component {
     var obj = value;
     obj.isValidatorAddProduct = true;
     if (key === "pname" || key === "all") {
-      if (this.isNullOrIsEmptyOrIsUndefined(obj.pname)) {
+      if (isNullOrIsEmptyOrIsUndefined(obj.pname)) {
         obj.isValidatorAddProduct = false;
         obj.isProductNameError = "Please Enter Product Name";
+      } else {
+        obj.isProductNameError = "";
+      }
+      if (isNullOrIsEmptyOrIsUndefined(this.state.productList.id)) {
+        if (
+          (this.props.productNameList || []).some(
+            (list) => (list.value || "") == obj.pname
+          )
+        ) {
+          obj.isValidatorAddProduct = false;
+          obj.isProductNameError = "Product name already exists.";
+        }
       } else {
         obj.isProductNameError = "";
       }
@@ -191,10 +202,8 @@ export default class AddproductModel extends React.Component {
 
   finalsubmit = () => {
     if (this.state.dataList.length === 0) {
-      console.log("1");
       toast.error("Please atleast one record insert");
     } else {
-      console.log("datalist : ", this.state.dataList);
       this.props.ProductclassDTO(this.state.dataList);
     }
   };
@@ -212,33 +221,19 @@ export default class AddproductModel extends React.Component {
       p: 4,
     };
 
-    let GST_TYPE = [
-      { value: "18%", display: "18%" },
-      { value: "12%", display: "12%" },
-      { value: "28%", display: "28%" },
-    ];
+    // let GST_TYPE = [
+    //   { value: 18, display: "18%" },
+    //   { value: 12, display: "12%" },
+    //   { value: 28, display: "28%" },
+    // ];
 
-    let PRODUCT_TYPE = [
-      { value: "DOZEN", display: "DOZEN" },
-      { value: "UNIT", display: "UNIT" },
-      //   "DOZEN",
-      //   "BOX",
-      //   "UNIT",
-      //   "GRAMS",
-      //   "METRES",
-      //   "PIECES",
-    ];
-
-    console.log(
-      "this.state.productList.gstpercentage : ",
-      this.state.productList.gstpercentage
-    );
+    // console.log("this.state.productList.gstpercentage : ",this.state.productList.gstpercentage);
 
     return (
       <div>
         <Box display="flex" justifyContent="center">
           <Modal
-            style={{ textAlign: "-webkit-center", marginTop: "100px" }}
+            style={{ textAlign: "-webkit-center", marginTop: "100px",overflow:"scroll"}}
             open={open}
             onClose={handleClose}
             aria-labelledby="modal-modal-title"
@@ -256,21 +251,17 @@ export default class AddproductModel extends React.Component {
                         style={{ textAlign: "initial" }}
                       >
                         <h3 className="compnayname">
-                          {this.props.productListForEdit
+                          {this.props.productListForEdit.length > 0
                             ? "Update Product"
                             : "Add Product"}
                         </h3>
                       </Grid>
                       <Grid item xs={1}>
-                        <div
-                          className="col-md-2 closebuttton"
-                          // style={{ textAlign: "end" }}
+                        <Buttons.CloseButton
                           onClick={() => {
                             this.props.isModelOpen(false);
                           }}
-                        >
-                          <CloseButton style={{ cursor: "pointer" }} />
-                        </div>
+                        />
                       </Grid>
                     </Grid>
                     <div className="container-fluid">
@@ -377,43 +368,24 @@ export default class AddproductModel extends React.Component {
                             style={{ width: "100%" }}
                           >
                             <SingleSelect
-                              label={""}
+                              label={"GST Type"}
                               // disableClearable={true}
                               keyOfData={"display"}
-                              value={
-                                (
-                                  GST_TYPE.find(
-                                    (element) =>
-                                      element.value ==
-                                      this.state.productList.gstpercentage
-                                  ) || {}
-                                ).display || ""
-                              }
+                              value={GST_TYPE.find(
+                                (element) =>
+                                  element.value ==
+                                  (this.state.productList.gstpercentage || "")
+                              )}
                               options={GST_TYPE}
                               onChange={(event, value) => {
                                 this.handleChangeProduct(
                                   "gstpercentage",
-                                  value.value,
+                                  (value && value.value) || "",
                                   null
                                 );
                               }}
                             />
-                            {/* <SingleSelect
-                              name={""}
-                              id={""}
-                              placeholder={"Select Product Type "}
-                              option={["18%", "12%", "5%", "28%"]}
-                              variant={"outlined"}
-                              label={"GST%"}
-                              onChange={(event, value) => {
-                                this.handleChangeProduct(
-                                  "gstpercentage",
-                                  value,
-                                  null
-                                );
-                              }}
-                              value={"18%"}
-                            /> */}
+
                             <label className="error">
                               {this.state.productList.gstpercentageError}
                             </label>
@@ -436,26 +408,30 @@ export default class AddproductModel extends React.Component {
                               //   "METRES",
                               //   "PIECES",
                               // ]}
-                              keyOfData={"display"}
-                              options={PRODUCT_TYPE || []}
+                              // keyOfData={"display"}
+                              options={PRODUCT_TYPE.map(
+                                (element) => element.display
+                              )}
+                              // options={PRODUCT_TYPE.map((element)=>element.display) || []}
                               variant={"outlined"}
                               label={"Unit"}
                               onChange={(event, value) => {
                                 this.handleChangeProduct(
                                   "productType",
-                                  value.value,
+                                  value,
                                   null
                                 );
                               }}
-                              value={
-                                (
-                                  PRODUCT_TYPE.find(
-                                    (element) =>
-                                      element.value ==
-                                      this.state.productList.productType
-                                  ) || {}
-                                ).display || ""
-                              }
+                              value={this.state.productList.productType}
+                              // value={
+                              //   (
+                              //     PRODUCT_TYPE.find(
+                              //       (element) =>
+                              //         element.value ==
+                              //         this.state.productList.productType
+                              //     ) || {}
+                              //   ).display || ""
+                              // }
                             />
                             <label className="error">
                               {this.state.productList.productTypeError}

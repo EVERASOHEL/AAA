@@ -14,21 +14,12 @@ import { ToastContainer, toast } from "react-toastify";
 import http from "../../utilities/CommonConfigConstant";
 import axios from "axios";
 
-function getResponse(data) {
-  return fetch("http://localhost:8888" + data.url, {
-    method: "post",
-    body: data.payload,
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((response) => response.json());
-}
-
 export function* apiforSubmitAddCompnayRequest({ payload }) {
+  console.log("payload : ", payload);
   let data = {
     url: "/api/companyController/saveNewCompany",
     payload: JSON.stringify(payload),
-    method: 'POST'
+    method: "POST",
   };
   const response = yield call(FetchApi, data);
   if (response.code == 200) {
@@ -44,26 +35,24 @@ export function* apiforSubmitAddCompnayRequest({ payload }) {
   }
 }
 
-function getList(data) {
-  return fetch("http://localhost:8888" + data.url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  }).then((response) => response.json());
-}
-
 export function* apiforList({ payload }) {
   let page = payload.data.page || 0;
   let size = payload.data.size || 20;
   let data = {
     url: `/api/companyController/getCompanylist?page=${page}&size=${size}`,
     payload: null,
-    method:'GET',
+    method: "GET",
   };
   const response = yield call(FetchApi, data);
 
-  if (response.code == 200) {
+  if (response === null) {
+    yield put({
+      type: ActionTypes.COMPANY_LIST_RESPONSE,
+      payload: {
+        data: [],
+      },
+    });
+  } else if (response.code == 200) {
     yield put({
       type: ActionTypes.COMPANY_LIST_RESPONSE,
       payload: {
@@ -76,7 +65,6 @@ export function* apiforList({ payload }) {
 }
 
 function deleteCompany(data) {
-  console.log("method : ", data.url);
   return fetch("http://localhost:8888" + data.url, {
     method: data.method,
     headers: {
@@ -87,7 +75,6 @@ function deleteCompany(data) {
 }
 
 export function* apiforDeleteCompany({ payload }) {
-  console.log("payload : ", payload.data);
   let data = {
     url: `/api/companyController/deleteCompany/${payload.data}`,
     method: "DELETE",
@@ -103,10 +90,34 @@ export function* apiforDeleteCompany({ payload }) {
   }
 }
 
+export function* apiforgetAllCompanyNameList({ payload }) {
+  let data = {
+    url: `/api/companyController/getAllCompanyName/${payload.companyType}`,
+    payload: null,
+  };
+  const response = yield call(FetchApi, data);
+  if (response.code == 200) {
+    yield put({
+      type: ActionTypes.COMPANY_NAME_LIST_RESPONSE,
+      payload: {
+        data: response.responseObj || [],
+      },
+    });
+  } else {
+    toast.error(MSG_UNIVERSAL_ERROR);
+  }
+}
+
 export default function* root() {
+  console.log("new");
   yield all([
     takeLatest(ActionTypes.ADD_COMPANY_REQUEST, apiforSubmitAddCompnayRequest),
+    takeLatest(ActionTypes.ADD_COMPANY_RESPONSE, apiforList),
     takeLatest(ActionTypes.COMPANY_LIST_REQUEST, apiforList),
     takeLatest(ActionTypes.DELETE_COMPANY, apiforDeleteCompany),
+    takeLatest(
+      ActionTypes.COMPANY_NAME_LIST_REQUEST,
+      apiforgetAllCompanyNameList
+    ),
   ]);
 }

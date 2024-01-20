@@ -20,6 +20,7 @@ import { Close, SearchOffSharp } from "@mui/icons-material";
 import AutocompleteTextField from "../../web/AutocompleteTextField/";
 import AssignmentIcon from "@mui/icons-material/Add";
 import { Delete, Edit } from "@mui/icons-material";
+import * as Buttons from "../../web/Buttons";
 import {
   Box,
   Button,
@@ -45,6 +46,7 @@ const index = (props) => {
   useEffect(() => {
     // Anything in here is fired on component mount.
     props.listRequest({ page: 0, size: 20 });
+    props.getAllProductName();
     return () => {
       // Anything in here is fired on component unmount.
     };
@@ -63,18 +65,6 @@ const index = (props) => {
       ...value,
     }));
   };
-
-  // render() {
-  function createData(name, calories, fat, carbs, protein) {
-    return { name, calories, fat, carbs, protein };
-  }
-
-  const rows = [
-    createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-    createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-    createData("Eclair", 262, 16.0, 24, 6.0),
-    createData("Cupcake", 305, 3.7, 67, 4.3),
-  ];
 
   function handleclassDTO(key, value) {
     var classDTO = { ...this.props.classDTO };
@@ -95,6 +85,7 @@ const index = (props) => {
         productType: x.productType,
       });
     });
+    console.log("1");
     submitProductRquestForm(finalDTO);
   }
 
@@ -110,8 +101,7 @@ const index = (props) => {
   function ActionFunction(data) {
     return (
       <>
-        <Edit
-          className={classes.iconButton}
+        <Buttons.EditButton
           onClick={() => {
             let classDTO = {
               id: data.id,
@@ -126,12 +116,33 @@ const index = (props) => {
             isModelOpen(true);
           }}
         />
-        <Delete
-          className={classes.iconButton}
+        <Buttons.DeleteButton
           onClick={() => {
             props.deleteProduct(data.id);
           }}
         />
+        {/* <Edit
+          className={classes.iconButton}
+          onClick={() => {
+            let classDTO = {
+              id: data.id,
+              pname: data.productName,
+              sellingprice: data.sellingPrice,
+              costprice: data.costPrice,
+              hsccode: data.productHsn,
+              productType: data.productType,
+              gstpercentage: data.gstPercentage,
+            };
+            setData({ productListForEdit: classDTO });
+            isModelOpen(true);
+          }}
+        /> */}
+        {/* <Delete
+          className={classes.iconButton}
+          onClick={() => {
+            props.deleteProduct(data.id);
+          }}
+        /> */}
       </>
     );
   }
@@ -147,9 +158,10 @@ const index = (props) => {
           open={props.open}
           isModelOpen={isModelOpen}
           productListForEdit={data.productListForEdit}
+          productNameList={props.productNameList}
         />
       ) : null}
-      <div style={{ marginTop: "65px" }}>
+      <div style={{ marginTop: "15px" }}>
         <div style={{ display: "flex" }}>
           <Container maxWidth="lg">
             <Card sx={{ minWidth: 500, textAlign: "center" }}>
@@ -228,6 +240,7 @@ const index = (props) => {
                   headers={[
                     { title: "No" },
                     { title: "Product Name" },
+                    { title: "Total Stock" },
                     { title: "Selling Price" },
                     { title: "Cost Price" },
                     { title: "Hsc Code" },
@@ -241,6 +254,9 @@ const index = (props) => {
                     },
                     {
                       key: "productName",
+                    },
+                    {
+                      key: "totalStock",
                     },
                     {
                       key: "sellingPrice",
@@ -279,6 +295,7 @@ const mapStateToProps = () => {
     productlist: selectors.productlist(),
     currentPage: selectors.currentPage(),
     currentPageSize: selectors.currentPageSize(),
+    productNameList: selectors.productNameList(),
   });
 };
 
@@ -290,9 +307,6 @@ const mapDispatchToProps = (dispatch) => {
     submitProductRquestForm: (data) => {
       dispatch(actions.submitProductRquestForm(data));
     },
-    registration: (data) => {
-      dispatch(actions.registration(data));
-    },
     modelOpenRequest: (data) => {
       dispatch(actions.isModelOpen(data));
     },
@@ -301,6 +315,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     deleteProduct: (payload) => {
       dispatch(actions.deleteProduct(payload));
+    },
+    getAllProductName: () => {
+      dispatch(actions.getAllProductName());
     },
   };
 };

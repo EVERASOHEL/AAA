@@ -1,0 +1,58 @@
+// -----------------------------------------------------------------------------
+
+.switch-multiple {
+  position: relative;
+  height: 40px;
+  // width: 300px;
+  width: 100%;
+  // margin: 20px auto;
+  background: #006abf21;
+  border-radius: 32px;
+}
+
+.switch-multiple-disabled {
+  background: lightgrey !important;
+}
+
+.switch-multiple .switch-input {
+  display: none;
+}
+
+.switch-multiple .switch-input:checked + .switch-label {
+  color: #fff;
+  transition: 0.15s ease-out;
+  transition-property: color, text-shadow;
+}
+
+.switch-multiple .switch-label {
+  font-weight: bold;
+  position: relative;
+  z-index: 2;
+  float: left;
+  line-height: 40px;
+  font-size: 12px;
+  color: #676a6c;
+  text-align: center;
+  cursor: pointer;
+}
+
+.switch-multiple .switch-selector {
+  position: absolute;
+  z-index: 1;
+  top: 0px;
+  left: 0px;
+  display: block;
+  height: 40px;
+  border-radius: 32px;
+  background-color: #0468bf;
+  transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.switch-selector-disabled {
+  background-color: grey !important;
+}
+
+.no-selection {
+  display: none !important;
+}
+

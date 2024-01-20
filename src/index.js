@@ -1,14 +1,50 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import "react-app-polyfill/stable";
+import "core-js";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+import React from "react";
+import { createRoot } from "react-dom/client";
+import Root from "./root";
+import reportWebVitals from "./reportWebVitals";
+import { Provider } from "react-redux";
+import store from "./configuration/store";
+import "./scss/style.scss";
+
+//fonts
+import "./fonts/Roboto/Roboto-Regular.ttf";
+import "./fonts/Nunito_Sans/NunitoSans_7pt-Regular.ttf";
+import SidebarDrawer from "./components/AppBar";
+import { ProSidebarProvider } from "react-pro-sidebar";
+// import "bootstrap/dist/css/bootstrap.min.css";
+import { BrowserRouter } from "react-router-dom";
+import "./index.css";
+import ReactDOM from 'react-dom';
+import App from './App';
+import WebFont from 'webfontloader';
+
+WebFont.load({
+  google: {
+    families: ['Pacifico', 'cursive'], // Replace 'Pacifico' with the name of the cursive font you want to use
+  },
+});
+
+createRoot(document.getElementById("root")).render(
+  <Provider store={store}>
+    {/* <div
+      style={{
+        display: "flex",
+      }}
+    > */}
+    {/* <BrowserRouter> */}
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+    {/* </BrowserRouter> */}
+    {/* <ProSidebarProvider>
+        <SidebarDrawer />
+        <Root/>
+      </ProSidebarProvider>
+    </div> */}
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -32,25 +32,20 @@ import HtmlComponent from "../../components/CompanyMaster";
 import isNullOrIsEmptyOrIsUndefined from "../../utilities/CommonValidator";
 import * as commonFunction from "../../utilities/CommonValidator";
 import { makeStyles } from "@mui/styles";
-import './style.scss';
+import "./style.scss";
+import { toast } from "react-toastify";
+import * as Buttons from "../../web/Buttons";
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
-    cursor:'pointer',
-    '&:hover': {
-      color: 'red', // Change the color to your desired hover color
+    cursor: "pointer",
+    "&:hover": {
+      color: "red", // Change the color to your desired hover color
     },
   },
 }));
 
 const index = (props) => {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     displayfilter: "none",
-  //   };
-  // }
-
   const [displayfilter, setdisplayfilter] = useState("none");
 
   function updateStateValue(value) {
@@ -63,23 +58,35 @@ const index = (props) => {
   useEffect(() => {
     // Anything in here is fired on component mount.
     props.listRequest({ page: 0, size: 20 });
+    props.companyNameList();
     return () => {
       // Anything in here is fired on component unmount.
     };
   }, []);
 
-  // componentDidMount() {
-  //   console.log("hello");
-  //   props.listRequest({page:this.state.page,size:props.currentPageSize});
-  // }
-
   const handleValidation = (key, classDTO) => {
     classDTO.isValidationSuccess = true;
+
+    if (key === "all" || key === "companyType") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.companyType)) {
+        classDTO.companyTypeError = "Please select company type";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.companyTypeError = "";
+      }
+    }
 
     if (key === "all" || key === "companyName") {
       if (isNullOrIsEmptyOrIsUndefined(classDTO.companyName)) {
         classDTO.companyNameError = "Please enter company name";
         classDTO.isValidationSuccess = false;
+      } else if (
+        isNullOrIsEmptyOrIsUndefined(classDTO.id) &&
+        (props.getCompnayNameList || []).some(
+          (list) => (list.value || "") == classDTO.companyName
+        )
+      ) {
+        classDTO.companyNameError = "Company name already exists.";
       } else {
         classDTO.companyNameError = "";
       }
@@ -88,18 +95,17 @@ const index = (props) => {
     // else if(classDTO.phoneNo.toString().length!==12){
     //   classDTO.phoneNoError = "Please enter 12 number of phone no.";
     // }
-    if (key === "all" || key === "phoneNo") {
-      if (isNullOrIsEmptyOrIsUndefined(classDTO.phoneNo)) {
-        classDTO.phoneNoError = "Please enter phone number";
-        classDTO.isValidationSuccess = false;
-      } else if (!commonFunction.isNotEmptyAndValidNumber(classDTO.phoneNo)) {
-        classDTO.isValidationSuccess = false;
-        classDTO.phoneNoError = "Please enter valid number";
-      } else {
-        classDTO.phoneNoError = "";
-      }
-      
-    }
+    // if (key === "all" || key === "phoneNo") {
+    //   if (isNullOrIsEmptyOrIsUndefined(classDTO.phoneNo)) {
+    //     classDTO.phoneNoError = "Please enter phone number";
+    //     classDTO.isValidationSuccess = false;
+    //   } else if (!commonFunction.isNotEmptyAndValidNumber(classDTO.phoneNo)) {
+    //     classDTO.isValidationSuccess = false;
+    //     classDTO.phoneNoError = "Please enter valid number";
+    //   } else {
+    //     classDTO.phoneNoError = "";
+    //   }
+    // }
 
     if (key === "all" || key === "address") {
       if (isNullOrIsEmptyOrIsUndefined(classDTO.address)) {
@@ -118,6 +124,25 @@ const index = (props) => {
         classDTO.stateNameError = "";
       }
     }
+
+    // if (key === "all") {
+    //   if (
+    //     isNullOrIsEmptyOrIsUndefined(classDTO.companyGstNo) &&
+    //     isNullOrIsEmptyOrIsUndefined(classDTO.companyPanNumber)
+    //   ) {
+    //     toast.error("Please insert the GST Number or Pan number.");
+    //     classDTO.isValidationSuccess = false;
+    //   }
+    // }
+
+    // if (key === "all" || key === "companyGstNo") {
+    //   if (isNullOrIsEmptyOrIsUndefined(classDTO.companyGstNo)) {
+    //     classDTO.companyGstNoError = "Please enter Gst No";
+    //     classDTO.isValidationSuccess = false;
+    //   } else {
+    //     classDTO.companyGstNoError = "";
+    //   }
+    // }
 
     return classDTO;
   };
@@ -138,22 +163,25 @@ const index = (props) => {
 
   function handleChangeSave(key) {
     var classDTO = { ...props.classDTO };
+    var {submitCompnayRequestForm} = props;
     classDTO = handleValidation(key, classDTO);
     if (classDTO.isValidationSuccess === true) {
       let finalDTO = {
-        id:classDTO.id,
+        id: classDTO.id,
+        companyType: classDTO.companyType,
         companyName: classDTO.companyName,
         address: classDTO.address,
         phoneNo: classDTO.phoneNo,
         stateName: classDTO.stateName,
+        companyGstNo: classDTO.companyGstNo,
+        companyPanNumber: classDTO.companyPanNumber,
       };
-      props.submitCompnayRequestForm(finalDTO);
+      submitCompnayRequestForm(finalDTO);
     } else {
       props.updateClassDTO(classDTO);
     }
   }
 
-  console.log("hello");
   function CompnayMasterRequest() {
     return (
       <>
@@ -171,12 +199,32 @@ const index = (props) => {
     );
   }
 
-  
   const classes = useStyles();
   function ActionFunction(data) {
     return (
       <>
-        <Edit
+        <Buttons.EditButton
+          onClick={() => {
+            let classDTO = {
+              id: data.id,
+              companyName: data.companyName,
+              companyType: data.companyType,
+              address: data.address,
+              phoneNo: data.phoneNo,
+              stateName: data.stateName,
+              companyGstNo: data.companyGstNo,
+              companyPanNumber: data.companyPanNumber,
+            };
+            props.openEditModel(classDTO);
+          }}
+        />
+        <Buttons.DeleteButton
+          onClick={() => {
+            props.deleteCompany(data.id);
+          }}
+        />
+
+        {/* <Edit
           className={classes.iconButton}
           onClick={() => {
             let classDTO = {
@@ -185,16 +233,17 @@ const index = (props) => {
               address: data.address,
               phoneNo: data.phoneNo,
               stateName: data.stateName,
+              companyGstNo: data.companyGstNo,
             };
             props.openEditModel(classDTO);
           }}
-        />
-        <Delete
+        /> */}
+        {/* <Delete
           className={classes.iconButton}
           onClick={()=>{
             props.deleteCompany(data.id);
           }}
-        />
+        /> */}
       </>
     );
   }
@@ -207,7 +256,7 @@ const index = (props) => {
   return (
     <>
       {CompnayMasterRequest()}
-      <div style={{ marginTop: "65px" }}>
+      <div style={{ marginTop: "15px" }}>
         <div style={{ display: "flex" }}>
           <Container maxWidth="lg">
             <Card sx={{ minWidth: 500, textAlign: "center" }}>
@@ -280,37 +329,6 @@ const index = (props) => {
                   </Typography>
                 </div>
                 <hr />
-                {/* <Tabelweb
-                    dataList={rows}
-                    headers={[
-                      { title: "No" },
-                      { title: "Product Name" },
-                      { title: "Created Date" },
-                      { title: "Price" },
-                      { title: "Hsc" },
-                      { title: "Action_Edit_Delete" },
-                    ]}
-                    keyMapping={[
-                      {
-                        key: "name",
-                      },
-                      {
-                        key: "calories",
-                      },
-                      {
-                        key: "fat",
-                      },
-                      {
-                        key: "carbs",
-                      },
-                      {
-                        key: "protein",
-                      },
-                      {
-                        key: "Edit_Delete",
-                      },
-                    ]}
-                  /> */}
                 <Evelpractice
                   dataList={props.companylist}
                   currentPage={props.currentPage}
@@ -319,9 +337,11 @@ const index = (props) => {
                   headers={[
                     { title: "No" },
                     { title: "Company Name" },
-                    { title: "Address" },
+                    // { title: "Address" },
+                    { title: "Company Type" },
                     { title: "Phone No" },
                     { title: "State" },
+                    { title: "GST No" },
                     { title: "Action" },
                   ]}
                   keyMapping={[
@@ -331,14 +351,20 @@ const index = (props) => {
                     {
                       key: "companyName",
                     },
+                    // {
+                    //   key: "address",
+                    // },
                     {
-                      key: "address",
+                      key: "companyType",
                     },
                     {
                       key: "phoneNo",
                     },
                     {
                       key: "stateName",
+                    },
+                    {
+                      key: "companyGstNo",
                     },
                     {
                       evalFunction: ActionFunction,
@@ -363,6 +389,7 @@ const mapStateToProps = () => {
     companylist: selectors.companylist(),
     currentPage: selectors.currentPage(),
     currentPageSize: selectors.currentPageSize(),
+    getCompnayNameList: selectors.getCompnayNameList(),
   });
 };
 
@@ -391,6 +418,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     deleteCompany: (payload) => {
       dispatch(actions.deleteCompany(payload));
+    },
+    companyNameList: () => {
+      dispatch(actions.companyNameList());
     },
   };
 };

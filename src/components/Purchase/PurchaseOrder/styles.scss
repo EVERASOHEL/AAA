@@ -1,0 +1,45 @@
+.productTypelabel{
+    background-color: darkgray;
+    color: antiquewhite;
+    padding: 5px;
+    border-radius: 10px;
+}
+.MuiTableContainer-root{
+    max-height: 250px;
+    overflow: scroll;
+}
+
+// card csss
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    max-width: 850px;
+  }
+
+  .card {
+    background-color: #fcfeff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    width: calc(100%);
+    padding: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .card-content {
+    font-size: 14px;
+    color: #666;
+    display: flex;
+  }
