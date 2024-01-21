@@ -85,7 +85,6 @@ const index = (props) => {
         productType: x.productType,
       });
     });
-    console.log("1");
     submitProductRquestForm(finalDTO);
   }
 

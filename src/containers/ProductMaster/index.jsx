@@ -33,7 +33,6 @@ import TextFieldOutlined from "../../web/TextField/TextFieldOutlined";
 const index = (props) => {
 
   useEffect(() => {
-    console.log("hello world");
   });
 
   const initialvalues = {
@@ -75,7 +74,6 @@ const index = (props) => {
         productHsn: x.hsccode,
       };
     });
-    console.log("finalDTO : ", finalDTO);
     submitProductRquestForm(finalDTO);
   }
 

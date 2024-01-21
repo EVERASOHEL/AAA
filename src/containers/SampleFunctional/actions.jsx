@@ -14,7 +14,6 @@ export const resetData = () => {
 };
 
 export const updateResponseDTO = (payload) => {
-    console.log("hello");
     return {
         type: ActionTypes.RESPONSE_DTO,
         payload,

@@ -73,7 +73,6 @@ const index = (props) => {
 
   //  belove code for vendor
 
-  console.log("history");
   const classes = useStyles();
   return (
     <Dialog open={paymentHistoryModel} maxWidth="md">

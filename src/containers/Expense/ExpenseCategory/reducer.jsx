@@ -68,7 +68,6 @@ const reducer = (stateDTO = initialState, action) => {
 
     case ActionTypes.OPEN_EDIT_MODEL: {
       state.classDTO = action.payload.data || {};
-      console.log("action.payload.data : ", action.payload.data);
       state.open = true;
       return JSON.parse(JSON.stringify(state));
     }

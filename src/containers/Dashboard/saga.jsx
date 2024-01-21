@@ -29,7 +29,6 @@ export function* apiforsubmitPaymentRequest({ payload }) {
 }
 
 export default function* root() {
-  console.log("new");
   yield all([
     takeLatest(ActionTypes.TOTAL_RECEIVABLE_AND_PAYBLE_AMOUNT_REQUEST,apiforsubmitPaymentRequest),
   ]);

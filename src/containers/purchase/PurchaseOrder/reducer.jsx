@@ -187,7 +187,6 @@ const reducer = (stateDTO = initialState, action) => {
     case ActionTypes.VIEW_PDF_RESPONSE: {
       state.pdfData = action.payload.data || [];
       state.isOpenPdf = true;
-      console.log("state.pdfData : ",state.pdfData);
       return JSON.parse(JSON.stringify(state));
     }
 

@@ -7,7 +7,6 @@ import {ActionTypes} from "./constant";
 // import * as commonFunction from "../../../../Constant/Functions/commonFunction";
 
 export function* apiProductRequest({payload}) {
-    console.log("payload : ", payload.data);
     // const response = apiFetch(
     // `api/travelRequestController/saveTravelRequestForm`,
     //   {

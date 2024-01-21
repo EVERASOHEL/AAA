@@ -44,12 +44,13 @@ export default class AddExpenseCategoryModel extends React.Component {
   render() {
     const { classDTO, handleClassDTO, open, isModelOpen, getCompnayNameList } =
       this.props;
+
     return (
       <Dialog open={open} maxWidth="md">
         <DialogTitle>
           {" "}
           <div className="dialogheaderstyle">
-            <Typography variant="h5">Add Expense Categorys</Typography>
+            <Typography variant="h5">Add Expense Category</Typography>
             <Buttons.CloseButton
               onClick={() => {
                 isModelOpen(false);
@@ -57,7 +58,7 @@ export default class AddExpenseCategoryModel extends React.Component {
             />
           </div>
         </DialogTitle>
-        <DialogContent style={{ maxHeight: "400px" }}>
+        <DialogContent style={{ maxHeight: "600px" }}>
           <Card style={{ padding: "20px", maxWidth: "400px" }}>
             <div style={{ marginBottom: "20px" }}>
               <label>Select Company:</label>
@@ -70,15 +71,23 @@ export default class AddExpenseCategoryModel extends React.Component {
                 }
                 keyOfData="title"
                 value={
-                  (getCompnayNameList || []).find(
-                    (element) => element === (classDTO.companyId || "")
-                  ) || ""
+                  (
+                    (getCompnayNameList || []).find(
+                      (element) => element.value === (classDTO.companyId || "")
+                    ) || {}
+                  ).title || ""
                 }
                 options={(getCompnayNameList || []).map(
-                    (element) => element.title
-                  )}
+                  (element) => element.title
+                )}
                 onChange={(event, value) => {
-                  handleClassDTO("companyId", value);
+                  const selectedCompanyId =
+                    (
+                      getCompnayNameList.find(
+                        (element) => element.title == value
+                      ) || {}
+                    ).value || "";
+                  handleClassDTO("companyId", selectedCompanyId);
                 }}
               />
               {classDTO.compayNameError && (

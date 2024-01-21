@@ -145,7 +145,6 @@ export function* apiforViewPdf({ payload }) {
   //   },
   // });
 
-  console.log("payload : ", payload.data);
   try {
     let data = {
       url: `/api/salesOrderController/viewPdf`,
@@ -153,7 +152,6 @@ export function* apiforViewPdf({ payload }) {
       method: "POST",
     };
     const response = yield call(FetchApi, data);
-    console.log("response : ", response);
     if (response.code == 200 || response.code == 204) {
       yield put({
         type: ActionTypes.VIEW_PDF_RESPONSE,
@@ -165,7 +163,6 @@ export function* apiforViewPdf({ payload }) {
       toast.error(MSG_UNIVERSAL_ERROR);
     }
   } catch (error) {
-    console.log("error : ",error);
     toast.error(MSG_UNIVERSAL_ERROR);
   }
 }
