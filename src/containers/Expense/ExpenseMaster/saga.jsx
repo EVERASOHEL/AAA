@@ -102,7 +102,6 @@ export function* apiforgetAllCompanyNameList({ payload }) {
 }
 
 export default function* root() {
-  console.log("new");
   yield all([
     takeLatest(ActionTypes.ADD_COMPANY_REQUEST, apiforSubmitAddCompnayRequest),
     takeLatest(ActionTypes.ADD_COMPANY_RESPONSE, apiforList),

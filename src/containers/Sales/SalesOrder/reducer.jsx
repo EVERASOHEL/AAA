@@ -31,7 +31,6 @@ const reducer = (stateDTO = initialState, action) => {
 
   switch (action.type) {
     case ActionTypes.CLASS_DTO: {
-      console.log("action.payload : ", action.payload);
       state.classDTO = action.payload || {};
       return { ...state };
     }
@@ -170,7 +169,6 @@ const reducer = (stateDTO = initialState, action) => {
       updatedata.orderDate = parsedDate;
       const productList = action.payload.productList;
       const compnayOrderDetails = updatedata;
-      console.log("updatedata : ", updatedata);
       state.open = true;
       list = productList;
       state.classDTO = compnayOrderDetails;
@@ -183,7 +181,6 @@ const reducer = (stateDTO = initialState, action) => {
     case ActionTypes.VIEW_PDF_RESPONSE: {
       state.pdfData = action.payload.data || [];
       state.isOpenPdf = true;
-      console.log("state.pdfData : ", state.pdfData);
       return JSON.parse(JSON.stringify(state));
     }
 

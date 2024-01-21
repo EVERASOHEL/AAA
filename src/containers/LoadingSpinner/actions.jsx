@@ -8,7 +8,6 @@ export const updateClassDTO = (payload) => {
 };
 
 export const changeLoadingStatus = (payload) => {
-    console.log("111");
     return {
         type: ActionTypes1.LOADING_STATUS,
         payload,

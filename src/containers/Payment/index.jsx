@@ -45,13 +45,11 @@ const index = (props) => {
     props.updateClassDTO(newDTO);
     // props.modelMessageRequest("");
     return () => {
-      console.log("hello");
       // Anything in here is fired on component unmount.
     };
   }, []);
 
   useEffect(() => {
-    console.log('ComponentToUpdate has been updated!');
     props.isModelOpen(true);
   }, [modelmessage]);
 
@@ -92,7 +90,6 @@ const index = (props) => {
     var classDTO = { ...props.classDTO };
     switch (key) {
       case "calculateAmount": {
-        console.log("classDTO.payingamount : ",classDTO.payingamount);
         if (isNullOrIsEmptyOrIsUndefined(classDTO.payingamount)) {
           classDTO["amountDue"] = classDTO.amountDueBackup;
         } else {
@@ -133,7 +130,6 @@ const index = (props) => {
   const handleChangeSave = () => {
     var classDTO = { ...props.classDTO };
     classDTO = handleValidation("all", classDTO);
-    console.log("classDTO : ",classDTO);
     if (classDTO.isValidationSuccess == true) {
       const newDTO = {
         orderId: classDTO.id,
@@ -142,7 +138,6 @@ const index = (props) => {
         paymentDate: classDTO.paymentDate,
         paymentMode: classDTO.paymentMode,
       };
-      console.log("newDTO : ",newDTO);
       props.submitPaymentRequest(newDTO);
     }
   };
@@ -165,7 +160,6 @@ const index = (props) => {
     );
   }
 
-  // console.log("123");
   // if(modelmessage==true){
   //   props.isModelOpen(true);
   //   setmodelmessage(false);

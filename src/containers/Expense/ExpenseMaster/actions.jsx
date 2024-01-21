@@ -21,7 +21,6 @@ export const updateResponseDTO = (payload) => {
 };
 
 export const submitCompnayRequestForm = (payload) => {
-    console.log("pay : ",payload);
     return {
         type: ActionTypes.ADD_COMPANY_REQUEST,
         payload,

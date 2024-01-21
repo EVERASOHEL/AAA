@@ -16,7 +16,6 @@ const initialState = defaultState;
 const reducer = (stateDTO = initialState, action) => {
   let state = _.cloneDeep(stateDTO);
 
-  console.log("loading action");
   switch (action.type) {
 
     case ActionTypes1.CLASS_DTO: {
@@ -26,9 +25,7 @@ const reducer = (stateDTO = initialState, action) => {
     }
 
     case ActionTypes1.LOADING_STATUS: {
-      console.log("hello");
       state.loadingStatus = action.payload || {};
-      console.log("status  : ",state.loadingStatus);
       return { ...state };
       // return JSON.parse(JSON.stringify(state));
     }

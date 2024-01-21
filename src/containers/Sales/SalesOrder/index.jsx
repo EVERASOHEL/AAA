@@ -401,7 +401,6 @@ const index = (props) => {
           <Tooltip title="view pdf">
             <Buttons.ViewPdf
               onClick={() => {
-                console.log("viewpdf");
                 data = {
                   companyType: "Sales pdf",
                   companyName: data.companyName,

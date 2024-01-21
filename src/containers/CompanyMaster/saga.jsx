@@ -15,7 +15,6 @@ import http from "../../utilities/CommonConfigConstant";
 import axios from "axios";
 
 export function* apiforSubmitAddCompnayRequest({ payload }) {
-  console.log("payload : ", payload);
   let data = {
     url: "/api/companyController/saveNewCompany",
     payload: JSON.stringify(payload),
@@ -109,7 +108,6 @@ export function* apiforgetAllCompanyNameList({ payload }) {
 }
 
 export default function* root() {
-  console.log("new");
   yield all([
     takeLatest(ActionTypes.ADD_COMPANY_REQUEST, apiforSubmitAddCompnayRequest),
     takeLatest(ActionTypes.ADD_COMPANY_RESPONSE, apiforList),

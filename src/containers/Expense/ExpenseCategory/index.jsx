@@ -133,7 +133,7 @@ const index = (props) => {
       default:
         classDTO[key] = value;
     }
-    classDTO = handleValidation(key, classDTO);
+    // classDTO = handleValidation(key, classDTO);
     props.updateClassDTO(classDTO);
   }
 
