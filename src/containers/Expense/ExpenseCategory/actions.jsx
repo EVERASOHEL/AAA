@@ -20,9 +20,9 @@ export const updateResponseDTO = (payload) => {
   };
 };
 
-export const submitCompnayRequestForm = (payload) => {
+export const submitExpenseCategoryRequestForm = (payload) => {
   return {
-    type: ActionTypes.ADD_COMPANY_REQUEST,
+    type: ActionTypes.ADD_EXPENSE_REQUEST,
     payload,
   };
 };

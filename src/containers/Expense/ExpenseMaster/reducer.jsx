@@ -2,7 +2,7 @@ import _ from "lodash";
 import { ActionTypes } from "./constants";
 import { toast } from "react-toastify";
 
-const defaultClassDTO = {companyType:"Customer"};
+const defaultClassDTO = {ExpenseType:"Expense"};
 
 const defaultResponseDTO = {};
 
@@ -26,13 +26,38 @@ const reducer = (stateDTO = initialState, action) => {
     case ActionTypes.MODEL_OPEN_REQUEST: {
       state.open = action.payload || false;
       if (state.open == false) {
+        let currentSelectedOption=state.classDTO.ExpenseType;
         state.classDTO = defaultClassDTO;
+        state.classDTO.ExpenseType=currentSelectedOption;
       }
       return { ...state };
       // return JSON.parse(JSON.stringify(state));
     }
 
-    case ActionTypes.COMPANY_LIST_RESPONSE: {
+    case ActionTypes.EXPENSE_LIST_RESPONSE: {
+      let data = action.payload.data || [];
+      let newData = [];
+      data.map((x, i) => {
+        newData.push({
+          No: i + 1,
+          id: x.id,
+          expenseName: x.expenseName,
+          expenseDateString: x.expenseDateString,
+          expenseAmount: x.expenseAmount,
+          paymentMethod: x.paymentMethod,
+        });
+      });
+
+      const lastObject = newData[newData.length - 1];
+      const { No } = lastObject || 0;
+
+      state.expenselist = newData;
+      state.currentPage = 0;
+      state.currentPageSize = No || 20;
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.EXPENSE_CATEGORY_LIST_RESPONSE: {
       let data = action.payload.data || [];
       let newData = [];
       data.map((x, i) => {
@@ -40,20 +65,15 @@ const reducer = (stateDTO = initialState, action) => {
           No: i + 1,
           id: x.id,
           companyName: x.companyName,
-          address: x.address,
-          phoneNo: x.phoneNo,
-          stateName: x.stateName,
-          companyType: x.companyType,
-          companyPanNumber: x.companyPanNumber,
-          totalcount: x.totalcount,
-          companyGstNo: x.companyGstNo,
+          categoryName: x.categoryName,
+          description: x.description
         });
       });
 
       const lastObject = newData[newData.length - 1];
       const { No } = lastObject || 0;
 
-      state.companylist = newData;
+      state.expensecategorylist = newData;
       state.currentPage = 0;
       state.currentPageSize = No || 20;
       return JSON.parse(JSON.stringify(state));
@@ -77,19 +97,6 @@ const reducer = (stateDTO = initialState, action) => {
       state.companyNameList = data;
       return JSON.parse(JSON.stringify(state));
     }
-
-    // case ActionTypes.RESET_DATA: {
-    //   return _.cloneDeep(defaultState);
-    // }
-
-    // case ActionTypes.RESPONSE_DTO: {
-    //   if (payload.key == "reset") {
-    //     state.responseDTO = _.cloneDeep(defaultResponseDTO);
-    //   } else {
-    //     state.responseDTO = { ...state.responseDTO, ...payload };
-    //   }
-    //   return state;
-    // }
 
     default:
       return state;

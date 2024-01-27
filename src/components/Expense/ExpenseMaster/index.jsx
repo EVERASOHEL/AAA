@@ -18,12 +18,12 @@ import React, { Component } from "react";
 import CloseButton from "@mui/icons-material/Close";
 import "./style.css";
 import "react-toastify/dist/ReactToastify.css";
-import TextFieldOutlined from "../../web/TextField/TextFieldOutlined";
+import TextFieldOutlined from "../../../web/TextField/TextFieldOutlined";
 import "react-toastify/dist/ReactToastify.css";
-import SingleSelect from "../../web/AutocompleteTextField";
-import { stateNameList } from "../../containers/CompanyMaster/constants";
-import Star from "../../components/Shared/Start";
-import Close from "../../components/images/cross.gif";
+import SingleSelect from "../../../web/AutocompleteTextField";
+import { stateNameList } from "../../../containers/CompanyMaster/constants";
+import Star from "../../../components/Shared/Start";
+import Close from "../../../components/images/cross.gif";
 import { ToastContainer, toast } from "react-toastify";
 import {
   Dialog,
@@ -31,8 +31,9 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import SwitchWithMultipleOption from "../../web/switchWithMultipleOption";
-import * as Buttons from "../../web/Buttons";
+import SwitchWithMultipleOption from "../../../web/switchWithMultipleOption";
+import * as Buttons from "../../../web/Buttons";
+import CalenderWeb from "../../../web/CalendarWeb";
 
 export default class AddCompanyModel extends React.Component {
   constructor(props) {
@@ -57,158 +58,102 @@ export default class AddCompanyModel extends React.Component {
           </div>
         </DialogTitle>
         <DialogContent>
-          {/* <div style={{ display: "flex" }}> */}
-          <table>
-            <tr>
-              <td>Company Type</td>
-              <td>
-                <SwitchWithMultipleOption
-                  component="companyType"
-                  options={[
-                    { displayKey: "Customer", value: "Customer" },
-                    { displayKey: "Vendor", value: "Vendor" },
-                    { displayKey: "Expense", value: "Expense" },
-                  ]}
-                  displayKey={"displayKey"}
-                  value={[
-                    { displayKey: "Customer", value: "Customer" },
-                    { displayKey: "Vendor", value: "Vendor" },
-                    { displayKey: "Expense", value: "Expense" },
-                  ].find((element) => element.value === classDTO.companyType)}
-                  onChange={(value) => {
-                    handleClassDTO("companyType", value.value);
-                  }}
-                />
-                {classDTO.companyTypeError ? (
-                  <label className="error" style={{ height: "auto" }}>
-                    {classDTO.companyTypeError}
-                  </label>
-                ) : null}
-              </td>
-            </tr>
-            <tr>
-              <td style={{ paddingTop: "15px" }}>
-                Company Name <Star />
-              </td>
-              <td style={{ paddingTop: "15px" }}>
-                <TextFieldOutlined
-                  name={"passengerFirstName"}
-                  id={"passengerFirstName"}
-                  placeholder={"Enter Company Name"}
-                  variant={"outlined"}
-                  handleChange={(event, value) => {
-                    handleClassDTO("companyName", event.target.value);
-                  }}
-                  value={classDTO.companyName}
-                />
-                {classDTO.companyNameError ? (
-                  <label className="error" style={{ height: "auto" }}>
-                    {classDTO.companyNameError}
-                  </label>
-                ) : null}
-              </td>
-            </tr>
-            <tr>
-              <td colSpan={2} style={{ paddingTop: "15px" }}>
+          <div className="container-fluid">
+            <Grid container spacing={2} style={{ alignItems: "center" }}>
+              <Grid item xs={4} style={{ marginTop: "10px" }}>
+                <div
+                  className="TextFieldcontainer col-md-6"
+                  style={{ width: "100%" }}
+                >
+                  <TextFieldOutlined
+                    name={"expenseName"}
+                    label={
+                      <span>
+                        Expense Name<span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                    variant={"outlined"}
+                    handleChange={(event, value) => {
+                      handleClassDTO("expenseName", event.target.value);
+                    }}
+                    value={classDTO.expenseName}
+                  />
+                  <label className="error">{classDTO.expenseNameError}</label>
+                </div>
+              </Grid>
+              <Grid item xs={4} style={{ marginTop: "10px" }}>
+                <div
+                  className="TextFieldcontainer col-md-6"
+                  style={{ width: "100%" }}
+                >
+                  <TextFieldOutlined
+                    name={"expenseAmount"}
+                    label={
+                      <span>
+                        Expense Amount<span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                    variant={"outlined"}
+                    handleChange={(event, value) => {
+                      handleClassDTO("expenseAmount", event.target.value);
+                    }}
+                    value={classDTO.expenseAmount}
+                  />
+                  <label className="error">{classDTO.expenseAmountError}</label>
+                </div>
+              </Grid>
+              <Grid item xs={4} style={{ marginTop: "10px" }}>
+                <div
+                  className="TextFieldcontainer col-md-6"
+                  style={{ width: "100%", height: "90px" }}
+                >
+                  <CalenderWeb
+                    handleChange={(value) => {
+                      handleClassDTO("expenseDate", value);
+                    }}
+                    value={classDTO.expenseDate}
+                  />
+                  <label className="error">{classDTO.expenseDateError}</label>
+                </div>
+              </Grid>
+              <Grid item xs={4} style={{ marginTop: "10px" }}>
+                <div
+                  className="TextFieldcontainer col-md-6"
+                  style={{ width: "100%" }}
+                >
+                  <TextFieldOutlined
+                    name={"paymentMethod"}
+                    label={
+                      <span>
+                        Vocher No<span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                    variant={"outlined"}
+                    handleChange={(event, value) => {
+                      handleClassDTO("paymentMethod", event.target.value);
+                    }}
+                    value={classDTO.paymentMethod}
+                  />
+                  <label className="error">{classDTO.paymentMethodError}</label>
+                </div>
+              </Grid>
+              <Grid item xs={4} style={{ marginTop: "10px" }}>
                 <textarea
                   name="description"
-                  placeholder="Address"
+                  placeholder="Enter expense description"
                   variant="outlined"
                   id="exampleFormControlTextarea1"
                   maxLength={1000}
                   rows="3"
-                  style={{ height: "61px", width: "94%", padding: "10px" }}
+                  style={{ width: "100%", padding: "10px", marginTop: "5px" }}
                   onChange={(event) => {
-                    handleClassDTO("address", event.target.value);
+                    handleClassDTO("description", event.target.value);
                   }}
-                  value={classDTO.address || ""}
+                  value={classDTO.description || ""}
                 ></textarea>
-                <label className="error">{classDTO.addressError}</label>
-              </td>
-            </tr>
-            <tr>
-              <td style={{ paddingTop: "15px" }}>
-                State Name <Star />
-              </td>
-              <td style={{ paddingTop: "15px" }}>
-                <SingleSelect
-                  name={""}
-                  id={""}
-                  keyOfData={"display"}
-                  placeholder={"Enter State Name "}
-                  options={stateNameList}
-                  variant={"outlined"}
-                  label={"State"}
-                  onChange={(event, value) => {
-                    handleClassDTO("stateName", value);
-                  }}
-                  value={stateNameList.find(
-                    (element) => element == classDTO.stateName
-                  )}
-                />
-                {classDTO.stateNameError ? (
-                  <label className="error">{classDTO.stateNameError}</label>
-                ) : null}
-              </td>
-            </tr>
-            <tr>
-              <td style={{ paddingTop: "15px" }}>Phone No </td>
-              <td style={{ paddingTop: "15px" }}>
-                <TextFieldOutlined
-                  name={""}
-                  id={""}
-                  placeholder={"Enter Phone Number"}
-                  variant={"outlined"}
-                  handleChange={(event, value) => {
-                    handleClassDTO("phoneNo", event.target.value);
-                  }}
-                  value={classDTO.phoneNo}
-                />
-                {/* {classDTO.phoneNoError ? (
-                  <label className="error">{classDTO.phoneNoError}</label>
-                ) : null} */}
-              </td>
-            </tr>
-            {classDTO.companyType != "Expense" ? (
-              <>
-                {" "}
-                <tr>
-                  <td style={{ paddingTop: "15px" }}>
-                    GST Number <Star />
-                  </td>
-                  <td style={{ paddingTop: "15px" }}>
-                    <TextFieldOutlined
-                      name={""}
-                      id={""}
-                      placeholder={"Enter GST Number"}
-                      variant={"outlined"}
-                      handleChange={(event, value) => {
-                        handleClassDTO("companyGstNo", event.target.value);
-                      }}
-                      value={classDTO.companyGstNo}
-                    />
-                  </td>
-                </tr>
-                <tr>
-                  <td style={{ paddingTop: "15px" }}>
-                    Pan Number <Star />
-                  </td>
-                  <td style={{ paddingTop: "15px" }}>
-                    <TextFieldOutlined
-                      name={""}
-                      id={""}
-                      placeholder={"Enter Pan Number"}
-                      variant={"outlined"}
-                      handleChange={(event, value) => {
-                        handleClassDTO("companyPanNumber", event.target.value);
-                      }}
-                      value={classDTO.companyPanNumber}
-                    />
-                  </td>
-                </tr>
-              </>
-            ) : null}
-          </table>
+              </Grid>
+            </Grid>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button
