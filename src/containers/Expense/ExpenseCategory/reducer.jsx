@@ -59,7 +59,7 @@ const reducer = (stateDTO = initialState, action) => {
       return JSON.parse(JSON.stringify(state));
     }
 
-    case ActionTypes.ADD_COMPANY_RESPONSE: {
+    case ActionTypes.ADD_EXPENSE_RESPONSE: {
       state.open = action.payload.data || false;
       state.classDTO = {};
       // window.location.reload();
