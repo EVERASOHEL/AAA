@@ -60,6 +60,7 @@ const index = (props) => {
   const [invoiceData, setInvoiceData] = useState({});
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const [mailData, setMailData] = useState({});
+  const [isLoading, setLoading] = useState(false);
   useEffect(() => {
     // Anything in here is fired on component mount.
     props.apiforsalesorderlist({ page: 0, size: 20, companyType: "Customer" });
@@ -146,14 +147,18 @@ const index = (props) => {
           salesClassDTO = {};
         } else {
           if (totalStock[0] > 0) {
+            salesClassDTO["totalStock"]=totalStock[0];
             salesClassDTO["quantity"] = "";
             salesClassDTO["price"] = parseFloat(price);
             salesClassDTO["productType"] = object[0].productType;
             salesClassDTO["hsnCode"] = object[0].productHsn;
+            salesClassDTO.productNameError = "";
+            salesClassDTO.isValidationSuccess = true;
           } else {
             salesClassDTO.productNameError =
               value + " Stock is 0 please add new stock.";
             salesClassDTO.isValidationSuccess = false;
+            salesClassDTO["totalStock"]=null;
           }
         }
         break;
@@ -375,8 +380,10 @@ const index = (props) => {
 
   const handleConfirmation = () => {
     if (confirmationMessage === "Are You Sure You Want Send Mail?") {
+      setLoading(true);
       props.apiforSendMail(mailData);
       setMailData({});
+      setLoading(false);
     } else if (confirmationMessage === "Are You Sure Update Sales Order?") {
       const id = props.companyOrderDetailsRowData.id;
       const editRowData = props.companyOrderDetailsRowData;
@@ -460,6 +467,24 @@ const index = (props) => {
 
   return (
     <>
+      {isLoading == true ? (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(255, 255, 255, 0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 9999,
+          }}
+        >
+          <ClipLoader color="#00BFFF" size={100} />
+        </div>
+      ) : null}
       {props.open === true ? (
         <HtmlComponent
           {...props}

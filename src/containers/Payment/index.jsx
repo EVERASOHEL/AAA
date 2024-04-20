@@ -15,6 +15,7 @@ import saga from "./saga";
 import * as selectors from "./selectors";
 
 import HtmlComponent from "../../components/PaymentComponent";
+import PurchaseOrderHtmlComponent from "../../containers/purchase/PurchaseOrder";
 import * as commonFunction from "../../utilities/CommonValidator";
 import isNullOrIsEmptyOrIsUndefined from "../../utilities/CommonValidator";
 import { toast } from "react-toastify";
@@ -27,10 +28,10 @@ const index = (props) => {
     }));
   }
 
-  const [modelmessage, setmodelmessage] = useState(false);
+  const [modelmessage, setmodelmessage] = useState(true);
 
   useEffect(() => {
-    // Anything in here is fired on component mount. 
+    // Anything in here is fired on component mount.
     setmodelmessage(true);
     props.isModelOpen(true);
     const { invoiceData } = props;
@@ -54,9 +55,7 @@ const index = (props) => {
   }, [modelmessage]);
 
   function isModelOpen(isOpen) {
-    setmodelmessage(true);
-    props.isModelOpen(isOpen);
-    // props.calllistapi();
+    props.handleChangePaymentModel(isOpen);
   }
 
   const handleValidation = (key, classDTO) => {
@@ -138,19 +137,24 @@ const index = (props) => {
         paymentDate: classDTO.paymentDate,
         paymentMode: classDTO.paymentMode,
       };
-      props.submitPaymentRequest(newDTO);
+      props.handleChangeSavePayment(newDTO);
+      // props.submitPaymentRequest(newDTO);
     }
   };
 
   function PaymentRequest() {
     return (
       <>
-        {props.open === true ? (
+        {/* {modelmessage == false ? (
+          <PurchaseOrderHtmlComponent isPaymentModelOpen={false} />
+        ) : null} */}
+
+        {props.getPaymentModelOpenStatus === true ? (
           <HtmlComponent
             {...props}
             handleClassDTO={handleClassDTO}
             classDTO={props.classDTO}
-            open={props.open}
+            open={props.getPaymentModelOpenStatus}
             isModelOpen={isModelOpen}
             PaymentTypeNameHeader={props.PaymentTypeNameHeader}
             handleChangeSave={handleChangeSave}
@@ -159,11 +163,6 @@ const index = (props) => {
       </>
     );
   }
-
-  // if(modelmessage==true){
-  //   props.isModelOpen(true);
-  //   setmodelmessage(false);
-  // }
   return <>{PaymentRequest()}</>;
 };
 
@@ -171,8 +170,8 @@ const mapStateToProps = () => {
   return createStructuredSelector({
     classDTO: selectors.getClassDTO(),
     // responseDTO: selectors.getResponseDTO(),
-    open: selectors.open(),
-    modelmessage:selectors.modelmessage(),
+    // open: selectors.open(),
+    modelmessage: selectors.modelmessage(),
   });
 };
 

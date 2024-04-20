@@ -32,6 +32,8 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import { GST_TYPE } from "../../../utilities/CommonConstants";
 import * as Buttons from "../../../web/Buttons";
+import { Chip } from "@mui/joy";
+import isNullOrIsEmptyOrIsUndefined from "../../../utilities/CommonValidator";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -145,7 +147,7 @@ const index = (props) => {
         <div className="container-fluid">
           <Grid container spacing={2} style={{ alignItems: "center" }}>
             <Grid item xs={4} style={{ marginTop: "10px" }}>
-            <div
+              <div
                 className="TextFieldcontainer col-md-6"
                 style={{ width: "100%", height: "90px" }}
               >
@@ -219,7 +221,7 @@ const index = (props) => {
             <Grid item xs={5}>
               <div
                 className="col-md-6 TextFieldcontainer"
-                style={{ width: "100%",marginTop: "10px" }}
+                style={{ width: "100%", marginTop: "10px" }}
               >
                 <SingleSelect
                   placeholder={"Select Item"}
@@ -244,6 +246,9 @@ const index = (props) => {
                 <label className="error">
                   {salesClassDTO.productNameError}
                 </label>
+                {(salesClassDTO.productName && !isNullOrIsEmptyOrIsUndefined(salesClassDTO.totalStock) && salesClassDTO.totalStock > 0) ? (
+                  <label className="success-label">Total Stock : {salesClassDTO.totalStock}</label>
+                ) : null}
               </div>
             </Grid>
             <Grid item xs={1}>

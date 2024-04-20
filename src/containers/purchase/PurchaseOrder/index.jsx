@@ -74,6 +74,10 @@ const index = (props) => {
 
   useEffect(() => {
     // Anything in here is fired on component mount.
+    // console.log("props.isPaymentModelClose : ",props.isPaymentModelClose);
+    // if(props.isPaymentModelClose===false){
+    //   props.isPaymentModelOpen(props.isPaymentModelClose);
+    // }
     props.apiforsalesorderlist({ page: 0, size: 20, companyType: "Vendor" });
     props.productListRequest();
     props.companyNameList("Vendor");
@@ -442,6 +446,10 @@ const index = (props) => {
     // setOpenViewPdfModel(true);
   };
 
+  const isPaymentModelOpen = (flag) => {
+    props.isPaymentModelOpen(flag);
+  };
+
   const ActionFunction = (data) => {
     // setEditRowData(data);
     return (
@@ -453,7 +461,8 @@ const index = (props) => {
             <Tooltip title="Add Vendor Payment">
               <Buttons.PaymentButton
                 onClick={() => {
-                  setisOpenPaymentModel(true);
+                  props.isPaymentModelOpen(true);
+                  // setisOpenPaymentModel(true);
                   setInvoiceData(data);
                 }}
               />
@@ -544,6 +553,15 @@ const index = (props) => {
     // setOpenViewPdfModel(false);
   };
 
+  const handleChangePaymentModel = (isPaymentModelClose) => {
+    console.log("props.isPaymentModelClose : ", props.isPaymentModelClose);
+    props.isPaymentModelOpen(isPaymentModelClose);
+  };
+
+  const handleChangeSavePayment=(paymentData)=>{
+    props.submitPaymentRequest(paymentData)
+  }
+
   return (
     <>
       {props.open === true ? (
@@ -576,16 +594,19 @@ const index = (props) => {
           // onConfirm={onconfirm}
         />
       ) : null}
-      {isOpenPaymentModel === true ? (
+      {props.getPaymentModelOpenStatus === true ? (
         <PaymnetComponent
           {...props}
           PaymentTypeNameHeader={"Vendor Payment"}
           flagformodel="istrue"
           calllistapi={calllistapi}
+          handleChangePaymentModel={handleChangePaymentModel}
           // open={isModelPayemntOpen}
           // isPayemntModelOpen={isModelPayemntOpen}
           // modelOpen={isModelPayemntOpen}
+          getPaymentModelOpenStatus={props.getPaymentModelOpenStatus}
           invoiceData={invoiceData}
+          handleChangeSavePayment={handleChangeSavePayment}
         />
       ) : null}
       {isOpenPaymentHistoryModel === true ? (
@@ -738,6 +759,7 @@ const mapStateToProps = () => {
     paymentHistoryData: selectors.paymentHistoryData(),
     pdfData: selectors.getPdfData(),
     isOpenPdf: selectors.getPdfStatus(),
+    getPaymentModelOpenStatus: selectors.getPaymentModelStatus(),
   });
 };
 
@@ -790,6 +812,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     apiforSendMail: (payload) => {
       dispatch(actions.apiforSendMail(payload));
+    },
+    isPaymentModelOpen: (payload) => {
+      dispatch(actions.isPaymentModelOpen(payload));
+    },
+    submitPaymentRequest: (payload) => {
+      dispatch(actions.submitPaymentRequest(payload));
     },
   };
 };

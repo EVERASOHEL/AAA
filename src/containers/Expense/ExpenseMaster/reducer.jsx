@@ -2,7 +2,7 @@ import _ from "lodash";
 import { ActionTypes } from "./constants";
 import { toast } from "react-toastify";
 
-const defaultClassDTO = {ExpenseType:"Expense"};
+const defaultClassDTO = { ExpenseType: "Expense" };
 
 const defaultResponseDTO = {};
 
@@ -26,9 +26,9 @@ const reducer = (stateDTO = initialState, action) => {
     case ActionTypes.MODEL_OPEN_REQUEST: {
       state.open = action.payload || false;
       if (state.open == false) {
-        let currentSelectedOption=state.classDTO.ExpenseType;
+        let currentSelectedOption = state.classDTO.ExpenseType;
         state.classDTO = defaultClassDTO;
-        state.classDTO.ExpenseType=currentSelectedOption;
+        state.classDTO.ExpenseType = currentSelectedOption;
       }
       return { ...state };
       // return JSON.parse(JSON.stringify(state));
@@ -51,6 +51,7 @@ const reducer = (stateDTO = initialState, action) => {
       const lastObject = newData[newData.length - 1];
       const { No } = lastObject || 0;
 
+      console.log("newData : ",newData);
       state.expenselist = newData;
       state.currentPage = 0;
       state.currentPageSize = No || 20;
@@ -66,7 +67,7 @@ const reducer = (stateDTO = initialState, action) => {
           id: x.id,
           companyName: x.companyName,
           categoryName: x.categoryName,
-          description: x.description
+          description: x.description,
         });
       });
 
@@ -79,22 +80,35 @@ const reducer = (stateDTO = initialState, action) => {
       return JSON.parse(JSON.stringify(state));
     }
 
-    case ActionTypes.ADD_COMPANY_RESPONSE: {
-      state.open = action.payload.data || false;
-      state.classDTO = {};
-      // window.location.reload();
-      return JSON.parse(JSON.stringify(state));
-    }
-
     case ActionTypes.OPEN_EDIT_MODEL: {
       state.classDTO = action.payload.data || {};
       state.open = true;
       return JSON.parse(JSON.stringify(state));
     }
 
+    case ActionTypes.ADD_EXPENSE_CATEGORY_RESPONSE: {
+      state.classDTO = defaultClassDTO;
+      state.classDTO.ExpenseType = "ExpenseCategory";
+      state.open = action.payload.data || false;
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.ADD_EXPENSE_RESPONSE: {
+      state.classDTO = defaultClassDTO;
+      state.classDTO.ExpenseType = "Expense";
+      state.open = action.payload.data || false;
+      return JSON.parse(JSON.stringify(state));
+    }
+
     case ActionTypes.COMPANY_NAME_LIST_RESPONSE: {
       let data = action.payload.data || [];
       state.companyNameList = data;
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.EXPENSE_CATEGORY_NAME_LIST_RESPONSE: {
+      let data = action.payload.data || [];
+      state.expenseCategoryNameList = data;
       return JSON.parse(JSON.stringify(state));
     }
 

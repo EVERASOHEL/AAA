@@ -28,6 +28,8 @@ import profileimage from "./components/images/beautiful_accounting_profile.webp"
 import logo from "./components/images/alphalogo.gif";
 import setting from "./components/images/icons8-settings-48.png";
 import Payment from "./containers/Payment";
+import { getLoadingState } from "./utilities/LoadingInterceptor";
+import { ClipLoader } from "react-spinners";
 
 // const theme = createMuiTheme({
 //   palette: {
@@ -79,133 +81,159 @@ const App = (props) => {
   });
 
   return (
-    <Router>
-      <ToastContainer position="top-center" />
-      <div style={{ display: "flex", display: "block" }}>
-        <div className="app-container companyname"
-          // style={{ width: collapsed ? "80px" : "350px" }}
-        >
-          <Sidebar
-            className="app"
-            collapsed={collapsed}
-            style={{ display: "flex", height: "100vh" }}
+    <>
+      <Router>
+        <ToastContainer position="top-center" />
+        <div style={{ display: "flex", display: "block" }}>
+          <div
+            className="app-container companyname"
+            // style={{ width: collapsed ? "80px" : "350px" }}
           >
-            <Menu iconShape="square">
-              <MenuItem
-                // className={classes.header}
-                className="menu1"
-                icon={
-                  <MenuRoundedIcon
-                    onClick={() => {
-                      handleToggleSidebar();
-                    }}
-                  />
-                }
-              >
-                {/* <Typography variant="h2" className={classes.companyName}>
+            <Sidebar
+              className="app"
+              collapsed={collapsed}
+              style={{ display: "flex", height: "100vh" }}
+            >
+              <Menu iconShape="square">
+                <MenuItem
+                  // className={classes.header}
+                  className="menu1"
+                  icon={
+                    <MenuRoundedIcon
+                      onClick={() => {
+                        handleToggleSidebar();
+                      }}
+                    />
+                  }
+                >
+                  {/* <Typography variant="h2" className={classes.companyName}>
                 Alpha
                 </Typography> */}
-                <h2 className="companyname cursive-text">Vexon</h2>
-              </MenuItem>
-              {routes.map((route, index) =>
-                route.subMenu ? (
-                  <SubMenu
-                    key={index}
-                    className="sidebarlink"
-                    label={route.title}
-                    icon={route.icon}
-                  >
-                    {route.subMenu.map((subItem, subIndex) => (
-                      <MenuItem key={subIndex} icon={subItem.icon}>
-                        <Link
-                          className="sidebarlink"
-                          to={subItem.path}
-                          // style={{ textDecoration: "none", color: "inherit",fontSize:"15px"  }}
-                        >
-                          {subItem.title}
-                        </Link>
-                      </MenuItem>
-                    ))}
-                  </SubMenu>
-                ) : (
-                  <MenuItem key={index} icon={route.icon}>
-                    <Link
-                      to={route.path}
+                  <h2 className="companyname cursive-text">Vexon</h2>
+                </MenuItem>
+                {routes.map((route, index) =>
+                  route.subMenu ? (
+                    <SubMenu
+                      key={index}
                       className="sidebarlink"
-                      // style={{ textDecoration: "none", color: "inherit",fontSize:"15px" }}
+                      label={route.title}
+                      icon={route.icon}
                     >
-                      {route.title}
-                    </Link>
-                  </MenuItem>
-                )
-              )}
-              {/* {routes.map((route) => (
+                      {route.subMenu.map((subItem, subIndex) => (
+                        <MenuItem key={subIndex} icon={subItem.icon}>
+                          <Link
+                            className="sidebarlink"
+                            to={subItem.path}
+                            // style={{ textDecoration: "none", color: "inherit",fontSize:"15px"  }}
+                          >
+                            {subItem.title}
+                          </Link>
+                        </MenuItem>
+                      ))}
+                    </SubMenu>
+                  ) : (
+                    <MenuItem key={index} icon={route.icon}>
+                      <Link
+                        to={route.path}
+                        className="sidebarlink"
+                        // style={{ textDecoration: "none", color: "inherit",fontSize:"15px" }}
+                      >
+                        {route.title}
+                      </Link>
+                    </MenuItem>
+                  )
+                )}
+                {/* {routes.map((route) => (
               <MenuItem key={route.path} icon={route.icon}>
                 <Link style={{ textDecoration: 'none', color: 'inherit' }} to={route.path}>{route.title}</Link>
               </MenuItem>
             ))} */}
-              {/* <MenuItem icon={<LogoutRoundedIcon />}> Logout </MenuItem> */}
-            </Menu>
-          </Sidebar>
-          {/* <SidebarLayout/> */}
-          <div className="content">
-            <AppBar position="static" sx={{ backgroundColor: "#efefef" }}>
-              <Toolbar>
-                <img src={logo} style={{ width: "40px" }} alt="" srcset="" />
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                  <p
-                    variant="h6"
-                    className="cursive-text"
-                    component="div"
-                    style={{ fontSize: "large", color: "darkgray",marginBottom:"0px" }}
-                  >
-                    WEL-CON CONTROL & SWITCHGEAR
-                  </p>
-                </Typography>
-                <img
-                  src={setting}
-                  style={{ width: "40px", marginRight: "20px" }}
-                  alt=""
-                  srcset=""
-                />
-                <Box>
-                  <Avatar alt="Remy Sharp" src={profileimage} />
-                </Box>
-
-                {/* Add navigation links or other components here */}
-              </Toolbar>
-            </AppBar>
-            <Routes>
-              {routes.map((route, index) =>
-                route.subMenu ? (
-                  route.subMenu.map((subPath) => (
-                    <Route
-                      key={index}
-                      path={subPath.path}
-                      exact
-                      Component={subPath.component}
-                    />
-                  ))
-                ) : (
-                  <Route
-                    path={route.path}
-                    key={index}
-                    exact
-                    Component={route.component}
+                {/* <MenuItem icon={<LogoutRoundedIcon />}> Logout </MenuItem> */}
+              </Menu>
+            </Sidebar>
+            {/* <SidebarLayout/> */}
+            <div className="content">
+              <AppBar position="static" sx={{ backgroundColor: "#efefef" }}>
+                <Toolbar>
+                  <img src={logo} style={{ width: "40px" }} alt="" srcset="" />
+                  <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                    <p
+                      variant="h6"
+                      className="cursive-text"
+                      component="div"
+                      style={{
+                        fontSize: "large",
+                        color: "darkgray",
+                        marginBottom: "0px",
+                      }}
+                    >
+                      WEL-CON CONTROL & SWITCHGEAR
+                    </p>
+                  </Typography>
+                  <img
+                    src={setting}
+                    style={{ width: "40px", marginRight: "20px" }}
+                    alt=""
+                    srcset=""
                   />
-                )
-              )}
-              <Route
-                path={"/purchase/purchaseorder/Payment"}
-                key={222}
-                exact={true}
-                Component={Payment}
-              />
-            </Routes>
+                  <Box>
+                    <Avatar alt="Remy Sharp" src={profileimage} />
+                  </Box>
+
+                  {/* Add navigation links or other components here */}
+                </Toolbar>
+              </AppBar>
+              <Routes>
+                {routes.map((route, index) =>
+                  route.subMenu ? (
+                    route.subMenu.map((subPath) => (
+                      <Route
+                        key={index}
+                        path={subPath.path}
+                        exact
+                        Component={subPath.component}
+                      />
+                    ))
+                  ) : (
+                    <Route
+                      path={route.path}
+                      key={index}
+                      exact
+                      Component={route.component}
+                    />
+                  )
+                )}
+                <Route
+                  path={"/purchase/purchaseorder/Payment"}
+                  key={222}
+                  exact={true}
+                  Component={Payment}
+                />
+              </Routes>
+            </div>
           </div>
         </div>
+      </Router>
+      {/* <div id="loading-overlay"> */}
+      <div
+        id="loading-overlay"
+        // style={{
+        //   position: "fixed",
+        //   top: 0,
+        //   left: 0,
+        //   width: "100%",
+        //   height: "100%",
+        //   background: "rgba(255, 255, 255, 0.8)",
+        //   display: "flex",
+        //   justifyContent: "center",
+        //   alignItems: "center",
+        //   zIndex: 9999,
+        // }}
+      >
+        <ClipLoader color="#00BFFF" size={100} />
       </div>
-    </Router>
+      {/* </div> */}
+    </>
   );
 };
 

@@ -23,6 +23,7 @@ const defaultState = {
   salesClassDTO: JSON.parse(JSON.stringify(defaultClassDTO)),
   open: false,
   isOpenPdf:false,
+  isPaymentModelOpen:false,
   // responseDTO: _.cloneDeep(defaultResponseDTO),
 };
 
@@ -149,7 +150,6 @@ const reducer = (stateDTO = initialState, action) => {
       const lastObject = data[data.length - 1];
       // const {No} = lastObject || 0;
       state.currentPageSize = data.length || 20;
-      // console.log("state.currentPageSize : ",state.currentPageSize);
       return JSON.parse(JSON.stringify(state));
     }
 
@@ -192,6 +192,16 @@ const reducer = (stateDTO = initialState, action) => {
 
     case ActionTypes.IS_OPEN_PDF_MODEL: {
       state.isOpenPdf = action.payload.data || [];
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.PAYMENT_MODEL_IS_OPEN: {
+      state.isPaymentModelOpen = action.payload.data || false;
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.PAYMENT_RESPONSE: {
+      state.isPaymentModelOpen = action.payload.data || false;
       return JSON.parse(JSON.stringify(state));
     }
 

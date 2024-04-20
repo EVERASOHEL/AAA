@@ -44,3 +44,6 @@ export const getPdfData = () =>
 
 export const getPdfStatus = () =>
   createSelector(stateSelector, (bstate) => bstate.isOpenPdf);
+
+export const getPaymentModelStatus = () =>
+  createSelector(stateSelector, (bstate) => bstate.isPaymentModelOpen);

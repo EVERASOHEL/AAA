@@ -68,16 +68,16 @@ export function* apiListforExpense({ payload }) {
     };
     const response = yield call(FetchApi, data);
 
-    if (response === null) {
+    if (response.responseObj === null) {
       yield put({
         type: ActionTypes.EXPENSE_LIST_RESPONSE,
         payload: {
           data: [],
         },
       });
-    } else if (response.code == 200) {
+    } else if (response.code == 200) {  
       yield put({
-        type: ActionTypes.COMPANY_LIST_RESPONSE,
+        type: ActionTypes.EXPENSE_LIST_RESPONSE,
         payload: {
           data: response.responseObj || [],
         },
@@ -99,7 +99,6 @@ export function* apiListforExpenseCategory({ payload }) {
       payload: null,
       method: "POST",
     };
-    console.log("expense category list api call");
     const response = yield call(FetchApi, data);
 
     if (response === null) {
@@ -179,6 +178,61 @@ export function* apiforSubmitAddExpenseCategoryRequest({ payload }) {
     if (response.code == 200 || response.code == 204) {
       toast.success(response.responseObj);
       yield put({
+        type: ActionTypes.ADD_EXPENSE_CATEGORY_RESPONSE,
+        payload: {
+          data: false,
+        },
+      });
+    } else {
+      toast.error(commonConstants.MSG_UNIVERSAL_ERROR);
+    }
+  } catch (error) {
+    toast.error(MSG_UNIVERSAL_ERROR);
+  }
+}
+
+export function* apiforgetAllCategoryNameList() {
+  try {
+    let data = {
+      url: "/api/expenseCategoryController/findAllExpenseCategoryName",
+      payload: null,
+      method: "GET",
+    };
+    const response = yield call(FetchApi, data);
+    if (response.code == 200 || response.code == 204) {
+      yield put({
+        type: ActionTypes.EXPENSE_CATEGORY_NAME_LIST_RESPONSE,
+        payload: {
+          data: response.responseObj || [],
+        },
+      });
+    } else {
+      toast.error(commonConstants.MSG_UNIVERSAL_ERROR);
+    }
+  } catch (error) {
+    toast.error(MSG_UNIVERSAL_ERROR);
+  }
+}
+
+export function* apiforsubmitExpenseRequest({ payload }) {
+  try {
+    let data = {
+      url: "/api/expenseController/saveExpense",
+      payload: JSON.stringify(payload),
+      method: "POST",
+    };
+    const response = yield call(FetchApi, data);
+    if (response.code == 200) {
+      toast.success(response.responseObj);
+      yield put({
+        type: ActionTypes.ADD_EXPENSE_RESPONSE,
+        payload: {
+          data: false,
+        },
+      });
+    } else if (response.code == 204) {
+      toast.error(response.responseObj);
+      yield put({
         type: ActionTypes.ADD_EXPENSE_RESPONSE,
         payload: {
           data: false,
@@ -195,7 +249,14 @@ export function* apiforSubmitAddExpenseCategoryRequest({ payload }) {
 export default function* root() {
   yield all([
     takeLatest(ActionTypes.ADD_COMPANY_REQUEST, apiforSubmitAddCompnayRequest),
-    takeLatest(ActionTypes.ADD_EXPENSE_CATEGORY_REQUEST, apiforSubmitAddExpenseCategoryRequest),
+    takeLatest(
+      ActionTypes.ADD_EXPENSE_CATEGORY_REQUEST,
+      apiforSubmitAddExpenseCategoryRequest
+    ),
+    takeLatest(
+      ActionTypes.ADD_EXPENSE_CATEGORY_RESPONSE,
+      apiListforExpenseCategory
+    ),
     takeLatest(ActionTypes.ADD_COMPANY_RESPONSE, apiforList),
     takeLatest(ActionTypes.COMPANY_LIST_REQUEST, apiforList),
     takeLatest(ActionTypes.EXPENSE_LIST_REQUEST, apiListforExpense),
@@ -208,5 +269,11 @@ export default function* root() {
       ActionTypes.COMPANY_NAME_LIST_REQUEST,
       apiGetAllExpenseCompanyNameList
     ),
+    takeLatest(
+      ActionTypes.EXPENSE_CATEGORY_NAME_LIST_REQUEST,
+      apiforgetAllCategoryNameList
+    ),
+    takeLatest(ActionTypes.ADD_EXPENSE_REQUEST, apiforsubmitExpenseRequest),
+    takeLatest(ActionTypes.ADD_EXPENSE_RESPONSE, apiListforExpense),
   ]);
 }

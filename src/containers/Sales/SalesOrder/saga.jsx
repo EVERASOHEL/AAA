@@ -16,6 +16,8 @@ import { MSG_UNIVERSAL_ERROR } from "../../../utilities/CommonConstants";
 import { FetchApi } from "../../../utilities/FetchService";
 import { changeLoadingStatus } from "../../LoadingSpinner/actions";
 
+import '../../../App.css'
+
 export function* apiforList({ payload }) {
   let data = {
     url: `/api/productController/getProductListWithoutPagination`,
@@ -174,18 +176,26 @@ export function* apiforSendMail({ payload }) {
   //     data: true,
   //   },
   // });
-
-  let data = {
-    url: `/api/salesOrderController/sendMail`,
-    payload: JSON.stringify(payload.data),
-    method: "POST",
-  };
-  const response = yield call(FetchApi, data);
-  if (response.code == 200) {
-    toast.success(response.responseObj);
-  } else {
+  // document.getElementById('loading-overlay').style.display = 'flex';
+  try {
+    let data = {
+      url: `/api/salesOrderController/sendMail`,
+      payload: JSON.stringify(payload.data),
+      method: "POST",
+    };
+    const response = yield call(FetchApi, data);
+    if (response.code == 200) {
+      toast.success(response.responseObj);
+    } else {
+      toast.error(MSG_UNIVERSAL_ERROR);
+    }
+  } catch (error) {
     toast.error(MSG_UNIVERSAL_ERROR);
+  }finally {
+    console.log("call final block..");
+    // document.getElementById('loading-overlay').style.display = 'none';
   }
+  
 }
 
 export default function* root() {

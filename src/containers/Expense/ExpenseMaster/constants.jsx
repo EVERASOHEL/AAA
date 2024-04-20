@@ -107,6 +107,9 @@ export const ActionTypes = keyMirrorRecursive(
 
         EXPENSE_CATEGORY_LIST_REQUEST:undefined,
         EXPENSE_CATEGORY_LIST_RESPONSE:undefined,
+
+        EXPENSE_CATEGORY_NAME_LIST_REQUEST:undefined,
+        EXPENSE_CATEGORY_NAME_LIST_RESPONSE:undefined,
     },
     pageName
 );

@@ -137,3 +137,19 @@ export const apiforSendMail = (data) => {
         }
     };
 };
+
+export const isPaymentModelOpen = (data) => {
+    return {
+        type: ActionTypes.PAYMENT_MODEL_IS_OPEN,
+        payload:{
+            data,
+        }
+    };
+};
+
+export const submitPaymentRequest = (payload) => {
+    return {
+        type: ActionTypes.PAYMENT_REQUEST,
+        payload,
+    };
+};

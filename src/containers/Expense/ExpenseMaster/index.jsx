@@ -115,20 +115,103 @@ const index = (props) => {
     return classDTO;
   };
 
+  const handleExpenseCategoryValidation = (key, classDTO) => {
+    classDTO.isValidationSuccess = true;
+
+    if (key === "all" || key === "companyId") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.companyId)) {
+        classDTO.compayNameError = "Please select expense company.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.compayNameError = "";
+      }
+    }
+
+    if (key === "all" || key === "categoryName") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.categoryName)) {
+        classDTO.categoryNameError = "Please enter expense name.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.categoryNameError = "";
+      }
+    }
+
+    if (key === "all" || key === "description") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.description)) {
+        classDTO.descriptionError = "Please enter expense description.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.descriptionError = "";
+      }
+    }
+
+    return classDTO;
+  };
+
+  const handleExpenseValidtion = (key, classDTO) => {
+    classDTO.isValidationSuccess = true;
+
+    if (key === "all" || key === "expenseCategoryId") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.expenseCategoryId)) {
+        classDTO.expenseCategoryIdError = "Please select expense name.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.expenseCategoryIdError = "";
+      }
+    }
+
+    if (key === "all" || key === "expenseAmount") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.expenseAmount)) {
+        classDTO.expenseAmountError = "Please enter expense amount.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.expenseAmountError = "";
+      }
+    }
+
+    if (key === "all" || key === "paymentMethod") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.paymentMethod)) {
+        classDTO.paymentMethodError = "Please select payment method.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.paymentMethodError = "";
+      }
+    }
+
+    if (key === "all" || key === "expenseDate") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.expenseDate)) {
+        classDTO.expenseDateError = "Please select expense date.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.expenseDateError = "";
+      }
+    }
+
+    if (key === "all" || key === "description") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.description)) {
+        classDTO.categoryNameError = "Please enter expense description.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.categoryNameError = "";
+      }
+    }
+
+    return classDTO;
+  };
+
   function handleClassDTO(key, value, selectedOption) {
     var classDTO = { ...props.classDTO };
     switch (key) {
       default:
         classDTO[key] = value;
     }
-    // classDTO = handleValidation(key, classDTO);
-    props.updateClassDTO(classDTO);
-    if (value === "ExpenseCategory") {
-      props.companyNameList({companyType:"Expense"});
-      props.listRequestForExpenseCategory({ page: 0, size: 20 });
-    } else if (value === "Expense") {
-      props.listRequestForExpense({ page: 0, size: 20 });
+    if (classDTO.ExpenseType == "Expense") {
+      classDTO = handleExpenseValidtion(key, classDTO);
+    } else {
+      classDTO = handleExpenseCategoryValidation(key, classDTO);
     }
+
+    props.updateClassDTO(classDTO);
   }
 
   function isModelOpen(isOpen) {
@@ -137,19 +220,37 @@ const index = (props) => {
 
   function handleChangeSave(key, selectedOption) {
     var classDTO = { ...props.classDTO };
+
     var { submitExpenseRequestForm, submitExpenseCategoryRequestForm } = props;
-    if (selectedOption == "ExpenseCategory") {
-      // classDTO = handleValidation(key, classDTO);
-      // if (classDTO.isValidationSuccess === true) {
-      let finalDTO = {
-        expenseCategoryId: classDTO.expenseCategoryId,
-        companyId: classDTO.companyId,
-        categoryName: classDTO.categoryName,
-        description: classDTO.description,
-      };
-      submitExpenseCategoryRequestForm(finalDTO);
-    } else {
-      props.updateClassDTO(classDTO);
+
+    if (selectedOption == "Expense") {
+      classDTO = handleExpenseValidtion(key, classDTO);
+      if (classDTO.isValidationSuccess === true) {
+        let finalDTO = {
+          expenseId: classDTO.expenseId,
+          expenseCategoryId: classDTO.expenseCategoryId,
+          expenseDate: classDTO.expenseDate,
+          expenseAmount: classDTO.expenseAmount,
+          description: classDTO.description,
+          paymentMethod: classDTO.paymentMethod,
+        };
+        submitExpenseRequestForm(finalDTO);
+      } else {
+        props.updateClassDTO(classDTO);
+      }
+    } else if (selectedOption == "ExpenseCategory") {
+      classDTO = handleExpenseCategoryValidation(key, classDTO);
+      if (classDTO.isValidationSuccess === true) {
+        let finalDTO = {
+          expenseCategoryId: classDTO.expenseCategoryId,
+          companyId: classDTO.companyId,
+          categoryName: classDTO.categoryName,
+          description: classDTO.description,
+        };
+        submitExpenseCategoryRequestForm(finalDTO);
+      } else {
+        props.updateClassDTO(classDTO);
+      }
     }
   }
 
@@ -164,6 +265,7 @@ const index = (props) => {
             open={props.open}
             isModelOpen={isModelOpen}
             handleChangeSave={handleChangeSave}
+            expenseCategoryNameList={props.expenseCategoryNameList}
           />
         ) : props.open === true &&
           props.classDTO.ExpenseType == "ExpenseCategory" ? (
@@ -299,6 +401,13 @@ const index = (props) => {
                       )}
                       onChange={(value) => {
                         handleClassDTO("ExpenseType", value.value);
+                        if (value.value === "ExpenseCategory") {
+                          props.companyNameList({ companyType: "Expense" });
+                          props.listRequestForExpenseCategory({
+                            page: 0,
+                            size: 20,
+                          });
+                        }
                       }}
                     />
                   </Typography>
@@ -310,7 +419,12 @@ const index = (props) => {
                       sx={{ bgcolor: "#9fa8da", color: "ButtonHighlight" }}
                       startIcon={<AssignmentIcon />}
                       // onClick={() => this.setState({ open: true })}
-                      onClick={() => isModelOpen(true)}
+                      onClick={() => {
+                        isModelOpen(true);
+                        if (props.classDTO.ExpenseType == "Expense") {
+                          props.listRequestForExpenseNameCategory();
+                        }
+                      }}
                     >
                       {props.classDTO.ExpenseType == "Expense"
                         ? "Expense Request"
@@ -405,6 +519,7 @@ const mapStateToProps = () => {
     expenseCompnayNameList: selectors.getCompnayNameList(),
     expenselist: selectors.expenselist(),
     expensecategorylist: selectors.expensecategorylist(),
+    expenseCategoryNameList: selectors.expenseCategoryNameList(),
   });
 };
 
@@ -448,6 +563,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     companyNameList: (payload) => {
       dispatch(actions.companyNameList(payload));
+    },
+    listRequestForExpenseNameCategory: () => {
+      dispatch(actions.listRequestForExpenseNameCategory());
     },
   };
 };
