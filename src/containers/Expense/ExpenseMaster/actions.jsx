@@ -99,3 +99,9 @@ export const listRequestForExpenseCategory = (data) => {
         }
     };
 };
+
+export const listRequestForExpenseNameCategory = () => {
+    return {
+        type: ActionTypes.EXPENSE_CATEGORY_NAME_LIST_REQUEST
+    };
+};

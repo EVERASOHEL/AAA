@@ -29,3 +29,6 @@ export const expenselist = () =>
 
 export const expensecategorylist = () =>
   createSelector(stateSelector, (bstate) => bstate.expensecategorylist);
+
+export const expenseCategoryNameList = () =>
+  createSelector(stateSelector, (bstate) => bstate.expenseCategoryNameList);
