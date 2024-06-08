@@ -224,3 +224,24 @@ TABLESPACE pg_default;
 
 ALTER TABLE IF EXISTS public.tbl_expense_category
     OWNER to postgres;
+
+-- when need of delete all table data then follow below all delete query
+-- delete from company;
+-- delete from tbl_expense;
+-- delete from tbl_expense_category;
+-- delete from tbl_product;
+-- delete from tbl_productstock;
+-- delete from tbl_salesordercompany;
+-- delete from tbl_salesorderproductdetails;
+-- delete from tbl_vendor_payment;
+-- delete from tbl_vendor_payment_history;
+
+-- when need of select query then
+-- select * from company;
+-- select * from tbl_product;
+-- select * from tbl_vendor_payment;
+-- select * from tbl_vendor_payment_history;
+-- select * from tbl_expense;
+-- select * from tbl_expense_category;
+-- select * from tbl_salesordercompany;
+-- select * from tbl_salesorderproductdetails;

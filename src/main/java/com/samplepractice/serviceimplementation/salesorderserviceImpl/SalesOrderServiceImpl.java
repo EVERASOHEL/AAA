@@ -66,7 +66,7 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 
         List<SalesOrderProductDetailsDTO> salesproductlist = salesOrderProductDetailsDTOSList.stream().map(list -> new SalesOrderProductDetailsDTO(list, salesOrderCompanyModel.getId())).collect(Collectors.toList());
 
-        final List<SalesOrderProductDetailsModel> salesOrderProductDetailsModels = salesOrderProductDetailsService.saveSalesOrderProductDetails(salesproductlist, companyType);
+        final List<SalesOrderProductDetailsModel> salesOrderProductDetailsModels = salesOrderProductDetailsService.saveSalesOrderProductDetails(salesproductlist, companyType,Objects.nonNull(salesOrderCompanyDTO.getId()) ? "U" : "N");
 
         pdfService.salesPdf(salesOrderCompanyDTO,companyType);
 

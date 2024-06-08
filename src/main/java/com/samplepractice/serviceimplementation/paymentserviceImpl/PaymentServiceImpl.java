@@ -16,6 +16,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,23 +37,25 @@ public class PaymentServiceImpl implements PaymentService {
     public String saveVendorPaymentAmount(PaymentDTO paymentDTO) throws Exception {
 
         PaymentValidation(paymentDTO);
+
         PaymentModel paymentModel = paymentRepository.save(new PaymentModel(paymentDTO));
         paymentHistoryRepository.save(new PaymentHistoryModel(paymentDTO, paymentModel.getId()));
-
         return "Payment Successfully Added.";
     }
 
     void PaymentValidation(PaymentDTO paymentDTO) throws Exception {
-
         CommonValidatorAppException.stringsIsNullOrEmpty("Company Name", paymentDTO.getCompanyName());
         CommonValidatorAppException.objectsIsNullAndIsDigit("Pay Amount", paymentDTO.getPayAmount());
         CommonValidatorAppException.stringsIsNullOrEmpty("Payment Date", paymentDTO.getPaymentDate().toString());
-
     }
 
     @Override
     public List<PaymentDTO> getHistoryofpaymentbyorderId(Long orderId) {
-        return paymentRepository.getPaymentHistoryByOrderId(orderId).stream().map(PaymentDTO::new).collect(Collectors.toList());
+        List<PaymentModel> historyData = paymentRepository.getPaymentHistoryByOrderId(orderId);
+        if (historyData.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return historyData.stream().map(PaymentDTO::new).collect(Collectors.toList());
     }
 
     @Override

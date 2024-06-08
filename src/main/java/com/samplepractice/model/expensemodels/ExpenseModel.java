@@ -43,9 +43,9 @@ public class ExpenseModel extends AbstractAuditingEntity {
     @Column(name = "paymentmethod")
     private String paymentMethod;
 
-    public ExpenseModel(ExpenseDTO expenseDTO) {
+    public ExpenseModel(ExpenseDTO expenseDTO,Long companyId) {
         this.expenseId=Objects.nonNull(expenseDTO.getExpenseId()) ? expenseDTO.getExpenseId() : null;
-        this.companyId= Objects.nonNull(expenseDTO.getCompanyId()) ? expenseDTO.getCompanyId() : null;
+        this.companyId= Objects.nonNull(companyId) ? companyId : null;
         this.expenseCategoryId=expenseDTO.getExpenseCategoryId();
         this.expenseAmount=expenseDTO.getExpenseAmount();
         this.expenseDate=expenseDTO.getExpenseDate();

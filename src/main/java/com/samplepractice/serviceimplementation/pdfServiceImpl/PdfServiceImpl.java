@@ -90,6 +90,7 @@ public class PdfServiceImpl implements PdfService {
         try {
 
             String recipientEmail = "everaabzal@gmail.com";
+//            String recipientEmail = "everasohel@gmail.com";
             String subject = "Sales Invoice - Invoice No. " + viewPdfDTO.getVoucherNo();
             String message = createMailMessageFormat(viewPdfDTO);
             String folderPath = "D:\\Vexon Pdf\\" + viewPdfDTO.getCompanyType() + "\\" + viewPdfDTO.getCompanyName() + "\\" + viewPdfDTO.getPdfName() + ".pdf";
@@ -254,7 +255,7 @@ public class PdfServiceImpl implements PdfService {
             Font productHeaderFont = PdfConfig.PdfFont(11f);
 
             float[] cell_size = {1.0f, 13.0f, 3.5f, 2.5f, 3f, 2f, 4f};
-            String[] columnHeadings = {"S.No", "Decription of\nGoods", "HNS/SAC", "Quntity", "Rate", "Per", "Amount"};
+            String[] columnHeadings = {"S.No", "Description of\nGoods", "HSN/SAC", "Quantity", "Rate", "Per", "Amount"};
 
             PdfPTable productHeaderTable = new PdfPTable(cell_size);
             productHeaderTable.setWidthPercentage(90);
@@ -264,7 +265,7 @@ public class PdfServiceImpl implements PdfService {
                 paragraph.setAlignment(Element.ALIGN_CENTER);
                 PdfPCell cell = new PdfPCell();
                 cell.setPaddingTop(-5f);
-                if (heading.equals("S.No") || heading.equals("Decription of\nGoods")) {
+                if (heading.equals("S.No") || heading.equals("Description of\nGoods")) {
                     paragraph.setMultipliedLeading(1f);
                     cell.setPaddingTop(-1f);
                 } else {
@@ -364,7 +365,7 @@ public class PdfServiceImpl implements PdfService {
         buyerInfo.put("Buyer's", "Buyer's");
         buyerInfo.put("buyerCompanyName", companyMasterDTO.getCompanyName());
         buyerInfo.put("buyerAddress", buyerAddress);
-        buyerInfo.put("gstin", "GSTIN/UIN : " + companyMasterDTO.getCompanyGstNo());
+        buyerInfo.put("gstin", "GSTIN/UIN : " + (Objects.nonNull(companyMasterDTO.getCompanyGstNo()) ? companyMasterDTO.getCompanyGstNo() : ""));
         buyerInfo.put("stateName", "State Name : " + companyMasterDTO.getStateName());
         buyerInfo.put("placeOfSupply", "Place of Supplay : " + companyMasterDTO.getStateName());
         buyerInfo.put("contactPerson", "Contact Person :");
@@ -552,20 +553,29 @@ public class PdfServiceImpl implements PdfService {
             SNoData.append(i + 1).append("\n");
             productNameData.append(dto.getProductName()).append("\n");
             productTypeData.append(dto.getProductType()).append("\n");
-            quantityData.append(String.format("%.2f", dto.getQuantity())).append("\n");
-            priceData.append(String.format("%.2f", dto.getPrice())).append("\n");
-            totalData.append(String.format("%.2f", dto.getTotal())).append("\n");
+            quantityData.append(CommonConstant.formatIndianRupees(dto.getQuantity())).append("\n");
+            priceData.append(CommonConstant.formatIndianRupees(dto.getPrice())).append("\n");
+            totalData.append(CommonConstant.formatIndianRupees(dto.getTotal())).append("\n");
             hsnCodeData.append(dto.getHsnCode()).append("\n");
         }
 
+        String totalTaxableAmount = CommonConstant.extractDecimalPart(salesOrderCompanyDTO.getTotalTaxableAmount());
         if (salesOrderCompanyDTO.getGstType().equals(Constants.IGST18)) {
+//            if(Float.parseFloat(totalTaxableAmount)>0.50){
+//                productNameData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tIntegrated Tax\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND OFF");
+//                float roundOnAmount = 1 - Float.parseFloat(totalTaxableAmount);
+//                String formattedAmount=String.format("%.2f",roundOnAmount);
+//                totalData.append("\n").append(CommonConstant.extractDecimalPart(salesOrderCompanyDTO.getTotalTaxableAmount()));
+//            }else{
+//                productNameData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tIntegrated Tax\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND OFF");
+//            }
             productNameData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tIntegrated Tax\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND OFF");
             totalData.append("\n\n").append(String.format("%.2f", salesOrderCompanyDTO.getTotalTaxAmount()));
             totalData.append("\n").append(CommonConstant.extractDecimalPart(salesOrderCompanyDTO.getTotalTaxableAmount()));
         } else if (salesOrderCompanyDTO.getGstType().equals(Constants.LGST18)) {
             productNameData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tCGST\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tSGST\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND OFF");
-            totalData.append("\n\n").append(String.format("%.2f", salesOrderCompanyDTO.getTotalTaxAmount() / 2));
-            totalData.append("\n").append(String.format("%.2f", salesOrderCompanyDTO.getTotalTaxAmount() / 2));
+            totalData.append("\n\n").append(CommonConstant.formatIndianRupees(salesOrderCompanyDTO.getTotalTaxAmount() / 2));
+            totalData.append("\n").append(CommonConstant.formatIndianRupees(salesOrderCompanyDTO.getTotalTaxAmount() / 2));
             totalData.append("\n").append(CommonConstant.extractDecimalPart(salesOrderCompanyDTO.getTotalTaxableAmount()));
         }
 
@@ -592,7 +602,7 @@ public class PdfServiceImpl implements PdfService {
         productDetailsData.addCell(PdfConfig.createCell("", Element.ALIGN_RIGHT, minHeight, "detailsFotter"));
         productDetailsData.addCell(PdfConfig.createCell("Total", Element.ALIGN_RIGHT, minHeight, "detailsFotter"));
         productDetailsData.addCell(PdfConfig.createCell("", Element.ALIGN_RIGHT, minHeight, "detailsFotter"));
-        productDetailsData.addCell(PdfConfig.createCell("" + String.format("%.2f", salesOrderCompanyDTO.getSalesOrderProductDetailsDTOList().stream().mapToDouble(SalesOrderProductDetailsDTO::getQuantity).sum()), Element.ALIGN_RIGHT, minHeight, "detailsFotter"));
+        productDetailsData.addCell(PdfConfig.createCell("" + CommonConstant.formatIndianRupees(salesOrderCompanyDTO.getSalesOrderProductDetailsDTOList().stream().mapToDouble(SalesOrderProductDetailsDTO::getQuantity).sum()), Element.ALIGN_RIGHT, minHeight, "detailsFotter"));
         productDetailsData.addCell(PdfConfig.createCell("", Element.ALIGN_RIGHT, minHeight, "detailsFotter"));
         productDetailsData.addCell(PdfConfig.createCell("", Element.ALIGN_RIGHT, minHeight, "detailsFotter"));
         productDetailsData.addCell(PdfConfig.createCell("" + CommonConstant.extractRoundOrFloorValue(salesOrderCompanyDTO.getTotalTaxableAmount()), Element.ALIGN_RIGHT, minHeight, "detailsFotter"));
@@ -916,5 +926,10 @@ public class PdfServiceImpl implements PdfService {
 //      Add the table to the document
         return companyDetails;
     }
+
+//    27-05-24
+//    private static String sanitizeFileName(String input) {
+//        return input.replaceAll("[^a-zA-Z0-9.-]", "_");
+//    }
 
 }

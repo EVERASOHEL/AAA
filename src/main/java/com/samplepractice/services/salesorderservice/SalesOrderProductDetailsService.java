@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface SalesOrderProductDetailsService {
 
-    List<SalesOrderProductDetailsModel> saveSalesOrderProductDetails(List<SalesOrderProductDetailsDTO> salesOrderProductDetailsDTOList,String companyType);
+    List<SalesOrderProductDetailsModel> saveSalesOrderProductDetails(List<SalesOrderProductDetailsDTO> salesOrderProductDetailsDTOList,String companyType,String transactionalFlag);
 
     List<SalesOrderProductDetailsDTO> getProductDetailsRecordforUpdate(Long id);
 }

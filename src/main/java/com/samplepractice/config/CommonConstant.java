@@ -50,14 +50,25 @@ public class CommonConstant {
         return "0.00";
     }
 
-    public static String extractRoundOrFloorValue(double value){
+//    public static String extractRoundOrFloorValue(double value){
+//        String stringValue = String.valueOf(value);
+//
+//        if (stringValue.matches(".*\\.5$")) {
+//            return new DecimalFormat("#.00").format(Math.floor(value));
+//        }
+//
+//        return new DecimalFormat("#.00").format(Math.round(value));
+//    }
+
+    public static String extractRoundOrFloorValue(double value) {
+
         String stringValue = String.valueOf(value);
 
         if (stringValue.matches(".*\\.5$")) {
-            return new DecimalFormat("#.00").format(Math.floor(value));
+            return CommonConstant.formatIndianRupees(Math.floor(value));
         }
 
-        return new DecimalFormat("#.00").format(Math.round(value));
+        return CommonConstant.formatIndianRupees(Math.round(value));
     }
 
     public static String formatDate(Date date) {
@@ -81,6 +92,11 @@ public class CommonConstant {
 
     public static String formatDecimal(double number) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
+        return decimalFormat.format(number);
+    }
+
+    public static String formatIndianRupees(double number) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,##,##0.00");
         return decimalFormat.format(number);
     }
 }

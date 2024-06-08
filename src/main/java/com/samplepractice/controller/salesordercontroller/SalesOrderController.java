@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@CrossOrigin("http://localhost:3000")
+@CrossOrigin(origins = {"http://192.168.43.210:3000", "http://localhost:3000"})
 @RestController
 @RequestMapping("/api/salesOrderController")
 public class SalesOrderController {
