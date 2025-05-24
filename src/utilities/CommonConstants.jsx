@@ -47,7 +47,7 @@ export const GST_TYPE = [
 
 export const PRODUCT_TYPE = [
   { value: "DOZEN", display: "DOZEN" },
-  { value: "GRAMS", display: "GRAMS" },
+  { value: "KG", display: "KG" },
   { value: "PCS", display: "PCS" },
   { value: "BOX", display: "BOX" },
   { value: "METRES", display: "METRES" },
@@ -57,3 +57,5 @@ export const PAYMENT_MODE = [
   { value: "Cash", display: "Cash" },
   { value: "Bank", display: "Bank" },
 ];
+
+export const CONFIRMATION_MAIL_SEND="Are You Sure You Want Send Mail?";

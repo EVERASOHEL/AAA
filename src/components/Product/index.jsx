@@ -227,7 +227,6 @@ export default class AddproductModel extends React.Component {
     //   { value: 28, display: "28%" },
     // ];
 
-    // console.log("this.state.productList.gstpercentage : ",this.state.productList.gstpercentage);
 
     return (
       <div>

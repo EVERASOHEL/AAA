@@ -68,7 +68,7 @@ const index = (props) => {
     };
   }, []);
 
-  const { HistoryData, paymentHistoryModel, setPaymentHistoryModelSetValue } =
+  const { HistoryData, paymentHistoryModel, setPaymentHistoryModelSetValue,title } =
     props;
 
   //  belove code for vendor
@@ -79,7 +79,7 @@ const index = (props) => {
       <DialogTitle>
         {" "}
         <div className="dialogheaderstyle">
-          <Typography variant="h5">Vendor Payment History</Typography>
+          <Typography variant="h5">{title}</Typography>
           <Buttons.CloseButton
             onClick={() => {
               setPaymentHistoryModelSetValue(false);

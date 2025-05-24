@@ -69,3 +69,9 @@ export const companyNameList = () => {
         }
     };
 };
+
+export const companyNameListForFilter = () => {
+    return {
+        type: ActionTypes.COMPANY_NAME_LIST_REQUEST_FOR_FILTER,
+    };
+};

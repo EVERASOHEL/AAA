@@ -19,7 +19,6 @@ const reducer = (stateDTO = initialState, action) => {
     switch (action.type) {
         case ActionTypes.CLASS_DTO: {
             state.classDTO = action.payload || {};
-            console.log("action.payload : ",action.payload);
             return {...state};
             // return JSON.parse(JSON.stringify(state));
         }

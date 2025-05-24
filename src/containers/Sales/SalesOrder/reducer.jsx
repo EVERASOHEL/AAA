@@ -20,7 +20,9 @@ const defaultState = {
   classDTO: JSON.parse(JSON.stringify(defaultClassDTO)),
   salesClassListDTO: JSON.parse(JSON.stringify(defaultSalesClassDTO)),
   salesClassDTO: JSON.parse(JSON.stringify(defaultClassDTO)),
+  isPaymentModelOpen: false,
   open: false,
+  saveSuccess:false,
   // responseDTO: _.cloneDeep(defaultResponseDTO),
 };
 
@@ -38,38 +40,49 @@ const reducer = (stateDTO = initialState, action) => {
     case ActionTypes.SALES_CLASS_LIST_DTO: {
       let object = action.payload || [];
       let flag = action.flag || "";
-      if (flag == "update") {
-        list = [];
-        list = Object.values(object);
-        state.salesClassListDTO = defaultSalesClassDTO;
-        state.salesClassListDTO = list;
-      } else if (flag == "new") {
-        list.push(object);
-        state.salesClassListDTO = list;
-      } else {
-        list = object;
-        state.salesClassListDTO = list;
-      }
-      var salesClassListDTO1 = state.salesClassListDTO;
+      let newSalesClassListDTO = [...state.salesClassListDTO]; // Copy the existing list
 
-      // below line is give suggestion for total Amount calculation based on total column
-      var totalGSTAmountValue = salesClassListDTO1.reduce(
-        (acc, obj) => acc + obj["total"],
+      if (flag === "update") {
+        // Replace the list entirely with the new object
+        newSalesClassListDTO = Object.values(object);
+      } else if (flag === "new") {
+        // Append the new object to the existing list
+        newSalesClassListDTO = [...newSalesClassListDTO, object];
+      } else {
+        // Replace the list with the object (default case)
+        newSalesClassListDTO = object;
+      }
+
+      // Calculate total GST Amount
+      const totalGSTAmountValue = newSalesClassListDTO.reduce(
+        (acc, obj) => acc + (obj.total || 0), // Safely handle if 'total' is undefined
         0
       );
-      state.classDTO["totalAmount"] = totalGSTAmountValue;
+
+      // Calculate GST and update classDTO immutably
+      let updatedClassDTO = {
+        ...state.classDTO,
+        totalAmount: totalGSTAmountValue,
+      };
+
       if (!isNullOrIsEmptyOrIsUndefined(state.classDTO.gstType)) {
-        var GstAmount = commonFunction.calculateGSTAmount(
+        const GstAmount = commonFunction.calculateGSTAmount(
           totalGSTAmountValue,
           state.classDTO.gstType
         );
-        state.classDTO["totalTaxAmount"] = GstAmount;
-        state.classDTO["totalTaxableAmount"] =
-          state.classDTO.totalAmount + GstAmount;
+        updatedClassDTO = {
+          ...updatedClassDTO,
+          totalTaxAmount: GstAmount,
+          totalTaxableAmount: totalGSTAmountValue + GstAmount,
+        };
       }
-      state.salesClassDTO = {};
-      return { ...state };
-      // return JSON.parse(JSON.stringify(state));
+
+      return {
+        ...state,
+        salesClassListDTO: newSalesClassListDTO, // Update immutably
+        classDTO: updatedClassDTO, // Update immutably
+        salesClassDTO: {}, // Reset salesClassDTO to an empty object
+      };
     }
 
     case ActionTypes.SALES_CLASS_DTO: {
@@ -129,6 +142,7 @@ const reducer = (stateDTO = initialState, action) => {
       state.classDTO = {};
       state.salesClassDTO = {};
       state.salesClassListDTO = defaultSalesClassDTO;
+      state.saveSuccess = true;
       return JSON.parse(JSON.stringify(state));
     }
 
@@ -148,6 +162,7 @@ const reducer = (stateDTO = initialState, action) => {
       const { No } = lastObject || 0;
 
       state.currentPageSize = data.length || 20;
+      state.saveRequest = false;
       return JSON.parse(JSON.stringify(state));
     }
 
@@ -178,6 +193,11 @@ const reducer = (stateDTO = initialState, action) => {
       return JSON.parse(JSON.stringify(state));
     }
 
+    case ActionTypes.PAYMENT_HISTORY_RESPONSE: {
+      state.paymentHistoryData = action.payload.data || [];
+      return JSON.parse(JSON.stringify(state));
+    }
+
     case ActionTypes.VIEW_PDF_RESPONSE: {
       state.pdfData = action.payload.data || [];
       state.isOpenPdf = true;
@@ -186,6 +206,55 @@ const reducer = (stateDTO = initialState, action) => {
 
     case ActionTypes.IS_OPEN_PDF_MODEL: {
       state.isOpenPdf = action.payload.data || [];
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.PAYMENT_MODEL_IS_OPEN: {
+      state.isPaymentModelOpen = action.payload.data || false;
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.PAYMENT_RESPONSE: {
+      state.isPaymentModelOpen = action.payload.data || false;
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.COMPANY_NAME_LIST_RESPONSE_FOR_FILTER: {
+      let data = action.payload.data || [];
+
+      const transformedData = data.map((item) => ({
+        value: item.title,
+        display: item.title,
+      }));
+
+      state.allTypeCompanyNameList = transformedData;
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.STATE_NAME_RESPONSE: {
+      let stateName = action.payload.data || false;
+    
+      // Create a copy of classDTO to update immutably
+      let updatedClassDTO = { ...state.classDTO };
+    
+      if (!isNullOrIsEmptyOrIsUndefined(stateName) && stateName === "Gujarat") {
+        updatedClassDTO.gstType = "LGST18[18%]";
+      } else if (
+        !isNullOrIsEmptyOrIsUndefined(stateName) &&
+        stateName !== "Gujarat"
+      ) {
+        updatedClassDTO.gstType = "IGST18[18%]";
+      }
+    
+      // Return the updated state
+      return {
+        ...state,
+        classDTO: updatedClassDTO, // Update classDTO immutably
+      };
+    }
+
+    case ActionTypes.RESET_SAVE_SUCCESS_FLAG: {
+      state.saveSuccess = false;
       return JSON.parse(JSON.stringify(state));
     }
 

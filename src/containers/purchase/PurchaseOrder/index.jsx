@@ -52,6 +52,7 @@ import AlertModel from "../../../components/Models";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import { Modal } from "@coreui/coreui";
 import PdfViewer from "../../../web/viewPdf/PdfViewer";
+import AdvancedDataTable from "../../AdvancedDataTable";
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -71,6 +72,8 @@ const index = (props) => {
   const [mailData, setMailData] = useState({});
 
   const [openViewPdfModel, setOpenViewPdfModel] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [mailconfirmModelisOpen, setmailconfirmModelisOpen] = useState(false);
 
   useEffect(() => {
     // Anything in here is fired on component mount.
@@ -78,14 +81,18 @@ const index = (props) => {
     // if(props.isPaymentModelClose===false){
     //   props.isPaymentModelOpen(props.isPaymentModelClose);
     // }
-    props.apiforsalesorderlist({ page: 0, size: 20, companyType: "Vendor" });
+    // props.apiforsalesorderlist({ page: 0, size: 20, companyType: "Vendor" });
     props.productListRequest();
     props.companyNameList("Vendor");
+    props.companyNameListForFilter({ companyType: "Vendor" });
     // props.updateClassDTO({"orderDate":new Date()});
     return () => {
       // Anything in here is fired on component unmount.
     };
   }, [confirmModelisOpen]);
+
+  useEffect(() => {
+  }, [mailconfirmModelisOpen]);
 
   const classes = useStyles();
   const initialvalues = {
@@ -323,9 +330,10 @@ const index = (props) => {
           classDTO["totalAmount"] = classDTO.totalAmount;
           classDTO["totalTaxAmount"] = GSTAmount;
           classDTO["totalTaxableAmount"] = classDTO.totalAmount + GSTAmount;
-        } else {
-          toast.error("Please Insert at least one product details");
         }
+        // } else {
+        //   toast.error("Please Insert at least one product details");
+        // }
         break;
       default:
         classDTO[key] = value;
@@ -450,6 +458,20 @@ const index = (props) => {
     props.isPaymentModelOpen(flag);
   };
 
+  const handleMailConfirmation = (toEmail) => {
+    const updatedMailData = {
+      ...mailData,
+      toEmail,
+    };
+    props.apiforSendMail(updatedMailData);
+    setMailData({});
+    setmailconfirmModelisOpen(false);
+  };
+
+  const handleCloseSendMailConfirmModel = () => {
+    setmailconfirmModelisOpen(false);
+  };
+
   const ActionFunction = (data) => {
     // setEditRowData(data);
     return (
@@ -482,7 +504,7 @@ const index = (props) => {
             <Buttons.History
               onClick={() => {
                 props.apiforhistory(data.id);
-                setisOpenPaymentHistoryModel(true);
+                // props.isPaymentHistoryModelOpen(true);
               }}
             />
           </Tooltip>
@@ -554,13 +576,38 @@ const index = (props) => {
   };
 
   const handleChangePaymentModel = (isPaymentModelClose) => {
-    console.log("props.isPaymentModelClose : ", props.isPaymentModelClose);
     props.isPaymentModelOpen(isPaymentModelClose);
   };
 
-  const handleChangeSavePayment=(paymentData)=>{
-    props.submitPaymentRequest(paymentData)
-  }
+  const handleChangeSavePayment = (paymentData) => {
+    props.submitPaymentRequest(paymentData);
+  };
+
+  const handleChangePaymentHistoryModel = (isPaymentModelClose) => {
+    props.isPaymentHistoryModelOpen(isPaymentModelClose);
+  };
+
+  const setFilter = () => {
+    const filters = {
+      components: [
+        {
+          payloadKey: "companyName",
+          key: "companyName",
+          stateKey: "companyName",
+          displayKey: "companyName",
+          label: "Company Name",
+          component: "singleSelect",
+          values: props.allTypeCompanyNameList || [],
+        },
+      ],
+      url: "", // API endpoint for filtering
+      method: "GET", // HTTP method for the filter API
+    };
+
+    return filters;
+  };
+
+  const filters = setFilter();
 
   return (
     <>
@@ -583,6 +630,15 @@ const index = (props) => {
           getCompnayNameList={props.getCompnayNameList}
         />
       ) : null}
+      {mailconfirmModelisOpen === true ? (
+        <SendMailPopup
+          {...props}
+          open={mailconfirmModelisOpen}
+          handleClose={handleCloseSendMailConfirmModel}
+          handleMailConfirmation={handleMailConfirmation}
+          message={confirmationMessage}
+        />
+      ) : null}
       {confirmModelisOpen === true ? (
         <AlertModel
           {...props}
@@ -601,19 +657,17 @@ const index = (props) => {
           flagformodel="istrue"
           calllistapi={calllistapi}
           handleChangePaymentModel={handleChangePaymentModel}
-          // open={isModelPayemntOpen}
-          // isPayemntModelOpen={isModelPayemntOpen}
-          // modelOpen={isModelPayemntOpen}
           getPaymentModelOpenStatus={props.getPaymentModelOpenStatus}
           invoiceData={invoiceData}
           handleChangeSavePayment={handleChangeSavePayment}
         />
       ) : null}
-      {isOpenPaymentHistoryModel === true ? (
+      {props.getPaymentHistoryModelStatus === true ? (
         <PaymentHistoryComponent
-          paymentHistoryModel={isOpenPaymentHistoryModel}
-          setPaymentHistoryModelSetValue={setPaymentHistoryModelSetValue}
+          paymentHistoryModel={props.getPaymentHistoryModelStatus}
+          setPaymentHistoryModelSetValue={handleChangePaymentHistoryModel}
           HistoryData={props.paymentHistoryData}
+          title={"Vendor Payment History"}
         />
       ) : null}
 
@@ -627,7 +681,44 @@ const index = (props) => {
         />
       ) : null}
 
-      <div style={{ marginTop: "15px" }}>
+      <AdvancedDataTable
+        key={refreshKey}
+        {...props}
+        url={"/api/salesOrderController/getSalesOrderList?companyType=Vendor"}
+        headers={[
+          { title: "No" },
+          { title: "Order Date" },
+          { title: "Voucher No" },
+          { title: "Company Name" },
+          { evalFunction: merageTitleAmount },
+          { title: "Action" },
+        ]}
+        keyMapping={[
+          {
+            key: "No",
+          },
+          {
+            key: "orderDateString",
+          },
+          {
+            key: "voucherNo",
+          },
+          {
+            key: "companyName",
+          },
+          {
+            evalFunction: merageAmount,
+          },
+          {
+            evalFunction: ActionFunction,
+          },
+        ]}
+        title={"Purchase Master"}
+        isModelOpen={isModelOpen}
+        filters={filters}
+      />
+
+      {/* <div style={{ marginTop: "15px" }}>
         <div style={{ display: "flex" }}>
           <Container maxWidth="lg">
             <Card sx={{ minWidth: 500, textAlign: "center" }}>
@@ -738,7 +829,7 @@ const index = (props) => {
             </Card>
           </Container>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
@@ -760,6 +851,8 @@ const mapStateToProps = () => {
     pdfData: selectors.getPdfData(),
     isOpenPdf: selectors.getPdfStatus(),
     getPaymentModelOpenStatus: selectors.getPaymentModelStatus(),
+    getPaymentHistoryModelStatus: selectors.getPaymentHistoryModelStatus(),
+    allTypeCompanyNameList: selectors.getAllTypeCompanyNameList(),
   });
 };
 
@@ -818,6 +911,12 @@ const mapDispatchToProps = (dispatch) => {
     },
     submitPaymentRequest: (payload) => {
       dispatch(actions.submitPaymentRequest(payload));
+    },
+    isPaymentHistoryModelOpen: (payload) => {
+      dispatch(actions.isOpenHistoryModel(payload));
+    },
+    companyNameListForFilter: (payload) => {
+      dispatch(actions.companyNameListForFilter(payload));
     },
   };
 };

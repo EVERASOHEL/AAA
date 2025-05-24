@@ -7,6 +7,7 @@ import * as commonConstants from "../../../utilities/Constants";
 import { ToastContainer, toast } from "react-toastify";
 import http from "../../../utilities/CommonConfigConstant";
 import axios from "axios";
+import isNullOrIsEmptyOrIsUndefined from "../../../utilities/CommonValidator";
 
 export function* apiforSubmitAddCompnayRequest({ payload }) {
   let data = {
@@ -58,6 +59,7 @@ export function* apiforList({ payload }) {
 }
 
 export function* apiListforExpense({ payload }) {
+
   try {
     let page = payload.data.page || 0;
     let size = payload.data.size || 20;
@@ -68,7 +70,7 @@ export function* apiListforExpense({ payload }) {
     };
     const response = yield call(FetchApi, data);
 
-    if (response.responseObj === null) {
+    if (isNullOrIsEmptyOrIsUndefined(response.responseObj)) {
       yield put({
         type: ActionTypes.EXPENSE_LIST_RESPONSE,
         payload: {
@@ -101,7 +103,7 @@ export function* apiListforExpenseCategory({ payload }) {
     };
     const response = yield call(FetchApi, data);
 
-    if (response === null) {
+    if (response) {
       yield put({
         type: ActionTypes.EXPENSE_CATEGORY_LIST_RESPONSE,
         payload: {
@@ -176,6 +178,7 @@ export function* apiforSubmitAddExpenseCategoryRequest({ payload }) {
     };
     const response = yield call(FetchApi, data);
     if (response.code == 200 || response.code == 204) {
+      
       toast.success(response.responseObj);
       yield put({
         type: ActionTypes.ADD_EXPENSE_CATEGORY_RESPONSE,

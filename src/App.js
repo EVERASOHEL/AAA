@@ -28,6 +28,7 @@ import profileimage from "./components/images/beautiful_accounting_profile.webp"
 import logo from "./components/images/alphalogo.gif";
 import setting from "./components/images/icons8-settings-48.png";
 import Payment from "./containers/Payment";
+import Demo from "./containers/Demo";
 import { getLoadingState } from "./utilities/LoadingInterceptor";
 import { ClipLoader } from "react-spinners";
 
@@ -109,7 +110,7 @@ const App = (props) => {
                   {/* <Typography variant="h2" className={classes.companyName}>
                 Alpha
                 </Typography> */}
-                  <h2 className="companyname cursive-text">Vexon</h2>
+                  <h2 className="companyname cursive-text">Alpha</h2>
                 </MenuItem>
                 {routes.map((route, index) =>
                   route.subMenu ? (
@@ -167,7 +168,7 @@ const App = (props) => {
                         marginBottom: "0px",
                       }}
                     >
-                      WEL-CON CONTROL & SWITCHGEAR
+                      ALPHA CONTROL & SWITCHGEAR
                     </p>
                   </Typography>
                   <img
@@ -208,6 +209,12 @@ const App = (props) => {
                   key={222}
                   exact={true}
                   Component={Payment}
+                />
+                <Route
+                  path={"/demo"}
+                  key={222}
+                  exact={true}
+                  Component={Demo}
                 />
               </Routes>
             </div>
