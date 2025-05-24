@@ -137,3 +137,35 @@ export const apiforSendMail = (data) => {
         }
     };
 };
+
+export const isPaymentModelOpen = (data) => {
+    return {
+        type: ActionTypes.PAYMENT_MODEL_IS_OPEN,
+        payload:{
+            data,
+        }
+    };
+};
+
+export const submitPaymentRequest = (payload) => {
+    return {
+        type: ActionTypes.PAYMENT_REQUEST,
+        payload,
+    };
+};
+
+export const isOpenHistoryModel = (data) => {
+    return {
+        type: ActionTypes.IS_OPEN_HISTORY_MODEL,
+        payload:{
+            data,
+        }
+    };
+};
+
+export const companyNameListForFilter = (payload) => {
+    return {
+        type: ActionTypes.COMPANY_NAME_LIST_REQUEST_FOR_FILTER,
+        payload,
+    };
+};

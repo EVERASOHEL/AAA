@@ -19,6 +19,7 @@ export const configureAppStore = () => {
         }),
     ];
 
+    console.log("configureAppStore");
     const store = configureStore({
         reducer: createReducer(),
         middleware: (defaultMiddleware) => [

@@ -1,6 +1,6 @@
 import keyMirrorRecursive from "fbjs/lib/keyMirrorRecursive";
 
-export const pageName = "CompanyMasterPage";
+export const pageName = "ExpenseCategoryPage";
 
 export const stateNameList = [
     "Andaman and Nicobar Islands",
@@ -94,7 +94,10 @@ export const ActionTypes = keyMirrorRecursive(
         OPEN_EDIT_MODEL:undefined,
         DELETE_COMPANY:undefined,
         COMPANY_NAME_LIST_REQUEST:undefined,
-        COMPANY_NAME_LIST_RESPONSE:undefined
+        COMPANY_NAME_LIST_RESPONSE:undefined,
+
+        ADD_EXPENSE_REQUEST:undefined,
+        ADD_EXPENSE_RESPONSE:undefined
     },
     pageName
 );

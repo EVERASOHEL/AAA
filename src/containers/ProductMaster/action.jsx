@@ -1,7 +1,6 @@
 import {ActionTypes} from "./constant";
 
 export function registration(data) {
-    console.log("data : ", data);
     return {
         type: ActionTypes.REGISTRATION_FORM,
         data,

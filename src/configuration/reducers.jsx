@@ -9,6 +9,7 @@ import {combineReducers} from "@reduxjs/toolkit";
  */
 export const createReducer = (injectedReducers = {}) => {
     // Initially we don't have any injectedReducers, so returning identity function to avoid the error
+    console.log("createReducer");
     if (Object.keys(injectedReducers).length === 0) {
         return (state) => state;
     } else {

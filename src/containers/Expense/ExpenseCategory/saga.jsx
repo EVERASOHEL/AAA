@@ -14,24 +14,27 @@ import { ToastContainer, toast } from "react-toastify";
 import http from "../../../utilities/CommonConfigConstant";
 import axios from "axios";
 
-export function* apiforSubmitAddCompnayRequest({ payload }) {
-  console.log("payload : ", payload);
-  let data = {
-    url: "/api/companyController/saveNewCompany",
-    payload: JSON.stringify(payload),
-    method: "POST",
-  };
-  const response = yield call(FetchApi, data);
-  if (response.code == 200) {
-    toast.success(response.responseObj);
-    yield put({
-      type: ActionTypes.ADD_COMPANY_RESPONSE,
-      payload: {
-        data: false,
-      },
-    });
-  } else {
-    toast.error(commonConstants.MSG_UNIVERSAL_ERROR);
+export function* apiforSubmitAddExpenseRequest({ payload }) {
+  try {
+    let data = {
+      url: "/api/expenseCategoryController/saveExpenseCategory",
+      payload: JSON.stringify(payload),
+      method: "POST",
+    };
+    const response = yield call(FetchApi, data);
+    if (response.code == 200) {
+      toast.success(response.responseObj);
+      yield put({
+        type: ActionTypes.ADD_EXPENSE_RESPONSE,
+        payload: {
+          data: false,
+        },
+      });
+    } else {
+      toast.error(commonConstants.MSG_UNIVERSAL_ERROR);
+    }
+  } catch (error) {
+    toast.error(MSG_UNIVERSAL_ERROR);
   }
 }
 
@@ -91,7 +94,6 @@ export function* apiforDeleteCompany({ payload }) {
 }
 
 export function* apiforgetAllCompanyNameList({ payload }) {
-  console.log("type : ",payload);
   let data = {
     url: `/api/companyController/getAllCompanyNameByCompanyType/${payload.companyType}`,
     payload: null,
@@ -110,9 +112,8 @@ export function* apiforgetAllCompanyNameList({ payload }) {
 }
 
 export default function* root() {
-  console.log("new");
   yield all([
-    takeLatest(ActionTypes.ADD_COMPANY_REQUEST, apiforSubmitAddCompnayRequest),
+    takeLatest(ActionTypes.ADD_EXPENSE_REQUEST, apiforSubmitAddExpenseRequest),
     takeLatest(ActionTypes.ADD_COMPANY_RESPONSE, apiforList),
     takeLatest(ActionTypes.COMPANY_LIST_REQUEST, apiforList),
     takeLatest(ActionTypes.DELETE_COMPANY, apiforDeleteCompany),

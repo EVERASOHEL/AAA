@@ -8,9 +8,20 @@ export const updateClassDTO = (payload) => {
 };
 
 export const changeLoadingStatus = (payload) => {
-    console.log("111");
     return {
         type: ActionTypes1.LOADING_STATUS,
         payload,
+    };
+};
+
+export const showLoading = () => {
+    return {
+        type: ActionTypes1.SHOW_LOADING
+    };
+};
+
+export const hideLoading = () => {
+    return {
+        type: ActionTypes1.HIDE_LOADING
     };
 };

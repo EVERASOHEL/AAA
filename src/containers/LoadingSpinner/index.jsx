@@ -15,8 +15,6 @@ import * as selectors from "./selectors";
 import "./style.scss";
 
 import { ClipLoader } from 'react-spinners';
-// import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-// import '../../../public/css/react-spinner-loader.css';
 
 const index = (props) => {
   function updateStateValue(value) {
@@ -30,22 +28,12 @@ const index = (props) => {
     return () => {};
   }, []);
 
+  props.updateClassDTO(props);
   return (
     <>
-      {props.isLoading && (
+      {props.classDTO && (
         <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            background: "rgba(255, 255, 255, 0.8)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            zIndex: 9999,
-          }}
+          className="loading-overlay"
         >
            <ClipLoader color="#00BFFF" size={100} />
         </div>

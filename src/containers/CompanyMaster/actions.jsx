@@ -21,7 +21,6 @@ export const updateResponseDTO = (payload) => {
 };
 
 export const submitCompnayRequestForm = (payload) => {
-    console.log("pay : ",payload);
     return {
         type: ActionTypes.ADD_COMPANY_REQUEST,
         payload,
@@ -68,5 +67,11 @@ export const companyNameList = () => {
         payload:{
             companyType:null
         }
+    };
+};
+
+export const companyNameListForFilter = () => {
+    return {
+        type: ActionTypes.COMPANY_NAME_LIST_REQUEST_FOR_FILTER,
     };
 };

@@ -13,14 +13,12 @@ import { FetchApi } from "../../utilities/FetchService";
 import { loadingInterceptor } from "../../utilities/loading-interceptor";
 
 export function* apiforSubmitAddProductRequest({ payload }) {
-  console.log("pay : ", payload);
   let data = {
     url: "/api/productController/saveNewProduct",
     payload: JSON.stringify(payload.data),
     method: "POST",
   };
   const response = yield call(FetchApi, data);
-  console.log("res : ", response);
   if (response.code == 200 || response.code == 204) {
     toast.success(response.responseObj);
     yield put({
@@ -42,7 +40,6 @@ export function* apiforList({ payload }) {
     payload: null,
   };
   const response = yield call(FetchApi, data);
-  console.log("list res : ", response);
   if (response === null) {
     yield put({
       type: ActionTypes.PRODUCT_LIST_RESPONSE,

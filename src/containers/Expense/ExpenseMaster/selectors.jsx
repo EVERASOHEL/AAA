@@ -23,3 +23,12 @@ export const currentPageSize = () =>
 
 export const getCompnayNameList = () =>
   createSelector(stateSelector, (bstate) => bstate.companyNameList);
+
+export const expenselist = () =>
+  createSelector(stateSelector, (bstate) => bstate.expenselist);
+
+export const expensecategorylist = () =>
+  createSelector(stateSelector, (bstate) => bstate.expensecategorylist);
+
+export const expenseCategoryNameList = () =>
+  createSelector(stateSelector, (bstate) => bstate.expenseCategoryNameList);

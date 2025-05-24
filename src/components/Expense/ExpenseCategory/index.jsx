@@ -42,8 +42,9 @@ export default class AddExpenseCategoryModel extends React.Component {
   componentDidMount() {}
 
   render() {
-    const { classDTO, handleClassDTO, open, isModelOpen, getCompnayNameList } =
+    const { classDTO, handleClassDTO, open, isModelOpen, expenseCompnayNameList } =
       this.props;
+      
     return (
       <Dialog open={open} maxWidth="md">
         <DialogTitle>
@@ -57,76 +58,88 @@ export default class AddExpenseCategoryModel extends React.Component {
             />
           </div>
         </DialogTitle>
-        <DialogContent style={{ maxHeight: "400px" }}>
-          <Card style={{ padding: "20px", maxWidth: "400px" }}>
-            <div style={{ marginBottom: "20px" }}>
-              <label>Select Company:</label>
-              <SingleSelect
-                placeholder="Select Company"
-                label={
-                  <span>
-                    Select Company<span style={{ color: "red" }}>*</span>
-                  </span>
-                }
-                keyOfData="title"
-                value={
-                  (getCompnayNameList || []).find(
-                    (element) => element === (classDTO.companyId || "")
-                  ) || ""
-                }
-                options={(getCompnayNameList || []).map(
-                    (element) => element.title
+        <DialogContent style={{ maxHeight: "600px" }}>
+          <div className="container-fluid">
+            <Card style={{ padding: "20px", width: "500px" }}>
+              <div style={{ display: "flex", }}>
+                <div style={{width:"-webkit-fill-available",justifyContent:"space-between"}}>
+                  <SingleSelect
+                    placeholder="Select Company"
+                    label={
+                      <span>
+                        Select Company<span style={{ color: "red" }}>*</span>
+                      </span>
+                    }
+                    keyOfData="title"
+                    value={
+                      (
+                        (expenseCompnayNameList || []).find(
+                          (element) =>
+                            element.value === (classDTO.companyId || "")
+                        ) || {}
+                      ).title || ""
+                    }
+                    options={(expenseCompnayNameList || []).map(
+                      (element) => element.title
+                    )}
+                    onChange={(event, value) => {
+                      const selectedCompanyId =
+                        (
+                          expenseCompnayNameList.find(
+                            (element) => element.title == value
+                          ) || {}
+                        ).value || "";
+                      handleClassDTO("companyId", selectedCompanyId);
+                    }}
+                  />
+                  {classDTO.compayNameError && (
+                    <label className="error">{classDTO.compayNameError}</label>
                   )}
-                onChange={(event, value) => {
-                  handleClassDTO("companyId", value);
-                }}
-              />
-              {classDTO.compayNameError && (
-                <label className="error">{classDTO.compayNameError}</label>
-              )}
-            </div>
+                </div>
 
-            <div style={{ marginBottom: "20px" }}>
-              <label>Expense Name:</label>
-              <TextFieldOutlined
-                name="expenseName"
-                id="expenseName"
-                placeholder="Enter Expense Name"
-                variant="outlined"
-                handleChange={(event) => {
-                  handleClassDTO("categoryName", event.target.value);
-                }}
-                value={classDTO.categoryName}
-              />
-              {classDTO.categoryNameError && (
-                <label className="error" style={{ height: "auto" }}>
-                  {classDTO.companyNameError}
-                </label>
-              )}
-            </div>
+                <div style={{width:"-webkit-fill-available",marginLeft:"20px"}}>
+                  <TextFieldOutlined
+                    name="expenseName"
+                    id="expenseName"
+                    label={"Expense Name"}
+                    placeholder="Enter Expense Name"
+                    variant={"outlined"}
+                    handleChange={(event) => {
+                      handleClassDTO("categoryName", event.target.value);
+                    }}
+                    value={classDTO.categoryName}
+                  />
+                  {classDTO.categoryNameError && (
+                    <label className="error" style={{ height: "auto" }}>
+                      {classDTO.categoryNameError}
+                    </label>
+                  )}
+                </div>
+              </div>
 
-            <div style={{ marginBottom: "20px" }}>
-              <label>Description:</label>
-              <textarea
-                name="description"
-                placeholder="Enter expense description"
-                variant="outlined"
-                id="exampleFormControlTextarea1"
-                maxLength={1000}
-                rows="3"
-                style={{ width: "100%", padding: "10px", marginTop: "5px" }}
-                onChange={(event) => {
-                  handleClassDTO("description", event.target.value);
-                }}
-                value={classDTO.description || ""}
-              ></textarea>
-              {classDTO.descriptionError && (
-                <label className="error" style={{ marginTop: "5px" }}>
-                  {classDTO.descriptionError}
-                </label>
-              )}
-            </div>
-          </Card>
+              <div style={{ marginBottom: "20px",marginTop:"5px" }}>
+                <label style={{color:"black",fontSize:"14px"}}>Expense Description</label>
+                <textarea
+                  name="description"
+                  placeholder="Enter expense description"
+                  variant="outlined"
+                  id="exampleFormControlTextarea1"
+                  maxLength={1000}
+                  rows="3"
+                  style={{ width: "100%", padding: "10px", marginTop: "5px" }}
+                  onChange={(event) => {
+                    handleClassDTO("description", event.target.value);
+                  }}
+                  value={classDTO.description || ""}
+                ></textarea>
+                {classDTO.descriptionError && (
+                  <label className="error" style={{ marginTop: "5px" }}>
+                    {classDTO.descriptionError}
+                  </label>
+                )}
+              </div>
+            </Card>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button
@@ -141,7 +154,7 @@ export default class AddExpenseCategoryModel extends React.Component {
             variant="contained"
             size="small"
             color="success"
-            onClick={() => this.props.handleChangeSave("all")}
+            onClick={() => this.props.handleChangeSave("all","ExpenseCategory")}
           >
             Save
           </Button>

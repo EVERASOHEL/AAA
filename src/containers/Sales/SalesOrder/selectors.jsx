@@ -36,8 +36,20 @@ export const currentPageSize = () =>
 export const getupdateforcompanyOrderRowData = () =>
   createSelector(stateSelector, (bstate) => bstate.companyOrderDetailsRowData);
 
+export const paymentHistoryData = () =>
+  createSelector(stateSelector, (bstate) => bstate.paymentHistoryData);
+
 export const getPdfData = () =>
   createSelector(stateSelector, (bstate) => bstate.pdfData);
 
 export const getPdfStatus = () =>
   createSelector(stateSelector, (bstate) => bstate.isOpenPdf);
+
+export const getPaymentModelStatus = () =>
+  createSelector(stateSelector, (bstate) => bstate.isPaymentModelOpen);
+
+export const getAllTypeCompanyNameList = () =>
+  createSelector(stateSelector, (bstate) => bstate.allTypeCompanyNameList);
+
+export const handleSaveSuccess = () =>
+  createSelector(stateSelector, (bstate) => bstate.saveSuccess);

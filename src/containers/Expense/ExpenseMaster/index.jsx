@@ -28,13 +28,15 @@ import reducer from "./reducer";
 import saga from "./saga";
 import * as selectors from "./selectors";
 
-import HtmlComponent from "../../../components/CompanyMaster";
+import HtmlExpenseComponent from "../../../components/Expense/ExpenseMaster";
+import HtmlExpenseCategoryComponent from "../../../components/Expense/ExpenseCategory";
 import isNullOrIsEmptyOrIsUndefined from "../../../utilities/CommonValidator";
 import * as commonFunction from "../../../utilities/CommonValidator";
 import { makeStyles } from "@mui/styles";
 import "./style.scss";
 import { toast } from "react-toastify";
 import * as Buttons from "../../../web/Buttons";
+import SwitchWithMultipleOption from "../../../web/switchWithMultipleOption";
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -57,8 +59,8 @@ const index = (props) => {
 
   useEffect(() => {
     // Anything in here is fired on component mount.
-    props.listRequest({ page: 0, size: 20 });
-    props.companyNameList();
+    props.listRequestForExpense({ page: 0, size: 20 });
+    // props.companyNameList();
     return () => {
       // Anything in here is fired on component unmount.
     };
@@ -92,21 +94,6 @@ const index = (props) => {
       }
     }
 
-    // else if(classDTO.phoneNo.toString().length!==12){
-    //   classDTO.phoneNoError = "Please enter 12 number of phone no.";
-    // }
-    // if (key === "all" || key === "phoneNo") {
-    //   if (isNullOrIsEmptyOrIsUndefined(classDTO.phoneNo)) {
-    //     classDTO.phoneNoError = "Please enter phone number";
-    //     classDTO.isValidationSuccess = false;
-    //   } else if (!commonFunction.isNotEmptyAndValidNumber(classDTO.phoneNo)) {
-    //     classDTO.isValidationSuccess = false;
-    //     classDTO.phoneNoError = "Please enter valid number";
-    //   } else {
-    //     classDTO.phoneNoError = "";
-    //   }
-    // }
-
     if (key === "all" || key === "address") {
       if (isNullOrIsEmptyOrIsUndefined(classDTO.address)) {
         classDTO.addressError = "Please enter address";
@@ -125,35 +112,105 @@ const index = (props) => {
       }
     }
 
-    // if (key === "all") {
-    //   if (
-    //     isNullOrIsEmptyOrIsUndefined(classDTO.companyGstNo) &&
-    //     isNullOrIsEmptyOrIsUndefined(classDTO.companyPanNumber)
-    //   ) {
-    //     toast.error("Please insert the GST Number or Pan number.");
-    //     classDTO.isValidationSuccess = false;
-    //   }
-    // }
+    return classDTO;
+  };
 
-    // if (key === "all" || key === "companyGstNo") {
-    //   if (isNullOrIsEmptyOrIsUndefined(classDTO.companyGstNo)) {
-    //     classDTO.companyGstNoError = "Please enter Gst No";
-    //     classDTO.isValidationSuccess = false;
-    //   } else {
-    //     classDTO.companyGstNoError = "";
-    //   }
-    // }
+  const handleExpenseCategoryValidation = (key, classDTO) => {
+    classDTO.isValidationSuccess = true;
+
+    if (key === "all" || key === "companyId") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.companyId)) {
+        classDTO.compayNameError = "Please select expense company.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.compayNameError = "";
+      }
+    }
+
+    if (key === "all" || key === "categoryName") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.categoryName)) {
+        classDTO.categoryNameError = "Please enter expense name.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.categoryNameError = "";
+      }
+    }
+
+    if (key === "all" || key === "description") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.description)) {
+        classDTO.descriptionError = "Please enter expense description.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.descriptionError = "";
+      }
+    }
 
     return classDTO;
   };
 
-  function handleClassDTO(key, value) {
+  const handleExpenseValidtion = (key, classDTO) => {
+    classDTO.isValidationSuccess = true;
+
+    if (key === "all" || key === "expenseCategoryId") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.expenseCategoryId)) {
+        classDTO.expenseCategoryIdError = "Please select expense name.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.expenseCategoryIdError = "";
+      }
+    }
+
+    if (key === "all" || key === "expenseAmount") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.expenseAmount)) {
+        classDTO.expenseAmountError = "Please enter expense amount.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.expenseAmountError = "";
+      }
+    }
+
+    if (key === "all" || key === "paymentMethod") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.paymentMethod)) {
+        classDTO.paymentMethodError = "Please select payment method.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.paymentMethodError = "";
+      }
+    }
+
+    if (key === "all" || key === "expenseDate") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.expenseDate)) {
+        classDTO.expenseDateError = "Please select expense date.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.expenseDateError = "";
+      }
+    }
+
+    if (key === "all" || key === "description") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.description)) {
+        classDTO.categoryNameError = "Please enter expense description.";
+        classDTO.isValidationSuccess = false;
+      } else {
+        classDTO.categoryNameError = "";
+      }
+    }
+
+    return classDTO;
+  };
+
+  function handleClassDTO(key, value, selectedOption) {
     var classDTO = { ...props.classDTO };
     switch (key) {
       default:
         classDTO[key] = value;
     }
-    classDTO = handleValidation(key, classDTO);
+    if (classDTO.ExpenseType == "Expense") {
+      classDTO = handleExpenseValidtion(key, classDTO);
+    } else {
+      classDTO = handleExpenseCategoryValidation(key, classDTO);
+    }
+
     props.updateClassDTO(classDTO);
   }
 
@@ -161,38 +218,65 @@ const index = (props) => {
     props.isModelOpenRequest(isOpen);
   }
 
-  function handleChangeSave(key) {
+  function handleChangeSave(key, selectedOption) {
     var classDTO = { ...props.classDTO };
-    var {submitCompnayRequestForm} = props;
-    classDTO = handleValidation(key, classDTO);
-    if (classDTO.isValidationSuccess === true) {
-      let finalDTO = {
-        id: classDTO.id,
-        companyType: classDTO.companyType,
-        companyName: classDTO.companyName,
-        address: classDTO.address,
-        phoneNo: classDTO.phoneNo,
-        stateName: classDTO.stateName,
-        companyGstNo: classDTO.companyGstNo,
-        companyPanNumber: classDTO.companyPanNumber,
-      };
-      submitCompnayRequestForm(finalDTO);
-    } else {
-      props.updateClassDTO(classDTO);
+
+    var { submitExpenseRequestForm, submitExpenseCategoryRequestForm } = props;
+
+    if (selectedOption == "Expense") {
+      classDTO = handleExpenseValidtion(key, classDTO);
+      if (classDTO.isValidationSuccess === true) {
+        let finalDTO = {
+          expenseId: classDTO.expenseId,
+          expenseCategoryId: classDTO.expenseCategoryId,
+          expenseDate: classDTO.expenseDate,
+          expenseAmount: classDTO.expenseAmount,
+          description: classDTO.description,
+          paymentMethod: classDTO.paymentMethod,
+        };
+        submitExpenseRequestForm(finalDTO);
+      } else {
+        props.updateClassDTO(classDTO);
+      }
+    } else if (selectedOption == "ExpenseCategory") {
+      classDTO = handleExpenseCategoryValidation(key, classDTO);
+      if (classDTO.isValidationSuccess === true) {
+        let finalDTO = {
+          expenseCategoryId: classDTO.expenseCategoryId,
+          companyId: classDTO.companyId,
+          categoryName: classDTO.categoryName,
+          description: classDTO.description,
+        };
+        submitExpenseCategoryRequestForm(finalDTO);
+      } else {
+        props.updateClassDTO(classDTO);
+      }
     }
   }
 
-  function CompnayMasterRequest() {
+  function ModelRequest() {
     return (
       <>
-        {props.open === true ? (
-          <HtmlComponent
+        {props.open === true && props.classDTO.ExpenseType == "Expense" ? (
+          <HtmlExpenseComponent
             {...props}
             handleClassDTO={handleClassDTO}
             classDTO={props.classDTO}
             open={props.open}
             isModelOpen={isModelOpen}
             handleChangeSave={handleChangeSave}
+            expenseCategoryNameList={props.expenseCategoryNameList}
+          />
+        ) : props.open === true &&
+          props.classDTO.ExpenseType == "ExpenseCategory" ? (
+          <HtmlExpenseCategoryComponent
+            {...props}
+            handleClassDTO={handleClassDTO}
+            classDTO={props.classDTO}
+            open={props.open}
+            isModelOpen={isModelOpen}
+            handleChangeSave={handleChangeSave}
+            expenseCompnayNameList={props.expenseCompnayNameList}
           />
         ) : null}
       </>
@@ -218,44 +302,21 @@ const index = (props) => {
             props.openEditModel(classDTO);
           }}
         />
-        <Buttons.DeleteButton
-          onClick={() => {
-            props.deleteCompany(data.id);
-          }}
-        />
-
-        {/* <Edit
-          className={classes.iconButton}
-          onClick={() => {
-            let classDTO = {
-              id: data.id,
-              companyName: data.companyName,
-              address: data.address,
-              phoneNo: data.phoneNo,
-              stateName: data.stateName,
-              companyGstNo: data.companyGstNo,
-            };
-            props.openEditModel(classDTO);
-          }}
-        /> */}
-        {/* <Delete
-          className={classes.iconButton}
-          onClick={()=>{
-            props.deleteCompany(data.id);
-          }}
-        /> */}
       </>
     );
   }
 
   function handlechangelistPagination(payload) {
-    props.listRequest(payload);
+    if (props.classDTO.ExpenseType == "Expense") {
+      props.listRequestForExpense(payload);
+    } else {
+      props.listRequestForExpenseCategory(payload);
+    }
   }
 
-  // render() {
   return (
     <>
-      {CompnayMasterRequest()}
+      {ModelRequest()}
       <div style={{ marginTop: "15px" }}>
         <div style={{ display: "flex" }}>
           <Container maxWidth="lg">
@@ -314,6 +375,42 @@ const index = (props) => {
                       </Grid>
                     </Grid>
                   </Box>
+                  <Typography
+                    textAlign="-webkit-right"
+                    style={{ width: "30%" }}
+                  >
+                    <SwitchWithMultipleOption
+                      component="ExpenseType"
+                      options={[
+                        { displayKey: "Expense", value: "Expense" },
+                        {
+                          displayKey: "ExpenseCategory",
+                          value: "ExpenseCategory",
+                        },
+                      ]}
+                      displayKey={"displayKey"}
+                      value={[
+                        { displayKey: "Expense", value: "Expense" },
+                        {
+                          displayKey: "ExpenseCategory",
+                          value: "ExpenseCategory",
+                        },
+                      ].find(
+                        (element) =>
+                          element.value === props.classDTO.ExpenseType
+                      )}
+                      onChange={(value) => {
+                        handleClassDTO("ExpenseType", value.value);
+                        if (value.value === "ExpenseCategory") {
+                          props.companyNameList({ companyType: "Expense" });
+                          props.listRequestForExpenseCategory({
+                            page: 0,
+                            size: 20,
+                          });
+                        }
+                      }}
+                    />
+                  </Typography>
                   <Typography textAlign="-webkit-right">
                     <Button
                       className="addproduct"
@@ -322,55 +419,87 @@ const index = (props) => {
                       sx={{ bgcolor: "#9fa8da", color: "ButtonHighlight" }}
                       startIcon={<AssignmentIcon />}
                       // onClick={() => this.setState({ open: true })}
-                      onClick={() => isModelOpen(true)}
+                      onClick={() => {
+                        isModelOpen(true);
+                        if (props.classDTO.ExpenseType == "Expense") {
+                          props.listRequestForExpenseNameCategory();
+                        }
+                      }}
                     >
-                      Add Company
+                      {props.classDTO.ExpenseType == "Expense"
+                        ? "Expense Request"
+                        : "Expense Category Request"}
                     </Button>
                   </Typography>
                 </div>
                 <hr />
-                <Evelpractice
-                  dataList={props.companylist}
-                  currentPage={props.currentPage}
-                  currentPageSize={props.currentPageSize}
-                  handlechangelistPagination={handlechangelistPagination}
-                  headers={[
-                    { title: "No" },
-                    { title: "Company Name" },
-                    // { title: "Address" },
-                    { title: "Company Type" },
-                    { title: "Phone No" },
-                    { title: "State" },
-                    { title: "GST No" },
-                    { title: "Action" },
-                  ]}
-                  keyMapping={[
-                    {
-                      key: "No",
-                    },
-                    {
-                      key: "companyName",
-                    },
-                    // {
-                    //   key: "address",
-                    // },
-                    {
-                      key: "companyType",
-                    },
-                    {
-                      key: "phoneNo",
-                    },
-                    {
-                      key: "stateName",
-                    },
-                    {
-                      key: "companyGstNo",
-                    },
-                    {
-                      evalFunction: ActionFunction,
-                    },
-                  ]}
-                />
+                {props.classDTO.ExpenseType == "ExpenseCategory" ? (
+                  <Evelpractice
+                    dataList={props.expensecategorylist}
+                    currentPage={props.currentPage}
+                    currentPageSize={props.currentPageSize}
+                    handlechangelistPagination={handlechangelistPagination}
+                    headers={[
+                      { title: "No" },
+                      { title: "Company Name" },
+                      { title: "Category Name" },
+                      { title: "Description" },
+                      { title: "Action" },
+                    ]}
+                    keyMapping={[
+                      {
+                        key: "No",
+                      },
+                      {
+                        key: "companyName",
+                      },
+                      {
+                        key: "categoryName",
+                      },
+                      {
+                        key: "description",
+                      },
+                      {
+                        evalFunction: ActionFunction,
+                      },
+                    ]}
+                  />
+                ) : (
+                  <Evelpractice
+                    dataList={props.expenselist}
+                    currentPage={props.currentPage}
+                    currentPageSize={props.currentPageSize}
+                    handlechangelistPagination={handlechangelistPagination}
+                    headers={[
+                      { title: "No" },
+                      { title: "Expense Name" },
+                      { title: "Expense Date" },
+                      { title: "Expense Amount" },
+                      { title: "Payment Method" },
+                      { title: "Action" },
+                    ]}
+                    keyMapping={[
+                      {
+                        key: "No",
+                      },
+                      {
+                        key: "expenseName",
+                      },
+                      {
+                        key: "expenseDateString",
+                      },
+                      {
+                        key: "expenseAmount",
+                      },
+                      {
+                        key: "paymentMethod",
+                      },
+                      {
+                        evalFunction: ActionFunction,
+                      },
+                    ]}
+                  />
+                )}
               </CardContent>
             </Card>
           </Container>
@@ -378,7 +507,6 @@ const index = (props) => {
       </div>
     </>
   );
-  // }
 };
 
 const mapStateToProps = () => {
@@ -386,10 +514,12 @@ const mapStateToProps = () => {
     classDTO: selectors.getClassDTO(),
     responseDTO: selectors.getResponseDTO(),
     open: selectors.open(),
-    companylist: selectors.companylist(),
     currentPage: selectors.currentPage(),
     currentPageSize: selectors.currentPageSize(),
-    getCompnayNameList: selectors.getCompnayNameList(),
+    expenseCompnayNameList: selectors.getCompnayNameList(),
+    expenselist: selectors.expenselist(),
+    expensecategorylist: selectors.expensecategorylist(),
+    expenseCategoryNameList: selectors.expenseCategoryNameList(),
   });
 };
 
@@ -419,8 +549,23 @@ const mapDispatchToProps = (dispatch) => {
     deleteCompany: (payload) => {
       dispatch(actions.deleteCompany(payload));
     },
-    companyNameList: () => {
-      dispatch(actions.companyNameList());
+    submitExpenseRequestForm: (payload) => {
+      dispatch(actions.submitExpenseRequestForm(payload));
+    },
+    submitExpenseCategoryRequestForm: (payload) => {
+      dispatch(actions.submitExpenseCategoryRequestForm(payload));
+    },
+    listRequestForExpense: (payload) => {
+      dispatch(actions.listRequestForExpense(payload));
+    },
+    listRequestForExpenseCategory: (payload) => {
+      dispatch(actions.listRequestForExpenseCategory(payload));
+    },
+    companyNameList: (payload) => {
+      dispatch(actions.companyNameList(payload));
+    },
+    listRequestForExpenseNameCategory: () => {
+      dispatch(actions.listRequestForExpenseNameCategory());
     },
   };
 };

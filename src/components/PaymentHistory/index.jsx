@@ -68,19 +68,18 @@ const index = (props) => {
     };
   }, []);
 
-  const { HistoryData, paymentHistoryModel, setPaymentHistoryModelSetValue } =
+  const { HistoryData, paymentHistoryModel, setPaymentHistoryModelSetValue,title } =
     props;
 
   //  belove code for vendor
 
-  console.log("history");
   const classes = useStyles();
   return (
     <Dialog open={paymentHistoryModel} maxWidth="md">
       <DialogTitle>
         {" "}
         <div className="dialogheaderstyle">
-          <Typography variant="h5">Vendor Payment History</Typography>
+          <Typography variant="h5">{title}</Typography>
           <Buttons.CloseButton
             onClick={() => {
               setPaymentHistoryModelSetValue(false);

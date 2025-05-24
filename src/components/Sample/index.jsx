@@ -24,7 +24,6 @@ export default class index extends Component {
             handleClassDTO,
             handleButtons,
         } = this.props;
-        console.log("ww");
         return (
             <div>
                 <p>Sample Page</p>

@@ -20,6 +20,10 @@ import "./index.css";
 import ReactDOM from 'react-dom';
 import App from './App';
 import WebFont from 'webfontloader';
+import { Roboto } from 'google-fonts'; // Import Roboto font
+import 'bootstrap/dist/css/bootstrap.min.css';
+import GlobalSpinnerWrapper from "./utilities/Spinner";
+import SendMailSpinner from "./utilities/DocumentShareSpinner";
 
 WebFont.load({
   google: {
@@ -30,11 +34,13 @@ WebFont.load({
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     {/* <div
-      style={{
+      style={{  
         display: "flex",
       }}
     > */}
     {/* <BrowserRouter> */}
+    <GlobalSpinnerWrapper />
+    <SendMailSpinner />
     <React.StrictMode>
       <App />
     </React.StrictMode>

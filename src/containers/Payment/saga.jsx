@@ -9,7 +9,6 @@ import { loadingInterceptor } from "../../utilities/loading-interceptor";
 import * as list from "../purchase/PurchaseOrder/saga";
 
 export function* apiforsubmitPaymentRequest({ payload }) {
-  console.log("payload : ",payload);
   let data = {
     url: "/api/paymentController/savevendorpayment",
     payload: JSON.stringify(payload),
@@ -30,7 +29,6 @@ export function* apiforsubmitPaymentRequest({ payload }) {
 }
 
 export default function* root() {
-  console.log("new");
   yield all([
     takeLatest(ActionTypes.PAYMENT_REQUEST,loadingInterceptor,apiforsubmitPaymentRequest),
     takeLatest(ActionTypes.PAYMENT_RESPONSE,loadingInterceptor,list.apiforSalesOrderList),

@@ -21,7 +21,6 @@ export const updateResponseDTO = (payload) => {
 };
 
 export const submitCompnayRequestForm = (payload) => {
-    console.log("pay : ",payload);
     return {
         type: ActionTypes.ADD_COMPANY_REQUEST,
         payload,
@@ -62,11 +61,47 @@ export const deleteCompany = (data) => {
     };
 };
 
-export const companyNameList = () => {
+export const companyNameList = (payload) => {
     return {
         type: ActionTypes.COMPANY_NAME_LIST_REQUEST,
+        payload,
+      };
+};
+
+export const submitExpenseRequestForm = (payload) => {
+    return {
+        type: ActionTypes.ADD_EXPENSE_REQUEST,
+        payload,
+    };
+};
+
+export const submitExpenseCategoryRequestForm = (payload) => {
+    return {
+        type: ActionTypes.ADD_EXPENSE_CATEGORY_REQUEST,
+        payload,
+    };
+};
+
+export const listRequestForExpense = (data) => {
+    return {
+        type: ActionTypes.EXPENSE_LIST_REQUEST,
         payload:{
-            companyType:null
+            data,
         }
+    };
+};
+
+export const listRequestForExpenseCategory = (data) => {
+    return {
+        type: ActionTypes.EXPENSE_CATEGORY_LIST_REQUEST,
+        payload:{
+            data,
+        }
+    };
+};
+
+export const listRequestForExpenseNameCategory = () => {
+    return {
+        type: ActionTypes.EXPENSE_CATEGORY_NAME_LIST_REQUEST
     };
 };

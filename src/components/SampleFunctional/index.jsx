@@ -24,8 +24,6 @@ const index = (props) => {
   //   // Anything in here is fired on component did update.
   // });
 
-  // console.log("name : ",classDTO.name);
-  // console.log("classDTO : ",classDTO);
 
   const { classDTO, handleClassDTO, handleButtons, handleChangeProduct } =
     props;

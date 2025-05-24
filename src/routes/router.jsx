@@ -116,13 +116,13 @@ const routes = [
         icon: <img src={expenseImg} className={'img'} alt="" srcset="" />,
         // icon: <SavingsRoundedIcon/>,
       },
-      {
-        path: '/expense/expenseCategory',
-        component: ExpenseCategory,
-        exact: true,
-        title: 'Expense Category',
-        icon: <img src={expenseCategoryImg} className={'img'} alt="" srcset="" />,
-      },
+      // {
+      //   path: '/expense/expenseCategory',
+      //   component: ExpenseCategory,
+      //   exact: true,
+      //   title: 'Expense Category',
+      //   icon: <img src={expenseCategoryImg} className={'img'} alt="" srcset="" />,
+      // },
     ],
   },
   {

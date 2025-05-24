@@ -15,6 +15,7 @@ import saga from "./saga";
 import * as selectors from "./selectors";
 
 import HtmlComponent from "../../../components/Sales/SalesOrder";
+import PaymentHistoryComponent from "../../../components/PaymentHistory";
 import Tabelweb from "../../../components/GenericTable/evelpractice";
 import { Add, Close, SearchOffSharp } from "@mui/icons-material";
 import AutocompleteTextField from "../../../web/AutocompleteTextField/";
@@ -44,7 +45,10 @@ import { toast } from "react-toastify";
 import { calculateGSTAmount } from "../../../utilities/CommonFunction";
 import * as Buttons from "../../../web/Buttons";
 import AlertModel from "../../../components/Models";
+import SendMailPopup from "../../../components/Models/email_Popup";
 import PdfViewer from "../../../web/viewPdf/PdfViewer";
+import { CONFIRMATION_MAIL_SEND } from "../../../utilities/CommonConstants";
+import AdvancedDataTable from "../../AdvancedDataTable";
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -59,17 +63,35 @@ const index = (props) => {
   const [isOpenPaymentModel, setisOpenPaymentModel] = useState(false);
   const [invoiceData, setInvoiceData] = useState({});
   const [confirmationMessage, setConfirmationMessage] = useState("");
+  const [isOpenPaymentHistoryModel, setisOpenPaymentHistoryModel] =
+    useState(false);
   const [mailData, setMailData] = useState({});
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [mailconfirmModelisOpen, setmailconfirmModelisOpen] = useState(false);
   useEffect(() => {
     // Anything in here is fired on component mount.
-    props.apiforsalesorderlist({ page: 0, size: 20, companyType: "Customer" });
+    // props.apiforsalesorderlist({ page: 0, size: 50, companyType: "Customer" });
     props.productListRequest();
     props.companyNameList("Customer");
+    props.companyNameListForFilter({ companyType: "Customer" });
+
     // props.updateClassDTO({"orderDate":new Date()});
     return () => {
       // Anything in here is fired on component unmount.
     };
-  }, [confirmModelisOpen]);
+  }, [confirmModelisOpen,mailconfirmModelisOpen]);
+
+  // useEffect(() => {}, []);
+
+  useEffect(() => {
+    // props.listRequest({ page: 0, size: 40});
+    // props.companyNameListForFilter();
+    if (props.saveSuccess) {
+      setRefreshKey((prevKey) => prevKey + 1);
+      props.resetSaveSuccessFlag()
+    }
+    return () => {};
+  }, [props.saveSuccess]);
 
   const classes = useStyles();
   const initialvalues = {
@@ -132,59 +154,63 @@ const index = (props) => {
     return salesClassDTO;
   };
 
-  const handleClassSalesDTO = (key, value) => {
-    var salesClassDTO = { ...props.salesClassDTO };
+  // const handleClassSalesDTO = (key, value) => {
+  //   var salesClassDTO = { ...props.salesClassDTO };
 
-    switch (key) {
-      case "productName": {
-        const object = props.productList.filter((x) => x.productName == value);
-        const price = object.map((x) => x.sellingPrice);
-        const totalStock = object.map((x) => x.totalStock);
-        // const productType = object.map((x) => x.productType);
-        salesClassDTO[key] = value;
-        if (isNullOrIsEmptyOrIsUndefined(value)) {
-          salesClassDTO = {};
-        } else {
-          if (totalStock[0] > 0) {
-            salesClassDTO["quantity"] = "";
-            salesClassDTO["price"] = parseFloat(price);
-            salesClassDTO["productType"] = object[0].productType;
-            salesClassDTO["hsnCode"] = object[0].productHsn;
-          } else {
-            salesClassDTO.productNameError =
-              value + " Stock is 0 please add new stock.";
-            salesClassDTO.isValidationSuccess = false;
-          }
-        }
-        break;
-      }
+  //   switch (key) {
+  //     case "productName": {
+  //       const object = props.productList.filter((x) => x.productName == value);
+  //       const price = object.map((x) => x.sellingPrice);
+  //       const totalStock = object.map((x) => x.totalStock);
+  //       // const productType = object.map((x) => x.productType);
+  //       salesClassDTO[key] = value;
+  //       if (isNullOrIsEmptyOrIsUndefined(value)) {
+  //         salesClassDTO = {};
+  //       } else {
+  //         if (totalStock[0] > 0) {
+  //           salesClassDTO["totalStock"] = totalStock[0];
+  //           salesClassDTO["quantity"] = "";
+  //           salesClassDTO["price"] = parseFloat(price);
+  //           salesClassDTO["productType"] = object[0].productType;
+  //           salesClassDTO["hsnCode"] = object[0].productHsn;
+  //           salesClassDTO.productNameError = "";
+  //           salesClassDTO.isValidationSuccess = true;
+  //         } else {
+  //           salesClassDTO.productNameError =
+  //             value + " Stock is 0 please add new stock.";
+  //           salesClassDTO.isValidationSuccess = false;
+  //           salesClassDTO["totalStock"] = null;
+  //         }
+  //       }
+  //       break;
+  //     }
 
-      case "priceAndQun": {
-        if (
-          !isNullOrIsEmptyOrIsUndefined(salesClassDTO.quantity) &&
-          !isNullOrIsEmptyOrIsUndefined(salesClassDTO.price) &&
-          salesClassDTO.isValidationSuccess === true
-        ) {
-          const total =
-            parseFloat(salesClassDTO.quantity) *
-            parseFloat(salesClassDTO.price);
-          salesClassDTO["total"] = total;
-        }
-        if (
-          isNullOrIsEmptyOrIsUndefined(salesClassDTO.quantity) ||
-          isNullOrIsEmptyOrIsUndefined(salesClassDTO.price)
-        ) {
-          salesClassDTO["total"] = "";
-        }
-        break;
-      }
+  //     case "priceAndQun": {
+  //       if (
+  //         !isNullOrIsEmptyOrIsUndefined(salesClassDTO.quantity) &&
+  //         !isNullOrIsEmptyOrIsUndefined(salesClassDTO.price) &&
+  //         salesClassDTO.isValidationSuccess === true
+  //       ) {
+  //         const total =
+  //           parseFloat(salesClassDTO.quantity) *
+  //           parseFloat(salesClassDTO.price);
+  //         salesClassDTO["total"] = total;
+  //       }
+  //       if (
+  //         isNullOrIsEmptyOrIsUndefined(salesClassDTO.quantity) ||
+  //         isNullOrIsEmptyOrIsUndefined(salesClassDTO.price)
+  //       ) {
+  //         salesClassDTO["total"] = "";
+  //       }
+  //       break;
+  //     }
 
-      default:
-        salesClassDTO[key] = value;
-    }
-    salesClassDTO = salesValidation(key, salesClassDTO);
-    props.updateSalesClassDTO(salesClassDTO);
-  };
+  //     default:
+  //       salesClassDTO[key] = value;
+  //   }
+  //   salesClassDTO = salesValidation(key, salesClassDTO);
+  //   props.updateSalesClassDTO(salesClassDTO);
+  // };
 
   const deleteSalesClassDTO = (i) => {
     var salesClassListDTO = [...props.salesClassListDTO];
@@ -197,9 +223,9 @@ const index = (props) => {
   };
 
   const handleSalesClassListDTO = () => {
-    var salesClassDTO = { ...props.salesClassDTO };
-    var salesClassListDTO = { ...props.salesClassListDTO };
-    salesClassDTO = salesValidation("all", salesClassDTO);
+    // var salesClassDTO = { ...props.salesClassDTO };
+    // var salesClassListDTO = { ...props.salesClassListDTO };
+    // salesClassDTO = salesValidation("all", salesClassDTO);
     if (salesClassDTO.isValidationSuccess == true) {
       const newSalesDTO = {
         productName: salesClassDTO.productName,
@@ -274,6 +300,9 @@ const index = (props) => {
           toast.error("Please Insert at least one product details");
         }
         break;
+      case "companyName":
+        props.companyStateName({ companyName: value });
+        classDTO[key] = value;
       default:
         classDTO[key] = value;
     }
@@ -373,8 +402,12 @@ const index = (props) => {
     setconfirmModelisOpen(false);
   };
 
+  const handleCloseSendMailConfirmModel = () => {
+    setmailconfirmModelisOpen(false);
+  };
+
   const handleConfirmation = () => {
-    if (confirmationMessage === "Are You Sure You Want Send Mail?") {
+    if (confirmationMessage === CONFIRMATION_MAIL_SEND) {
       props.apiforSendMail(mailData);
       setMailData({});
     } else if (confirmationMessage === "Are You Sure Update Sales Order?") {
@@ -388,9 +421,34 @@ const index = (props) => {
     setconfirmModelisOpen(false);
   };
 
+  const handleMailConfirmation = (toEmail) => {
+    const updatedMailData = {
+      ...mailData,
+      toEmail,
+    };
+    props.apiforSendMail(updatedMailData);
+    setMailData({});
+    setmailconfirmModelisOpen(false);
+  };
+
   const handleViewPdf = (data) => {
     props.apiforViewPdf(data);
     // setOpenViewPdfModel(true);
+  };
+
+  const handleSendMail = (data) => {
+    const mailData = {
+      companyType: "Sales pdf",
+      companyName: data.companyName,
+      pdfName: `${data.voucherNo} - ${data.companyName}`,
+      voucherNo: data.voucherNo,
+      totalTaxableAmount: data.totalTaxableAmount,
+      orderDateString: data.orderDateString,
+    };
+
+    setMailData(mailData); // Set the mail data
+    setConfirmationMessage(CONFIRMATION_MAIL_SEND); // Set the confirmation message
+    setmailconfirmModelisOpen(true); // Open the mail confirmation popup
   };
 
   const ActionFunction = (data) => {
@@ -401,7 +459,6 @@ const index = (props) => {
           <Tooltip title="view pdf">
             <Buttons.ViewPdf
               onClick={() => {
-                console.log("viewpdf");
                 data = {
                   companyType: "Sales pdf",
                   companyName: data.companyName,
@@ -412,26 +469,41 @@ const index = (props) => {
               }}
             />
           </Tooltip>
-          <Buttons.PaymentButton
-            onClick={() => {
-              setisOpenPaymentModel(true);
-              setInvoiceData(data);
-            }}
-          />
+          <Tooltip title="Payment History">
+            <Buttons.History
+              onClick={() => {
+                props.apiforhistory(data.id);
+                setisOpenPaymentHistoryModel(true);
+              }}
+            />
+          </Tooltip>
+          {data.totalTaxableAmount != null &&
+          data.payAmount != null &&
+          data.totalTaxableAmount !== data.payAmount ? (
+            <Tooltip title="Add Vendor Payment">
+              <Buttons.PaymentButton
+                onClick={() => {
+                  props.isPaymentModelOpen(true);
+                  // setisOpenPaymentModel(true);
+                  setInvoiceData(data);
+                }}
+              />
+            </Tooltip>
+          ) : (
+            <div
+              className="blank-button"
+              style={{
+                width: "25px",
+                height: "25px",
+                marginLeft: "5px",
+                background: "transparent",
+              }}
+            />
+          )}
           <Tooltip title="send pdf via email">
             <Buttons.sendEmail
               onClick={() => {
-                data = {
-                  companyType: "Sales pdf",
-                  companyName: data.companyName,
-                  pdfName: data.voucherNo + " - " + data.companyName,
-                  voucherNo: data.voucherNo,
-                  totalTaxableAmount: data.totalTaxableAmount,
-                  orderDateString: data.orderDateString,
-                };
-                setMailData(data);
-                setConfirmationMessage("Are You Sure You Want Send Mail?");
-                setconfirmModelisOpen(true);
+                handleSendMail(data);
               }}
             />
           </Tooltip>
@@ -454,10 +526,48 @@ const index = (props) => {
     setisOpenPaymentModel(isOpen);
   };
 
+  const setPaymentHistoryModelSetValue = (modelValue) => {
+    setisOpenPaymentHistoryModel(modelValue);
+  };
+
   const handleClosePdf = () => {
     props.isOpenPdfModel(false);
     // setOpenViewPdfModel(false);
   };
+
+  const calllistapi = () => {
+    props.apiforsalesorderlist({ page: 0, size: 20, companyType: "Customer" });
+  };
+
+  const handleChangePaymentModel = (isPaymentModelClose) => {
+    props.isPaymentModelOpen(isPaymentModelClose);
+  };
+
+  const handleChangeSavePayment = (paymentData) => {
+    props.submitPaymentRequest(paymentData);
+  };
+
+  const setFilter = () => {
+    const filters = {
+      components: [
+        {
+          payloadKey: "companyName",
+          key: "companyName",
+          stateKey: "companyName",
+          displayKey: "companyName",
+          label: "Company Name",
+          component: "singleSelect",
+          values: props.allTypeCompanyNameList || [],
+        },
+      ],
+      url: "", // API endpoint for filtering
+      method: "GET", // HTTP method for the filter API
+    };
+
+    return filters;
+  };
+
+  const filters = setFilter();
 
   return (
     <>
@@ -470,7 +580,7 @@ const index = (props) => {
           classDTO={props.classDTO}
           // resetData={props.resetData}
           productList={props.productList}
-          handleClassSalesDTO={handleClassSalesDTO}
+          // handleClassSalesDTO={handleClassSalesDTO}
           salesClassDTO={props.salesClassDTO}
           handleSalesClassListDTO={handleSalesClassListDTO}
           salesClassListDTO={props.salesClassListDTO}
@@ -487,18 +597,35 @@ const index = (props) => {
           handleClose={handleCloseConfirmModel}
           handleConfirmation={handleConfirmation}
           message={confirmationMessage}
-          // message={"Are You Sure Update Sales Order?"}
-          // onConfirm={onconfirm}
         />
       ) : null}
-      {isOpenPaymentModel === true ? (
+      {mailconfirmModelisOpen === true ? (
+        <SendMailPopup
+          {...props}
+          open={mailconfirmModelisOpen}
+          handleClose={handleCloseSendMailConfirmModel}
+          handleMailConfirmation={handleMailConfirmation}
+          message={confirmationMessage}
+        />
+      ) : null}
+      {props.getPaymentModelOpenStatus === true ? (
         <PaymnetComponent
           {...props}
-          PaymentTypeNameHeader={"Vendor Payment"}
-          open={isModelPayemntOpen}
-          isPayemntModelOpen={isModelPayemntOpen}
-          modelOpen={isModelPayemntOpen}
+          PaymentTypeNameHeader={"Customer Payment"}
+          flagformodel="istrue"
+          calllistapi={calllistapi}
+          handleChangePaymentModel={handleChangePaymentModel}
+          getPaymentModelOpenStatus={props.getPaymentModelOpenStatus}
           invoiceData={invoiceData}
+          handleChangeSavePayment={handleChangeSavePayment}
+        />
+      ) : null}
+      {isOpenPaymentHistoryModel === true ? (
+        <PaymentHistoryComponent
+          paymentHistoryModel={isOpenPaymentHistoryModel}
+          setPaymentHistoryModelSetValue={setPaymentHistoryModelSetValue}
+          HistoryData={props.paymentHistoryData}
+          title={"Customer Payment History"}
         />
       ) : null}
       {props.isOpenPdf === true ? (
@@ -510,7 +637,43 @@ const index = (props) => {
           handleClosePdf={handleClosePdf}
         />
       ) : null}
-      <div style={{ marginTop: "15px" }}>
+      <AdvancedDataTable
+        key={refreshKey}
+        {...props}
+        url={"/api/salesOrderController/getSalesOrderList?companyType=Customer"}
+        headers={[
+          { title: "No" },
+          { title: "Order Date" },
+          { title: "Voucher No" },
+          { title: "Company Name" },
+          { evalFunction: merageTitleAmount },
+          { title: "Action" },
+        ]}
+        keyMapping={[
+          {
+            key: "No",
+          },
+          {
+            key: "orderDateString",
+          },
+          {
+            key: "voucherNo",
+          },
+          {
+            key: "companyName",
+          },
+          {
+            evalFunction: merageAmount,
+          },
+          {
+            evalFunction: ActionFunction,
+          },
+        ]}
+        title={"Sales Master"}
+        isModelOpen={isModelOpen}
+        filters={filters}
+      />
+      {/* <div style={{ marginTop: "15px" }}>
         <div style={{ display: "flex" }}>
           <Container maxWidth="lg">
             <Card sx={{ minWidth: 500, textAlign: "center" }}>
@@ -573,7 +736,7 @@ const index = (props) => {
                       Add Sales Order
                     </Button>
                   </Typography>
-                </div>
+                </div>  
                 <hr />
                 <Tabelweb
                   dataList={props.salesOrderList}
@@ -585,7 +748,7 @@ const index = (props) => {
                     { title: "Order Date" },
                     { title: "Voucher No" },
                     { title: "Company Name" },
-                    { title: "GST Type" },
+                    // { title: "GST Type" },
                     // { title: "Amount" },
                     { evalFunction: merageTitleAmount },
                     // { title: "Total Amount" },
@@ -606,9 +769,9 @@ const index = (props) => {
                     {
                       key: "companyName",
                     },
-                    {
-                      key: "gstType",
-                    },
+                    // {
+                    //   key: "gstType",
+                    // },
                     {
                       evalFunction: merageAmount,
                     },
@@ -621,7 +784,7 @@ const index = (props) => {
             </Card>
           </Container>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
@@ -639,8 +802,12 @@ const mapStateToProps = () => {
     currentPage: selectors.currentPage(),
     currentPageSize: selectors.currentPageSize(),
     companyOrderDetailsRowData: selectors.getupdateforcompanyOrderRowData(),
+    paymentHistoryData: selectors.paymentHistoryData(),
     pdfData: selectors.getPdfData(),
     isOpenPdf: selectors.getPdfStatus(),
+    getPaymentModelOpenStatus: selectors.getPaymentModelStatus(),
+    allTypeCompanyNameList: selectors.getAllTypeCompanyNameList(),
+    saveSuccess: selectors.handleSaveSuccess(),
   });
 };
 
@@ -685,11 +852,29 @@ const mapDispatchToProps = (dispatch) => {
     apiforSendMail: (payload) => {
       dispatch(actions.apiforSendMail(payload));
     },
+    apiforhistory: (payload) => {
+      dispatch(actions.apiforhistory(payload));
+    },
     apiforViewPdf: (payload) => {
       dispatch(actions.apiforViewPdf(payload));
     },
     isOpenPdfModel: (payload) => {
       dispatch(actions.isOpenPdfModel(payload));
+    },
+    isPaymentModelOpen: (payload) => {
+      dispatch(actions.isPaymentModelOpen(payload));
+    },
+    submitPaymentRequest: (payload) => {
+      dispatch(actions.submitPaymentRequest(payload));
+    },
+    companyNameListForFilter: (payload) => {
+      dispatch(actions.companyNameListForFilter(payload));
+    },
+    companyStateName: (payload) => {
+      dispatch(actions.companyStateName(payload));
+    },
+    resetSaveSuccessFlag: () => {
+      dispatch(actions.resetSaveSuccessFlag());
     },
   };
 };

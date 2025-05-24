@@ -59,7 +59,7 @@ const reducer = (stateDTO = initialState, action) => {
       return JSON.parse(JSON.stringify(state));
     }
 
-    case ActionTypes.ADD_COMPANY_RESPONSE: {
+    case ActionTypes.ADD_EXPENSE_RESPONSE: {
       state.open = action.payload.data || false;
       state.classDTO = {};
       // window.location.reload();
@@ -68,7 +68,6 @@ const reducer = (stateDTO = initialState, action) => {
 
     case ActionTypes.OPEN_EDIT_MODEL: {
       state.classDTO = action.payload.data || {};
-      console.log("action.payload.data : ", action.payload.data);
       state.open = true;
       return JSON.parse(JSON.stringify(state));
     }

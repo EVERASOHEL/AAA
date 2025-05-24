@@ -23,3 +23,9 @@ export const currentPageSize = () =>
 
 export const getCompnayNameList = () =>
   createSelector(stateSelector, (bstate) => bstate.companyNameList);
+
+export const handleSaveSuccess = () =>
+  createSelector(stateSelector, (bstate) => bstate.saveSuccess);
+
+export const getAllTypeCompanyNameList = () =>
+  createSelector(stateSelector, (bstate) => bstate.allTypeCompanyNameList);

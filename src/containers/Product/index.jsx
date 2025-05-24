@@ -32,6 +32,7 @@ import {
 } from "@mui/material";
 import { FaFilter } from "react-icons/fa";
 import { makeStyles } from "@mui/styles";
+import { MultipleSelect } from "../../web/TextField/MultipleSelect";
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -67,8 +68,9 @@ const index = (props) => {
   };
 
   function handleclassDTO(key, value) {
-    var classDTO = { ...this.props.classDTO };
+    var classDTO = { ...props.classDTO };
     classDTO[key] = value;
+    props.updateClassDTO(classDTO);
   }
 
   function ProductclassDTO(product) {
@@ -85,7 +87,6 @@ const index = (props) => {
         productType: x.productType,
       });
     });
-    console.log("1");
     submitProductRquestForm(finalDTO);
   }
 
@@ -147,6 +148,13 @@ const index = (props) => {
     );
   }
 
+  const employees = [
+    { id: 1, name: 'Alice' },
+    { id: 2, name: 'Bob' },
+    { id: 3, name: 'Charlie' },
+    { id: 4, name: 'David' }
+  ];
+
   return (
     <>
       {/* {this.state.open === true ? ( */}
@@ -164,7 +172,7 @@ const index = (props) => {
       <div style={{ marginTop: "15px" }}>
         <div style={{ display: "flex" }}>
           <Container maxWidth="lg">
-            <Card sx={{ minWidth: 500, textAlign: "center" }}>
+            <Card sx={{ minWidth: 800, textAlign: "center" }}>
               <CardContent>
                 <div className="twobuttonmanage">
                   <Typography textAlign="-webkit-left">
@@ -182,12 +190,41 @@ const index = (props) => {
                   </Typography>
                   <Box
                     className="card-shadow"
-                    sx={{ minWidth: 300 }}
+                    sx={{ minWidth: 500 }}
                     style={{ display: `${data.displayfilter}` }}
                   >
                     <Grid container spacing={2} className="filtergrid">
                       <Grid item xs={7}>
-                        <AutocompleteTextField width="200px" />
+                        {/* <AutocompleteTextField width="200px" /> */}
+                        <div className="form-check form-check-inline multi-sel-wdth">
+                          <MultipleSelect
+                            // disabled={
+                            //   !(
+                            //     classDTO.shortFallEmailEmployee &&
+                            //     classDTO.shortFallFrequency
+                            //   )
+                            // }
+                            options={(
+                              employees || []
+                            ).map((element) => element.name || "")}
+                            value={(
+                              (props.classDTO || []).shortFallEmailEmployeeList || []
+                            ).map((element) => element.name || "")}
+                            onChange={(event, value, reason) => {
+                              const selectedActiveEmployeeListWithID = (
+                                employees || []
+                              ).filter((element) =>
+                                (value || []).includes(element.name)
+                              );
+
+                              handleclassDTO(
+                                "shortFallEmailEmployeeList",
+                                selectedActiveEmployeeListWithID
+                              );
+                              // handleclassDTO("shortFallEmailEmployeeError", "");
+                            }}
+                          />
+                        </div>
                       </Grid>
                       <Grid item xs={3} style={{ textAlign: "left" }}>
                         <Button
@@ -244,7 +281,7 @@ const index = (props) => {
                     { title: "Selling Price" },
                     { title: "Cost Price" },
                     { title: "Hsc Code" },
-                    { title: "GST Type" },
+                    // { title: "GST Type" },
                     { title: "Product Type" },
                     { title: "Action" },
                   ]}
@@ -267,9 +304,9 @@ const index = (props) => {
                     {
                       key: "productHsn",
                     },
-                    {
-                      key: "gstPercentage",
-                    },
+                    // {
+                    //   key: "gstPercentage",
+                    // },
                     {
                       key: "productType",
                     },

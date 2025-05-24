@@ -171,12 +171,17 @@ const AutocompleteTextField = (props) => {
   return (
     <React.Fragment>
       <Autocomplete
-        // style={{paddingTop:"0.5",paddingBottom:"0.5",height:"32px"}}
-        // className={classes.autocomplete}
-        disablePortal
         blurOnSelect={true}
-        id="combo-box-demo"
-        options={options || []}
+        className={className}
+        id={id}
+        disableClearable={disableClearable ? true : false}
+        disabled={disabled ? true : false}
+        // readOnly={readOnly ? true : false}
+        style={style}
+        // filterOptions={
+        //   options.length > 200 ? filterOptions : createFilterOptions()
+        // }
+        filterSelectedOptions
         getOptionLabel={(option) => {
           if (keyOfData && option[keyOfData]) {
             return option[keyOfData] === null
@@ -186,15 +191,28 @@ const AutocompleteTextField = (props) => {
             return option === null ? "" : option.toString();
           }
         }}
+        getOptionDisabled={(option) => {
+          return (disabledOptions || []).some((element) => {
+            if (keyOfData && option[keyOfData]) {
+              return element[keyOfData] === option[keyOfData];
+            } else {
+              return element === option;
+            }
+          });
+        }}
         getOptionSelected={(option, value) => {
           return (
             (keyOfData ? option[keyOfData] : option) ===
             (keyOfValue ? value[keyOfValue] : value)
           );
         }}
+        loading={loading || false}
+        onBlur={onBlur}
         onChange={onChange}
-        //   sx={{width:300}}
-        sx={{ width: props.width }}
+        onFocus={onFocus}
+        onInputChange={onInputChange}
+        open={open}
+        options={options}
         renderInput={(params) => (
           <TextField
             {...params}

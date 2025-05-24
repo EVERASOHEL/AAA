@@ -66,61 +66,30 @@ const index = (props) => {
   const handleValidation = (key, classDTO) => {
     classDTO.isValidationSuccess = true;
 
-    if (key === "all" || key === "companyType") {
-      if (isNullOrIsEmptyOrIsUndefined(classDTO.companyType)) {
-        classDTO.companyTypeError = "Please select company type";
+    if (key === "all" || key === "companyId") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.companyId)) {
+        classDTO.compayNameError = "Please select company.";
         classDTO.isValidationSuccess = false;
       } else {
-        classDTO.companyTypeError = "";
+        classDTO.compayNameError = "";
       }
     }
 
-    if (key === "all" || key === "companyName") {
-      if (isNullOrIsEmptyOrIsUndefined(classDTO.companyName)) {
-        classDTO.companyNameError = "Please enter company name";
+    if (key === "all" || key === "categoryName") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.categoryName)) {
+        classDTO.categoryNameError = "Please enter expense name.";
         classDTO.isValidationSuccess = false;
-      } else if (
-        isNullOrIsEmptyOrIsUndefined(classDTO.id) &&
-        (props.getCompnayNameList || []).some(
-          (list) => (list.value || "") == classDTO.companyName
-        )
-      ) {
-        classDTO.companyNameError = "Company name already exists.";
       } else {
-        classDTO.companyNameError = "";
+        classDTO.categoryNameError = "";
       }
     }
 
-    // else if(classDTO.phoneNo.toString().length!==12){
-    //   classDTO.phoneNoError = "Please enter 12 number of phone no.";
-    // }
-    // if (key === "all" || key === "phoneNo") {
-    //   if (isNullOrIsEmptyOrIsUndefined(classDTO.phoneNo)) {
-    //     classDTO.phoneNoError = "Please enter phone number";
-    //     classDTO.isValidationSuccess = false;
-    //   } else if (!commonFunction.isNotEmptyAndValidNumber(classDTO.phoneNo)) {
-    //     classDTO.isValidationSuccess = false;
-    //     classDTO.phoneNoError = "Please enter valid number";
-    //   } else {
-    //     classDTO.phoneNoError = "";
-    //   }
-    // }
-
-    if (key === "all" || key === "address") {
-      if (isNullOrIsEmptyOrIsUndefined(classDTO.address)) {
-        classDTO.addressError = "Please enter address";
+    if (key === "all" || key === "description") {
+      if (isNullOrIsEmptyOrIsUndefined(classDTO.description)) {
+        classDTO.descriptionError = "Please enter expense description.";
         classDTO.isValidationSuccess = false;
       } else {
-        classDTO.addressError = "";
-      }
-    }
-
-    if (key === "all" || key === "stateName") {
-      if (isNullOrIsEmptyOrIsUndefined(classDTO.stateName)) {
-        classDTO.stateNameError = "Please select state";
-        classDTO.isValidationSuccess = false;
-      } else {
-        classDTO.stateNameError = "";
+        classDTO.descriptionError = "";
       }
     }
 
@@ -143,20 +112,16 @@ const index = (props) => {
 
   function handleChangeSave(key) {
     var classDTO = { ...props.classDTO };
-    var {submitCompnayRequestForm} = props;
+    var {submitExpenseCategoryRequestForm} = props;
     classDTO = handleValidation(key, classDTO);
     if (classDTO.isValidationSuccess === true) {
       let finalDTO = {
-        id: classDTO.id,
-        companyType: classDTO.companyType,
-        companyName: classDTO.companyName,
-        address: classDTO.address,
-        phoneNo: classDTO.phoneNo,
-        stateName: classDTO.stateName,
-        companyGstNo: classDTO.companyGstNo,
-        companyPanNumber: classDTO.companyPanNumber,
+        expenseCategoryId: classDTO.expenseCategoryId,
+        companyId: classDTO.companyId,
+        categoryName: classDTO.categoryName,
+        description: classDTO.description,
       };
-      submitCompnayRequestForm(finalDTO);
+      submitExpenseCategoryRequestForm(finalDTO);
     } else {
       props.updateClassDTO(classDTO);
     }
@@ -359,8 +324,8 @@ const mapDispatchToProps = (dispatch) => {
     updateResponseDTO: (payload) => {
       dispatch(actions.updateResponseDTO(payload));
     },
-    submitCompnayRequestForm: (payload) => {
-      dispatch(actions.submitCompnayRequestForm(payload));
+    submitExpenseCategoryRequestForm: (payload) => {
+      dispatch(actions.submitExpenseCategoryRequestForm(payload));
     },
     isModelOpenRequest: (payload) => {
       dispatch(actions.isModelOpen(payload));

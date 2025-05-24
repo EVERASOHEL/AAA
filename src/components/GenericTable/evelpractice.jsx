@@ -12,14 +12,16 @@ import { Delete, Edit } from "@mui/icons-material";
 import { TableBody } from "@mui/material";
 import React, { Component } from "react";
 import Pagination from "../Shared/Pagination/tablePagination";
-import './styles.scss'
+import "./styles.scss";
+import { ClipLoader } from "react-spinners";
+import isNullOrIsEmptyOrIsUndefined from "../../utilities/CommonValidator";
 
 export default class index extends Component {
   constructor() {
     super();
     this.state = {
       page: 0,
-      rowsPerPage: 10,
+      rowsPerPage: 50,
     };
   }
 
@@ -36,7 +38,10 @@ export default class index extends Component {
   handleChangeRowsPerPage = (event) => {
     this.setState({ rowsPerPage: +event.target.value });
     this.setState({ page: 0 });
-    this.props.handlechangelistPagination({page:this.state.page,size:event.target.value});
+    this.props.handlechangelistPagination({
+      page: this.state.page,
+      size: event.target.value,
+    });
     // setRowsPerPage(+event.target.value);
     // setPage(0);
   };
@@ -89,8 +94,9 @@ export default class index extends Component {
     const { headers, dataList, keyMapping, currentPage, currentPageSize } =
       this.props;
 
-    const [firstObject]=dataList || [];
-    const {totalcount}=firstObject || {};
+    const [firstObject] = dataList || [];
+    const { totalcount } = firstObject || {};
+
     return (
       <div>
         <Paper style={{ width: "100%" }}>
@@ -109,7 +115,14 @@ export default class index extends Component {
                   {headers && headers.length > 0
                     ? headers.map((x) => {
                         return (
-                          <TableCell align="left" key={x.title}>
+                          <TableCell
+                            align="left"
+                            key={x.title}
+                            style={{
+                              backgroundColor: "#efefef",
+                              fontWeight: "600",
+                            }}
+                          >
                             {/* {x.title} */}
                             {this.ElementHeaderFunction(x)}
                           </TableCell>
@@ -119,13 +132,14 @@ export default class index extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {dataList && dataList.length > 0
-                  ? dataList
+                {!isNullOrIsEmptyOrIsUndefined(dataList) ? (
+                  dataList.length > 0 ? (
+                    dataList
                       .slice(
                         this.state.page * currentPageSize,
                         this.state.page * currentPageSize + currentPageSize
                       )
-                      .map((row) => {
+                      .map((row, index) => {
                         return (
                           <TableRow key={index} className="tableRow">
                             {keyMapping.map((column, col_index) => {
@@ -138,15 +152,18 @@ export default class index extends Component {
                           </TableRow>
                         );
                       })
-                  : ""}
+                  ) : null
+                ) : (
+                  <></>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
+            rowsPerPageOptions={[50, 100, 200]}
             component="div"
-            count={totalcount || 20}
-            rowsPerPage={currentPageSize}
+            count={totalcount || 50}
+            rowsPerPage={this.state.rowsPerPage}
             page={this.state.page}
             onPageChange={this.handleChangePage}
             onRowsPerPageChange={this.handleChangeRowsPerPage}

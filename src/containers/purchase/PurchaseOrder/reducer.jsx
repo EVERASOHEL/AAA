@@ -9,7 +9,7 @@ const convertedDateTime = moment(new Date()).format(
 );
 
 // const defaultClassDTO = { gstType: "IGST18[18%]",PurchaseGST:"Purchase 100% GST" };
-const defaultClassDTO = { gstType: "IGST18[18%]"};
+const defaultClassDTO = { gstType: "IGST18[18%]", orderDate: new Date() };
 // "date":new Date()
 const defaultSalesClassDTO = [];
 
@@ -22,7 +22,9 @@ const defaultState = {
   salesClassListDTO: JSON.parse(JSON.stringify(defaultSalesClassDTO)),
   salesClassDTO: JSON.parse(JSON.stringify(defaultClassDTO)),
   open: false,
-  isOpenPdf:false,
+  isOpenPdf: false,
+  isPaymentModelOpen: false,
+  isOpenHostoryModel: false,
   // responseDTO: _.cloneDeep(defaultResponseDTO),
 };
 
@@ -104,7 +106,7 @@ const reducer = (stateDTO = initialState, action) => {
           productHsn: x.productHsn,
           gstPercentage: x.gstPercentage,
           productType: x.productType,
-          payAmount: x.payAmount
+          payAmount: x.payAmount,
         });
       });
       state.productlist = newData;
@@ -136,50 +138,49 @@ const reducer = (stateDTO = initialState, action) => {
 
     case ActionTypes.SALES_ORDER_LIST_RESPONSE: {
       let data = action.payload.data || [];
-      
-      const newSalesOrderList=(data)=>{
-        return data.map((obj,index)=>({
+
+      const newSalesOrderList = (data) => {
+        return data.map((obj, index) => ({
           ...obj,
-          No:index+1
+          No: index + 1,
         }));
       };
 
-      state.salesOrderList=newSalesOrderList(data);
+      state.salesOrderList = newSalesOrderList(data);
       state.currentPage = 0;
       const lastObject = data[data.length - 1];
       // const {No} = lastObject || 0;
       state.currentPageSize = data.length || 20;
-      // console.log("state.currentPageSize : ",state.currentPageSize);
       return JSON.parse(JSON.stringify(state));
     }
 
-    case ActionTypes.STORE_EDIT_ROW_DATA_TEMPORARY:{
-      const companyOrderDetails=action.payload.data || [];
-      state.companyOrderDetailsRowData=companyOrderDetails
+    case ActionTypes.STORE_EDIT_ROW_DATA_TEMPORARY: {
+      const companyOrderDetails = action.payload.data || [];
+      state.companyOrderDetailsRowData = companyOrderDetails;
       return JSON.parse(JSON.stringify(state));
     }
 
-    case ActionTypes.SALES_ORDER_PRODUCT_UPDATE_RESPONSE:{
+    case ActionTypes.SALES_ORDER_PRODUCT_UPDATE_RESPONSE: {
+      const { orderDateString, ...updatedata } =
+        action.payload.compnayOrderDetails || [];
 
-      const {orderDateString, ...updatedata } = (action.payload.compnayOrderDetails || []);
+      const parsedDate = moment(orderDateString, "DD-MM-YYYY HH:mm");
 
-      const parsedDate = moment(orderDateString, 'DD-MM-YYYY HH:mm');
-      const iso8601Date = parsedDate.format('ddd MMM DD YYYY HH:mm:ss [GMT]ZZ (z)');
-
-      updatedata.orderDate=iso8601Date;
-      const productList=action.payload.productList;
-      const compnayOrderDetails=updatedata;
-      state.open = true
+      updatedata.orderDate = parsedDate;
+      const productList = action.payload.productList;
+      const compnayOrderDetails = updatedata;
+      state.open = true;
       list = productList;
       state.classDTO = compnayOrderDetails;
       state.salesClassDTO = {};
       state.salesClassListDTO = list;
-      state.companyOrderDetailsRowData={};
+      state.companyOrderDetailsRowData = {};
       return JSON.parse(JSON.stringify(state));
     }
 
     case ActionTypes.PAYMENT_HISTORY_RESPONSE: {
       state.paymentHistoryData = action.payload.data || [];
+      state.isOpenHostoryModel = true;
       // return { ...state };
       return JSON.parse(JSON.stringify(state));
     }
@@ -187,7 +188,6 @@ const reducer = (stateDTO = initialState, action) => {
     case ActionTypes.VIEW_PDF_RESPONSE: {
       state.pdfData = action.payload.data || [];
       state.isOpenPdf = true;
-      console.log("state.pdfData : ",state.pdfData);
       return JSON.parse(JSON.stringify(state));
     }
 
@@ -196,7 +196,32 @@ const reducer = (stateDTO = initialState, action) => {
       return JSON.parse(JSON.stringify(state));
     }
 
-    // case ActionTypes.produ
+    case ActionTypes.PAYMENT_MODEL_IS_OPEN: {
+      state.isPaymentModelOpen = action.payload.data || false;
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.PAYMENT_RESPONSE: {
+      state.isPaymentModelOpen = action.payload.data || false;
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.IS_OPEN_HISTORY_MODEL: {
+      state.isOpenHostoryModel = action.payload.data || [];
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.COMPANY_NAME_LIST_RESPONSE_FOR_FILTER: {
+      let data = action.payload.data || [];
+
+      const transformedData = data.map((item) => ({
+        value: item.title,
+        display: item.title,
+      }));
+
+      state.allTypeCompanyNameList = transformedData;
+      return JSON.parse(JSON.stringify(state));
+    }
 
     default:
       return state;

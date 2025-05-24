@@ -9,6 +9,7 @@ const defaultResponseDTO = {};
 const defaultState = {
   classDTO: JSON.parse(JSON.stringify(defaultClassDTO)),
   open: false,
+  saveSuccess: false,
 };
 
 const initialState = defaultState;
@@ -56,6 +57,14 @@ const reducer = (stateDTO = initialState, action) => {
       state.companylist = newData;
       state.currentPage = 0;
       state.currentPageSize = No || 20;
+
+      //getAllCompanyNameList
+      let allTypeCompanyNameList = [];
+      newData.map((x) => {
+        allTypeCompanyNameList.push({ value: x.companyName, display: x.companyName });
+      });
+      state.allTypeCompanyNameList = allTypeCompanyNameList;
+
       return JSON.parse(JSON.stringify(state));
     }
 
@@ -63,12 +72,12 @@ const reducer = (stateDTO = initialState, action) => {
       state.open = action.payload.data || false;
       state.classDTO = {};
       // window.location.reload();
+      state.saveSuccess = true;
       return JSON.parse(JSON.stringify(state));
     }
 
     case ActionTypes.OPEN_EDIT_MODEL: {
       state.classDTO = action.payload.data || {};
-      console.log("action.payload.data : ", action.payload.data);
       state.open = true;
       return JSON.parse(JSON.stringify(state));
     }
@@ -76,6 +85,18 @@ const reducer = (stateDTO = initialState, action) => {
     case ActionTypes.COMPANY_NAME_LIST_RESPONSE: {
       let data = action.payload.data || [];
       state.companyNameList = data;
+      return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes.COMPANY_NAME_LIST_RESPONSE_FOR_FILTER: {
+      let data = action.payload.data || [];
+
+      const transformedData = data.map((item)=>({
+        value: item.title,
+        display: item.title,
+      }));
+
+      state.allTypeCompanyNameList = transformedData;
       return JSON.parse(JSON.stringify(state));
     }
 

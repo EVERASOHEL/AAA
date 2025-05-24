@@ -29,7 +29,13 @@ export const ActionTypes = keyMirrorRecursive(
         VIEW_PDF_RESPONSE:undefined,
         IS_OPEN_PDF_MODEL:undefined,
         SEND_MAIL_REQUEST:undefined,
-        SEND_MAIL_RESPONSE:undefined
+        SEND_MAIL_RESPONSE:undefined,
+        PAYMENT_MODEL_IS_OPEN:undefined,
+        PAYMENT_REQUEST:undefined,
+        PAYMENT_RESPONSE:undefined,
+        IS_OPEN_HISTORY_MODEL:undefined,
+        COMPANY_NAME_LIST_REQUEST_FOR_FILTER: undefined,
+        COMPANY_NAME_LIST_RESPONSE_FOR_FILTER: undefined,
     },
     pageName
 );

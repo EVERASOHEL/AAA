@@ -7,7 +7,6 @@ import {ActionTypes} from "./constant";
 // import * as commonFunction from "../../../../Constant/Functions/commonFunction";
 
 export function* apiProductRequest({payload}) {
-    console.log("payload : ", payload.data);
     // const response = apiFetch(
     // `api/travelRequestController/saveTravelRequestForm`,
     //   {
@@ -25,7 +24,6 @@ export function* apiProductRequest({payload}) {
 
     //   if (responseJSON.code === 200) {
     //     const responseObj = responseJSON.responseObj || "";
-    //     console.log("response obj : ",responseObj);
     //     commonFunction.gotoSpecificPage("list");
     //     if(responseObj==="Travel Request Updated Successfully"){
     //       toast.success(responseObj.message || "Travel request successfully updated.");
