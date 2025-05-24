@@ -15,8 +15,6 @@ import * as selectors from "./selectors";
 import "./style.scss";
 
 import { ClipLoader } from 'react-spinners';
-// import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
-// import '../../../public/css/react-spinner-loader.css';
 
 const index = (props) => {
   function updateStateValue(value) {
@@ -30,10 +28,10 @@ const index = (props) => {
     return () => {};
   }, []);
 
-  console.log('props.isLoading :>> ', props.isLoading);
+  props.updateClassDTO(props);
   return (
     <>
-      {props.isLoading && (
+      {props.classDTO && (
         <div
           className="loading-overlay"
         >
@@ -43,9 +41,8 @@ const index = (props) => {
     </>
   );
 };
-console.log('selectors.getIsLoading() :>> ', selectors.getIsLoading());
+
 const mapStateToProps = () => {
-  console.log("call mapStateToProps");
   return createStructuredSelector({
     classDTO: selectors.getClassDTO(),
     isLoading: selectors.getIsLoading(),

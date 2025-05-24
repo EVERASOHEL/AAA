@@ -19,11 +19,14 @@ import AutocompleteTextField from "../../web/AutocompleteTextField/";
 import AssignmentIcon from "@mui/icons-material/Add";
 import Tabelweb from "../../components/GenericTable/";
 import Evelpractice from "../../components/GenericTable/evelpractice";
+import AdvancedDataTable from "../AdvancedDataTable";
 import { Close, Delete, Edit, SearchOffSharp } from "@mui/icons-material";
 import _ from "lodash";
 
 import * as actions from "./actions";
 import { pageName } from "./constants";
+import {headers} from "./constants"
+import {keyMapping} from "./constants"
 import reducer from "./reducer";
 import saga from "./saga";
 import * as selectors from "./selectors";
@@ -35,6 +38,12 @@ import { makeStyles } from "@mui/styles";
 import "./style.scss";
 import { toast } from "react-toastify";
 import * as Buttons from "../../web/Buttons";
+import Accordion from "@mui/material/Accordion";
+import AccordionActions from "@mui/material/AccordionActions";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+// import Button from '@mui/material/Button';
 
 const useStyles = makeStyles((theme) => ({
   iconButton: {
@@ -46,7 +55,9 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const index = (props) => {
-  const [displayfilter, setdisplayfilter] = useState("none");
+  // const [displayfilter, setdisplayfilter] = useState("none");
+  // const [expanded, setExpanded] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   function updateStateValue(value) {
     updateState((prevState) => ({
@@ -56,13 +67,21 @@ const index = (props) => {
   }
 
   useEffect(() => {
-    // Anything in here is fired on component mount.
-    props.listRequest({ page: 0, size: 20 });
-    props.companyNameList();
+    // props.listRequest({ page: 0, size: 40});
+    props.companyNameListForFilter();
+    if (props.saveSuccess) {
+      handleSaveSuccess(); // Trigger re-render
+    }
     return () => {
-      // Anything in here is fired on component unmount.
     };
-  }, []);
+  }, [props.saveSuccess]);
+
+  function handleSaveSuccess() {
+    // Increment the refresh key to trigger re-render
+    setRefreshKey((prevKey) => prevKey + 1);
+  }
+
+  
 
   const handleValidation = (key, classDTO) => {
     classDTO.isValidationSuccess = true;
@@ -92,21 +111,6 @@ const index = (props) => {
       }
     }
 
-    // else if(classDTO.phoneNo.toString().length!==12){
-    //   classDTO.phoneNoError = "Please enter 12 number of phone no.";
-    // }
-    // if (key === "all" || key === "phoneNo") {
-    //   if (isNullOrIsEmptyOrIsUndefined(classDTO.phoneNo)) {
-    //     classDTO.phoneNoError = "Please enter phone number";
-    //     classDTO.isValidationSuccess = false;
-    //   } else if (!commonFunction.isNotEmptyAndValidNumber(classDTO.phoneNo)) {
-    //     classDTO.isValidationSuccess = false;
-    //     classDTO.phoneNoError = "Please enter valid number";
-    //   } else {
-    //     classDTO.phoneNoError = "";
-    //   }
-    // }
-
     if (key === "all" || key === "address") {
       if (isNullOrIsEmptyOrIsUndefined(classDTO.address)) {
         classDTO.addressError = "Please enter address";
@@ -124,26 +128,6 @@ const index = (props) => {
         classDTO.stateNameError = "";
       }
     }
-
-    // if (key === "all") {
-    //   if (
-    //     isNullOrIsEmptyOrIsUndefined(classDTO.companyGstNo) &&
-    //     isNullOrIsEmptyOrIsUndefined(classDTO.companyPanNumber)
-    //   ) {
-    //     toast.error("Please insert the GST Number or Pan number.");
-    //     classDTO.isValidationSuccess = false;
-    //   }
-    // }
-
-    // if (key === "all" || key === "companyGstNo") {
-    //   if (isNullOrIsEmptyOrIsUndefined(classDTO.companyGstNo)) {
-    //     classDTO.companyGstNoError = "Please enter Gst No";
-    //     classDTO.isValidationSuccess = false;
-    //   } else {
-    //     classDTO.companyGstNoError = "";
-    //   }
-    // }
-
     return classDTO;
   };
 
@@ -163,7 +147,7 @@ const index = (props) => {
 
   function handleChangeSave(key) {
     var classDTO = { ...props.classDTO };
-    var {submitCompnayRequestForm} = props;
+    var { submitCompnayRequestForm } = props;
     classDTO = handleValidation(key, classDTO);
     if (classDTO.isValidationSuccess === true) {
       let finalDTO = {
@@ -223,161 +207,65 @@ const index = (props) => {
             props.deleteCompany(data.id);
           }}
         />
-
-        {/* <Edit
-          className={classes.iconButton}
-          onClick={() => {
-            let classDTO = {
-              id: data.id,
-              companyName: data.companyName,
-              address: data.address,
-              phoneNo: data.phoneNo,
-              stateName: data.stateName,
-              companyGstNo: data.companyGstNo,
-            };
-            props.openEditModel(classDTO);
-          }}
-        /> */}
-        {/* <Delete
-          className={classes.iconButton}
-          onClick={()=>{
-            props.deleteCompany(data.id);
-          }}
-        /> */}
       </>
     );
   }
 
-  function handlechangelistPagination(payload) {
-    props.listRequest(payload);
-  }
+  const handleFilterClick = () => {
+    setExpanded((prevExpanded) => !prevExpanded);
+  };
+
+  const setFilter = () => {
+    const filters = {
+      components: [
+        {
+          payloadKey: "companyName",
+          key: "companyName",
+          stateKey: "companyName",
+          displayKey: "companyName",
+          label: "Company Name",
+          component: "singleSelect",
+          values: props.allTypeCompanyNameList || []
+        },
+      ],
+      url: "", // API endpoint for filtering
+      method: "GET", // HTTP method for the filter API
+    };
+
+    return filters;
+  };
+
+  const filters = setFilter();
+  
+
+  // function handlechangelistPagination(payload) {
+  //   props.listRequest(payload);
+  // }
 
   // render() {
-  return (
-    <>
-      {CompnayMasterRequest()}
-      <div style={{ marginTop: "15px" }}>
-        <div style={{ display: "flex" }}>
-          <Container maxWidth="lg">
-            <Card sx={{ minWidth: 500, textAlign: "center" }}>
-              <CardContent>
-                <div className="twobuttonmanage">
-                  <Typography textAlign="-webkit-left">
-                    <Button
-                      className="addproduct"
-                      variant="contained"
-                      color="primary"
-                      size="small"
-                      sx={{ bgcolor: "#33A1C9", color: "ButtonHighlight" }}
-                      startIcon={<FaFilter />}
-                      onClick={
-                        () => setdisplayfilter("block")
-                        // this.setState({ displayfilter: "block" })
-                      }
-                    >
-                      Filter
-                    </Button>
-                  </Typography>
-                  <Box
-                    className="card-shadow"
-                    sx={{ minWidth: 300 }}
-                    style={{ display: `${displayfilter}` }}
-                  >
-                    <Grid container spacing={2} className="filtergrid">
-                      <Grid item xs={7}>
-                        <AutocompleteTextField width="200px" />
-                      </Grid>
-                      <Grid item xs={3} style={{ textAlign: "left" }}>
-                        <Button
-                          size="small"
-                          variant="contained"
-                          startIcon={<SearchOffSharp />}
-                          sx={{
-                            bgcolor: "#33A1C9",
-                            color: "ButtonHighlight",
-                          }}
-                        >
-                          Submit
-                        </Button>
-                      </Grid>
-                      <Grid item xs={2} style={{ textAlign: "end" }}>
-                        {/* <Avatar sx={{width: 15, height: 15 , bgcolor: pink[500] }}> */}
-                        {/* </Avatar> */}
-                        <Close
-                          color="red"
-                          className="closebutton"
-                          onClick={
-                            () => setdisplayfilter("none")
-                            // this.setState({ displayfilter: "none" })
-                          }
-                        />
-                      </Grid>
-                    </Grid>
-                  </Box>
-                  <Typography textAlign="-webkit-right">
-                    <Button
-                      className="addproduct"
-                      variant="contained"
-                      size="small"
-                      sx={{ bgcolor: "#9fa8da", color: "ButtonHighlight" }}
-                      startIcon={<AssignmentIcon />}
-                      // onClick={() => this.setState({ open: true })}
-                      onClick={() => isModelOpen(true)}
-                    >
-                      Add Company
-                    </Button>
-                  </Typography>
-                </div>
-                <hr />
-                <Evelpractice
-                  dataList={props.companylist}
-                  currentPage={props.currentPage}
-                  currentPageSize={props.currentPageSize}
-                  handlechangelistPagination={handlechangelistPagination}
-                  headers={[
-                    { title: "No" },
-                    { title: "Company Name" },
-                    // { title: "Address" },
-                    { title: "Company Type" },
-                    { title: "Phone No" },
-                    { title: "State" },
-                    { title: "GST No" },
-                    { title: "Action" },
-                  ]}
-                  keyMapping={[
-                    {
-                      key: "No",
-                    },
-                    {
-                      key: "companyName",
-                    },
-                    // {
-                    //   key: "address",
-                    // },
-                    {
-                      key: "companyType",
-                    },
-                    {
-                      key: "phoneNo",
-                    },
-                    {
-                      key: "stateName",
-                    },
-                    {
-                      key: "companyGstNo",
-                    },
-                    {
-                      evalFunction: ActionFunction,
-                    },
-                  ]}
-                />
-              </CardContent>
-            </Card>
-          </Container>
-        </div>
-      </div>
-    </>
-  );
+    return (
+      <>
+        {CompnayMasterRequest()}
+        <AdvancedDataTable
+          key={refreshKey}
+          {...props}
+          url="/api/companyController/getCompanylist"
+          headers={headers}
+          keyMapping={[
+            { key: "No" },
+            { key: "companyName" },
+            { key: "companyType" },
+            { key: "phoneNo" },
+            { key: "stateName" },
+            { key: "companyGstNo" },
+            { evalFunction: ActionFunction },
+          ]}
+          title={"Company Master"}
+          isModelOpen={isModelOpen}
+          filters={filters}
+        />
+      </>
+    );
   // }
 };
 
@@ -386,10 +274,12 @@ const mapStateToProps = () => {
     classDTO: selectors.getClassDTO(),
     responseDTO: selectors.getResponseDTO(),
     open: selectors.open(),
-    companylist: selectors.companylist(),
-    currentPage: selectors.currentPage(),
-    currentPageSize: selectors.currentPageSize(),
+    // companylist: selectors.companylist(),
+    // currentPage: selectors.currentPage(),
+    // currentPageSize: selectors.currentPageSize(),
     getCompnayNameList: selectors.getCompnayNameList(),
+    saveSuccess: selectors.handleSaveSuccess(),
+    allTypeCompanyNameList: selectors.getAllTypeCompanyNameList(),
   });
 };
 
@@ -421,6 +311,9 @@ const mapDispatchToProps = (dispatch) => {
     },
     companyNameList: () => {
       dispatch(actions.companyNameList());
+    },
+    companyNameListForFilter: () => {
+      dispatch(actions.companyNameListForFilter());
     },
   };
 };

@@ -25,10 +25,19 @@ const reducer = (stateDTO = initialState, action) => {
     }
 
     case ActionTypes1.LOADING_STATUS: {
-      console.log('action.payload :>> ', action.payload);
       state.loadingStatus = action.payload || {};
       // return { ...state };
       return JSON.parse(JSON.stringify(state));
+    }
+
+    case ActionTypes1.SHOW_LOADING: {
+      state.classDTO = true
+      return { ...state };
+    }
+
+    case ActionTypes1.HIDE_LOADING: {
+      state.classDTO = false
+      return { ...state };
     }
 
     default:

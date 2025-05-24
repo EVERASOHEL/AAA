@@ -47,3 +47,9 @@ export const getPdfStatus = () =>
 
 export const getPaymentModelStatus = () =>
   createSelector(stateSelector, (bstate) => bstate.isPaymentModelOpen);
+
+export const getPaymentHistoryModelStatus = () =>
+  createSelector(stateSelector, (bstate) => bstate.isOpenHostoryModel);
+
+export const getAllTypeCompanyNameList = () =>
+  createSelector(stateSelector, (bstate) => bstate.allTypeCompanyNameList);

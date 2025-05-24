@@ -14,8 +14,8 @@ import { MSG_UNIVERSAL_ERROR } from "../../../utilities/CommonConstants";
 import { FetchApi } from "../../../utilities/FetchService";
 import reducer from "../../LoadingSpinner/reducer";
 import { ActionTypes1 } from "../../LoadingSpinner/constants";
-import {changeLoadingStatus} from "../../LoadingSpinner/actions";
-import '../../../App.css'
+import { changeLoadingStatus } from "../../LoadingSpinner/actions";
+import "../../../App.css";
 
 // import {loadingInterceptor} from "../../LoadingSpinner";
 
@@ -125,7 +125,6 @@ export function* apiforSalesOrderList({ payload }) {
   } catch (error) {
     toast.error(commonConstants.MSG_UNIVERSAL_ERROR);
   } finally {
-    console.log("call final block..");
     // yield put(changeLoadingStatus(false));
     // reducer(undefined, { // Pass undefined as the initial state
     //   type: ActionTypes1.LOADING_STATUS,
@@ -141,7 +140,6 @@ export function* apiforSalesOrderList({ payload }) {
     //     console.log("Loading indicator not found");
     //   }
     // });
-    
     // });
   }
 }
@@ -174,7 +172,6 @@ export function* apiforpaymenthistory({ payload }) {
     method: "GET",
   };
   const response = yield call(FetchApi, data);
-
   if (response.code == 200) {
     yield put({
       type: ActionTypes.PAYMENT_HISTORY_RESPONSE,
@@ -208,7 +205,7 @@ export function* apiforViewPdf({ payload }) {
 
 export function* apiforSendMail({ payload }) {
   try {
-    document.getElementById('loading-overlay').style.display = 'flex';
+    document.getElementById("loading-overlay").style.display = "flex";
     let data = {
       url: `/api/salesOrderController/sendMail`,
       payload: JSON.stringify(payload.data),
@@ -226,14 +223,12 @@ export function* apiforSendMail({ payload }) {
     } else {
       toast.error(MSG_UNIVERSAL_ERROR);
     }
-    
   } catch (error) {
     toast.error(MSG_UNIVERSAL_ERROR);
-  }finally {
+  } finally {
     console.log("call final block..");
-    document.getElementById('loading-overlay').style.display = 'none';
+    document.getElementById("loading-overlay").style.display = "none";
   }
-  
 }
 
 export function* apiforsubmitPaymentRequest({ payload }) {
@@ -253,6 +248,24 @@ export function* apiforsubmitPaymentRequest({ payload }) {
     });
   } else {
     toast.error(commonConstants.MSG_UNIVERSAL_ERROR);
+  }
+}
+
+export function* apiforGetAllCompanyNameListforFilter({payload}) {
+  let data = {
+    url: `/api/companyController/getAllCompanyNameByCompanyType/${payload.companyType}`,
+    payload: null,
+  };
+  const response = yield call(FetchApi, data);
+  if (response.code == 200) {
+    yield put({
+      type: ActionTypes.COMPANY_NAME_LIST_RESPONSE_FOR_FILTER,
+      payload: {
+        data: response.responseObj || [],
+      },
+    });
+  } else {
+    toast.error(MSG_UNIVERSAL_ERROR);
   }
 }
 
@@ -278,5 +291,9 @@ export default function* root() {
     takeLatest(ActionTypes.SEND_MAIL_REQUEST, apiforSendMail),
     takeLatest(ActionTypes.PAYMENT_REQUEST, apiforsubmitPaymentRequest),
     takeLatest(ActionTypes.PAYMENT_RESPONSE, apiforSalesOrderList),
+    takeLatest(
+      ActionTypes.COMPANY_NAME_LIST_REQUEST_FOR_FILTER,
+      apiforGetAllCompanyNameListforFilter
+    ),
   ]);
 }

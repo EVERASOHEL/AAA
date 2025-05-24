@@ -119,7 +119,7 @@ const index = (props) => {
               <span style={{ color: "red" }}>*</span>
               <TextFieldOutlined
                 name=""
-                label=""z
+                label=""
                 variant="outlined"
                 istrue={classDTO.payfullAmount}
                 maxLength={30}

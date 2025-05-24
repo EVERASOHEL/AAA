@@ -93,6 +93,15 @@ export const salesOrderCompanyRowData = (data) => {
     };
 };
 
+export const apiforhistory = (data) => {
+    return {
+        type: ActionTypes.PAYMENT_HISTORY_REQUEST,
+        payload:{
+            data,
+        }
+    };
+};
+
 export const apiforViewPdf = (data) => {
     return {
         type: ActionTypes.VIEW_PDF_REQUEST,
@@ -117,5 +126,41 @@ export const apiforSendMail = (data) => {
         payload:{
             data,
         }
+    };
+};
+
+export const isPaymentModelOpen = (data) => {
+    return {
+        type: ActionTypes.PAYMENT_MODEL_IS_OPEN,
+        payload:{
+            data,
+        }
+    };
+};
+
+export const submitPaymentRequest = (payload) => {
+    return {
+        type: ActionTypes.PAYMENT_REQUEST,
+        payload,
+    };
+};
+
+export const companyNameListForFilter = (payload) => {
+    return {
+        type: ActionTypes.COMPANY_NAME_LIST_REQUEST_FOR_FILTER,
+        payload,
+    };
+};
+
+export const companyStateName = (payload) => {
+    return {
+        type: ActionTypes.STATE_NAME_REQUEST,
+        payload,
+    };
+};
+
+export const resetSaveSuccessFlag = () => {
+    return {
+        type: ActionTypes.RESET_SAVE_SUCCESS_FLAG,
     };
 };

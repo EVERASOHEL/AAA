@@ -153,3 +153,19 @@ export const submitPaymentRequest = (payload) => {
         payload,
     };
 };
+
+export const isOpenHistoryModel = (data) => {
+    return {
+        type: ActionTypes.IS_OPEN_HISTORY_MODEL,
+        payload:{
+            data,
+        }
+    };
+};
+
+export const companyNameListForFilter = (payload) => {
+    return {
+        type: ActionTypes.COMPANY_NAME_LIST_REQUEST_FOR_FILTER,
+        payload,
+    };
+};

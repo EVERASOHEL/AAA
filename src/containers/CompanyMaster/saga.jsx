@@ -5,6 +5,7 @@ import { FetchApi } from "../../utilities/FetchService";
 // import {loadingInterceptor} from "../../utilities/LoadingInterceptor";
 
 import { ActionTypes } from "./constants";
+import { AdvacedTableActionTypes } from "../../containers/AdvancedDataTable/constants";
 // import {ActionTypes as RootActionTypes} from "../../root/constants";
 
 // import {MSG_UNIVERSAL_ERROR} from "../../utilities/CommonConstants";
@@ -107,15 +108,37 @@ export function* apiforgetAllCompanyNameList({ payload }) {
   }
 }
 
+export function* apiforGetAllCompanyNameListforFilter() {
+  let data = {
+    url: `/api/companyController/getAllTypeCompanyName`,
+    payload: null,
+  };
+  const response = yield call(FetchApi, data);
+  if (response.code == 200) {
+    yield put({
+      type: ActionTypes.COMPANY_NAME_LIST_RESPONSE_FOR_FILTER,
+      payload: {
+        data: response.responseObj || [],
+      },
+    });
+  } else {
+    toast.error(MSG_UNIVERSAL_ERROR);
+  }
+}
+
 export default function* root() {
   yield all([
     takeLatest(ActionTypes.ADD_COMPANY_REQUEST, apiforSubmitAddCompnayRequest),
-    takeLatest(ActionTypes.ADD_COMPANY_RESPONSE, apiforList),
+    // takeLatest(ActionTypes.ADD_COMPANY_RESPONSE, apiforList),
     takeLatest(ActionTypes.COMPANY_LIST_REQUEST, apiforList),
     takeLatest(ActionTypes.DELETE_COMPANY, apiforDeleteCompany),
     takeLatest(
       ActionTypes.COMPANY_NAME_LIST_REQUEST,
       apiforgetAllCompanyNameList
+    ),
+    takeLatest(
+      ActionTypes.COMPANY_NAME_LIST_REQUEST_FOR_FILTER,
+      apiforGetAllCompanyNameListforFilter
     ),
   ]);
 }

@@ -36,6 +36,7 @@ import SwitchWithMultipleOption from "../../../web/switchWithMultipleOption";
 import ProgressBar from "@ramonak/react-progress-bar";
 import '../../../App.css'
 import isNullOrIsEmptyOrIsUndefined from "../../../utilities/CommonValidator";
+import Chip from "@mui/material/Chip";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -140,7 +141,7 @@ const index = (props) => {
           <div className="container-fluid">
             <Grid container spacing={2} style={{ alignItems: "center" }}>
               <Grid item xs={3}>
-                <Typography variant="h5">Purchase Order</Typography>
+                <Typography variant="h5" className="model-header-font">Purchase Order</Typography>
               </Grid>
               {/* <Grid item xs={4}>
                 <SwitchWithMultipleOption
@@ -194,7 +195,7 @@ const index = (props) => {
                 <label className="error">{classDTO.dateError}</label>
               </div>
             </Grid>
-            <Grid item xs={1}>
+            <Grid item xs={2}>
               <div
                 className="TextFieldcontainer col-md-6"
                 style={{ width: "100%" }}
@@ -248,7 +249,7 @@ const index = (props) => {
                 <label className="error">{classDTO.companyNameError}</label>
               </div>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={3}>
               <div
                 className="col-md-6 TextFieldcontainer"
                 style={{ width: "100%" }}
@@ -259,6 +260,7 @@ const index = (props) => {
                       GST Type<span style={{ color: "red" }}>*</span>
                     </span>
                   }
+                  disableClearable={true}
                   keyOfData={"display"}
                   value={GST_TYPE.find(
                     (element) => element.display == (classDTO.gstType || "")
@@ -273,11 +275,10 @@ const index = (props) => {
             </Grid>
           </Grid>
 
-          {/* when Gst value not 100% for below code */}
-          {classDTO.PurchaseGST === "Not Dermine GST" ? (
+          {/* {classDTO.PurchaseGST === "Not Dermine GST" ? (
             <div class="card-container">
               <div class="card">
-                {/* <div class="card-title">GST Percentage</div> */}
+                <div class="card-title">GST Percentage</div>
                 <div class="card-content">
                   <Grid container spacing={2} style={{ alignItems: "center" }}>
                     <Grid item xs={3}>
@@ -368,7 +369,7 @@ const index = (props) => {
                 </div>
               </div>
             </div>
-          ) : null}
+          ) : null} */}
 
           {/* end */}
 
@@ -407,11 +408,9 @@ const index = (props) => {
                 </label>
               </div>
             </Grid>
-            <Grid item xs={1}>
-              {salesClassDTO.productType ? (
-                <label htmlFor="" className="productTypelabel">
-                  {salesClassDTO.productType}
-                </label>
+            <Grid item xs={1} className="productTylelabelgrid" style={{padding:"0px",paddingLeft:"16px"}}>
+              {salesClassDTO.productType ? (  
+                <Chip label={salesClassDTO.productType} size="small" style={{ backgroundColor: 'darkgray', color: 'aliceblue',height:"auto" }} />
               ) : null}
             </Grid>
             <Grid item xs={1}>
@@ -485,7 +484,7 @@ const index = (props) => {
               </div>
             </Grid>
             <Grid item xs={1}>
-              <Tooltip title="Add Sales Product Details">
+              <Tooltip title="Add Purchase Product Details">
                 <img
                   onClick={() => {
                     props.handleSalesClassListDTO();

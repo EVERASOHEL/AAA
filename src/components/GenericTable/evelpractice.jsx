@@ -14,13 +14,14 @@ import React, { Component } from "react";
 import Pagination from "../Shared/Pagination/tablePagination";
 import "./styles.scss";
 import { ClipLoader } from "react-spinners";
+import isNullOrIsEmptyOrIsUndefined from "../../utilities/CommonValidator";
 
 export default class index extends Component {
   constructor() {
     super();
     this.state = {
       page: 0,
-      rowsPerPage: 10,
+      rowsPerPage: 50,
     };
   }
 
@@ -95,6 +96,7 @@ export default class index extends Component {
 
     const [firstObject] = dataList || [];
     const { totalcount } = firstObject || {};
+
     return (
       <div>
         <Paper style={{ width: "100%" }}>
@@ -130,51 +132,38 @@ export default class index extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {dataList && dataList.length > 0 ? (
-                  dataList
-                    .slice(
-                      this.state.page * currentPageSize,
-                      this.state.page * currentPageSize + currentPageSize
-                    )
-                    .map((row) => {
-                      return (
-                        <TableRow key={index} className="tableRow">
-                          {keyMapping.map((column, col_index) => {
-                            return (
-                              <TableCell key={col_index}>
-                                {this.ElementFunction(row, column)}
-                              </TableCell>
-                            );
-                          })}
-                        </TableRow>
-                      );
-                    })
+                {!isNullOrIsEmptyOrIsUndefined(dataList) ? (
+                  dataList.length > 0 ? (
+                    dataList
+                      .slice(
+                        this.state.page * currentPageSize,
+                        this.state.page * currentPageSize + currentPageSize
+                      )
+                      .map((row, index) => {
+                        return (
+                          <TableRow key={index} className="tableRow">
+                            {keyMapping.map((column, col_index) => {
+                              return (
+                                <TableCell key={col_index}>
+                                  {this.ElementFunction(row, column)}
+                                </TableCell>
+                              );
+                            })}
+                          </TableRow>
+                        );
+                      })
+                  ) : null
                 ) : (
-                  <div
-                    style={{
-                      position: "fixed",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: "100%",
-                      background: "rgba(255, 255, 255, 0.8)",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      zIndex: 9999,
-                    }}
-                  >
-                    <ClipLoader color="#00BFFF" size={100} />
-                  </div>
+                  <></>
                 )}
               </TableBody>
             </Table>
           </TableContainer>
           <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
+            rowsPerPageOptions={[50, 100, 200]}
             component="div"
-            count={totalcount || 20}
-            rowsPerPage={currentPageSize}
+            count={totalcount || 50}
+            rowsPerPage={this.state.rowsPerPage}
             page={this.state.page}
             onPageChange={this.handleChangePage}
             onRowsPerPageChange={this.handleChangeRowsPerPage}

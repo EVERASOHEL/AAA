@@ -24,7 +24,6 @@ export function* apiProductRequest({payload}) {
 
     //   if (responseJSON.code === 200) {
     //     const responseObj = responseJSON.responseObj || "";
-    //     console.log("response obj : ",responseObj);
     //     commonFunction.gotoSpecificPage("list");
     //     if(responseObj==="Travel Request Updated Successfully"){
     //       toast.success(responseObj.message || "Travel request successfully updated.");

@@ -37,7 +37,8 @@ const reducer = (stateDTO = initialState, action) => {
     case ActionTypes.EXPENSE_LIST_RESPONSE: {
       let data = action.payload.data || [];
       let newData = [];
-      data.map((x, i) => {
+
+      (data || []).map((x, i) => {
         newData.push({
           No: i + 1,
           id: x.id,
@@ -50,8 +51,6 @@ const reducer = (stateDTO = initialState, action) => {
 
       const lastObject = newData[newData.length - 1];
       const { No } = lastObject || 0;
-
-      console.log("newData : ",newData);
       state.expenselist = newData;
       state.currentPage = 0;
       state.currentPageSize = No || 20;
@@ -61,7 +60,7 @@ const reducer = (stateDTO = initialState, action) => {
     case ActionTypes.EXPENSE_CATEGORY_LIST_RESPONSE: {
       let data = action.payload.data || [];
       let newData = [];
-      data.map((x, i) => {
+      (data || []).map((x, i) => {
         newData.push({
           No: i + 1,
           id: x.id,

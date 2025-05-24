@@ -33,6 +33,9 @@ export const ActionTypes = keyMirrorRecursive(
         PAYMENT_MODEL_IS_OPEN:undefined,
         PAYMENT_REQUEST:undefined,
         PAYMENT_RESPONSE:undefined,
+        IS_OPEN_HISTORY_MODEL:undefined,
+        COMPANY_NAME_LIST_REQUEST_FOR_FILTER: undefined,
+        COMPANY_NAME_LIST_RESPONSE_FOR_FILTER: undefined,
     },
     pageName
 );

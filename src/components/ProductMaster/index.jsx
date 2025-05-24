@@ -355,7 +355,7 @@ export default class AddproductModel extends React.Component {
                               name={""}
                               id={""}
                               // placeholder={"Select Product Type "}
-                              option={["DOZEN","BOX","UNIT","GRAMS","METRES","PIECES"]}
+                              option={["DOZEN","BOX","UNIT","KG","METRES","PIECES"]}
                               variant={"outlined"}
                               label={"Unit"}
                               onChange={(event, value) => {

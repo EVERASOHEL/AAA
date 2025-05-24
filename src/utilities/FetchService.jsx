@@ -11,6 +11,7 @@ import { getToken } from "./SessionService";
 import { SERVER_ADDR } from "../configuration/constants";
 import { getMachineID } from "./MachineIdentifier";
 import { toast } from "react-toastify";
+import { spinnerInstance } from "./Spinner";
 
 export const asResponse = (response) =>
   Promise.resolve({
@@ -135,31 +136,91 @@ const getAuthWithMultipartHeader = () => {
 
 const BASE_URL = "http://localhost:8888";
 
-export const FetchApi = (data) => {
-  return fetch(BASE_URL + data.url, {
-    method: data.method,
-    body: data.payload,
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  }).then((response) => {
+export const FetchApi = async (data) => {
+  try {
+    spinnerInstance.show(); // Show spinner before the request starts
+
+    const response = await fetch(BASE_URL + data.url, {
+      method: data.method,
+      body: data.payload,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error("Network response was not ok");
     }
+
     if (response.status === 204) {
       return null; // Return null or any other appropriate value
     }
-    return response.json().catch((error) => {
-      // Handle JSON parsing error (e.g., empty response, non-JSON response)
-      console.error("Error parsing JSON data:", error.message);
-      throw error; // Re-throw the error to be handled by the calling function
-    });
-  })
-  .catch((error) => {
+
+    return await response.json();
+  } catch (error) {
     console.error("Error fetching data:", error.message);
-    throw error; // Re-throw the error to be handled by the calling function
-  });
+    throw error;
+  } finally {
+    spinnerInstance.hide(); // Hide spinner after the request completes (success or error)
+  }
+};
+
+export const FetchApiForSendMail = async (data) => {
+  try {
+    
+    const response = await fetch(BASE_URL + data.url, {
+      method: data.method,
+      body: data.payload,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    if (response.status === 204) {
+      return null; // Return null or any other appropriate value
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching data:", error.message);
+    throw error;
+  } 
+};
+
+export const FetchApiForAdvancedDataTable = async (data) => {
+  try {
+    spinnerInstance.show(); // Show spinner before the request starts
+
+    const response = await fetch(BASE_URL + data.url, {
+      method: data.method,
+      body: data.payload ? JSON.stringify(data.payload) : null,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    if (response.status === 204) {
+      return null; // Return null or any other appropriate value
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching data:", error.message);
+    throw error;
+  } finally {
+    spinnerInstance.hide(); // Hide spinner after the request completes (success or error)
+  }
 };
 
 // export const FetchApi = (data) => {
