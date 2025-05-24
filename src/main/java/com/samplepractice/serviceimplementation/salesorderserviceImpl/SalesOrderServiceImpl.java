@@ -2,6 +2,7 @@ package com.samplepractice.serviceimplementation.salesorderserviceImpl;
 
 import com.google.common.base.Strings;
 //import org.apache.
+import com.samplepractice.config.Constants;
 import com.samplepractice.dto.salesorderdto.SalesOrderCompanyDTO;
 import com.samplepractice.dto.salesorderdto.SalesOrderProductDetailsDTO;
 import com.samplepractice.model.salesordermodel.SalesOrderCompanyModel;
@@ -11,9 +12,13 @@ import com.samplepractice.services.companyService.CompanyService;
 import com.samplepractice.services.pdfservice.PdfService;
 import com.samplepractice.services.salesorderservice.SalesOrderProductDetailsService;
 import com.samplepractice.services.salesorderservice.SalesOrderService;
+import com.samplepractice.util.handleLog.LoggingUtility;
+import com.samplepractice.validator.AppException;
 import com.samplepractice.validator.CommonValidatorAppException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -29,9 +34,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class SalesOrderServiceImpl implements SalesOrderService {
@@ -51,24 +56,49 @@ public class SalesOrderServiceImpl implements SalesOrderService {
     @Autowired
     private PdfService pdfService;
 
+    @Autowired
+    private LoggingUtility loggingUtility;
+
+    private static final Logger logger = LoggerFactory.getLogger(SalesOrderServiceImpl.class);
+
     @Override
     @Transactional
     public String saveSalesOrder(SalesOrderCompanyDTO salesOrderCompanyDTO) throws Exception {
 
-//        salesOrderCompanyDTO.setTotalTaxAmount(salesOrderCompanyDTO.getTTA());
-        salesOrderValidation(salesOrderCompanyDTO);
+        loggingUtility.logAndExecute("Starting sales order validation", () -> {
+            try {
+                salesOrderValidation(salesOrderCompanyDTO);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
-        String companyType = companyService.getCompanyTypeByCompanyName(salesOrderCompanyDTO.getCompanyName());
+        String companyType = loggingUtility.logAndExecute("Fetching company type", () -> {
+            return companyService.getCompanyTypeByCompanyName(salesOrderCompanyDTO.getCompanyName());
+        });
 
-        SalesOrderCompanyModel salesOrderCompanyModel = salesOrderCompanyRepository.save(new SalesOrderCompanyModel(salesOrderCompanyDTO));
+        SalesOrderCompanyModel salesOrderCompanyModel = loggingUtility.logAndExecute("Saving sales order company model", () -> {
+            return salesOrderCompanyRepository.save(new SalesOrderCompanyModel(salesOrderCompanyDTO));
+        });
 
         List<SalesOrderProductDetailsDTO> salesOrderProductDetailsDTOSList = salesOrderCompanyDTO.getSalesOrderProductDetailsDTOList();
 
-        List<SalesOrderProductDetailsDTO> salesproductlist = salesOrderProductDetailsDTOSList.stream().map(list -> new SalesOrderProductDetailsDTO(list, salesOrderCompanyModel.getId())).collect(Collectors.toList());
+        List<SalesOrderProductDetailsDTO> salesproductlist = salesOrderProductDetailsDTOSList.stream()
+                .map(list -> new SalesOrderProductDetailsDTO(list, salesOrderCompanyModel.getId()))
+                .collect(Collectors.toList());
 
-        final List<SalesOrderProductDetailsModel> salesOrderProductDetailsModels = salesOrderProductDetailsService.saveSalesOrderProductDetails(salesproductlist, companyType,Objects.nonNull(salesOrderCompanyDTO.getId()) ? "U" : "N");
+        final List<SalesOrderProductDetailsModel> salesOrderProductDetailsModels = loggingUtility.logAndExecute("Saving sales order product details", () -> {
+            return salesOrderProductDetailsService.saveSalesOrderProductDetails(salesproductlist, companyType,
+                    Objects.nonNull(salesOrderCompanyDTO.getId()) ? "U" : "N");
+        });
 
-        pdfService.salesPdf(salesOrderCompanyDTO,companyType);
+        loggingUtility.logAndExecute("Generating PDF for sales order", () -> {
+            try {
+                pdfService.salesPdf(salesOrderCompanyDTO, companyType);
+            } catch (Exception e) {
+                throw new AppException(e.getMessage());
+            }
+        });
 
         return Objects.isNull(salesOrderCompanyDTO.getId()) ? "Sales Order Successfully Created!" : "Sales Order Successfully Updated!";
     }
@@ -86,39 +116,65 @@ public class SalesOrderServiceImpl implements SalesOrderService {
 
     @Override
     @Transactional
-    public Page<SalesOrderCompanyDTO> getAllSalesOrderList(Pageable pageable, String companyType) {
+    public Page<SalesOrderCompanyDTO> getAllSalesOrderList(Pageable pageable, String companyType, Map<String, String> filters) {
+
+        String companayName=filters.getOrDefault("companyName", null);
+
+        logger.info("Starting transaction to fetch all sales orders for company type: {}", companyType);
         entityManager.joinTransaction();
 
         String queryString = "select soc.*,count(soc.id) over() as totalcount,sum(vp.payamount) as payamount from tbl_salesordercompany soc" +
                 " left join tbl_vendor_payment vp on soc.id=vp.orderid where soc.companyname in " +
-                "(select c.companyname from company c where c.companytype=cast(:companyType AS text))" +
-                " GROUP BY soc.id, soc.companyname, soc.createddate order by soc.createddate asc";
+                "(select c.companyname from company c where c.companytype=cast(:companyType AS text)) " +
+                "AND (:companyName is null or soc.companyname=cast(:companyName as varchar))"+
+                " GROUP BY soc.id, soc.companyname, soc.createddate order by soc.createddate desc";
 
         if (Objects.nonNull(pageable)) {
             queryString = queryString + " OFFSET :firstElement ROWS FETCH NEXT :maxElement ROWS ONLY";
+            logger.info("Query with pagination: {}", queryString);
+        } else {
+            logger.info("Query without pagination: {}", queryString);
         }
 
         Query query = entityManager.createNativeQuery(queryString);
         query.setParameter("companyType", !Strings.isNullOrEmpty(companyType) ? companyType : null);
+        query.setParameter("companyName", !Strings.isNullOrEmpty(companayName) ? companayName : null);
+
+        logger.info("Set companyType parameter to: {}", companyType);
+
         if (Objects.nonNull(pageable)) {
             query.setParameter("firstElement", pageable.getPageNumber() * pageable.getPageSize());
             query.setParameter("maxElement", pageable.getPageSize());
+            logger.info("Set pagination parameters: firstElement={}, maxElement={}", pageable.getPageNumber() * pageable.getPageSize(), pageable.getPageSize());
         }
 
-        List<Object[]> resultList = query.getResultList();
+        List<Object[]> resultList;
+        try {
+            resultList = query.getResultList();
+            logger.info("Query executed successfully. Number of results: {}", resultList.size());
+        } catch (Exception e) {
+            logger.error("Error executing query: {}", e.getMessage());
+            throw e;
+        }
+
         List<SalesOrderCompanyDTO> salesOrderCompanyDTOS = new ArrayList<>();
         resultList.forEach(list -> salesOrderCompanyDTOS.add(new SalesOrderCompanyDTO((Object[]) list)));
+        logger.info("Converted result set to DTOs. Number of DTOs: {}", salesOrderCompanyDTOS.size());
 
         if (Objects.isNull(pageable)) {
-            if (salesOrderCompanyDTOS.size() == 0) {
+            if (salesOrderCompanyDTOS.isEmpty()) {
                 pageable = PageRequest.of(0, 1);
             } else {
                 pageable = PageRequest.of(0, salesOrderCompanyDTOS.size());
             }
         }
-        if (io.jsonwebtoken.lang.Collections.isEmpty(salesOrderCompanyDTOS)) {
-            return new PageImpl<>(new ArrayList<>(), pageable, new ArrayList<>().size());
+
+        if (salesOrderCompanyDTOS.isEmpty()) {
+            logger.info("No sales orders found.");
+            return new PageImpl<>(new ArrayList<>(), pageable, 0);
         }
+
+        logger.info("Returning page with sales orders. Total count: {}", salesOrderCompanyDTOS.get(0).getTotalcount());
         return new PageImpl<>(salesOrderCompanyDTOS, pageable, salesOrderCompanyDTOS.get(0).getTotalcount());
     }
 

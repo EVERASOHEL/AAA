@@ -15,5 +15,6 @@ public class ViewPdfDTO {
     private String orderDateString;
     private Float totalTaxableAmount;
     private String voucherNo;
+    private String toEmail;
 
 }

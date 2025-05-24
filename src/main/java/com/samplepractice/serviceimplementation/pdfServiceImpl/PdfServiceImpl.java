@@ -89,7 +89,7 @@ public class PdfServiceImpl implements PdfService {
     public String sendPdfEmail(ViewPdfDTO viewPdfDTO) {
         try {
 
-            String recipientEmail = "everaabzal@gmail.com";
+            String recipientEmail = Objects.nonNull(viewPdfDTO.getToEmail()) ? viewPdfDTO.getToEmail() : "everaabzal@gmail.com";
 //            String recipientEmail = "everasohel@gmail.com";
             String subject = "Sales Invoice - Invoice No. " + viewPdfDTO.getVoucherNo();
             String message = createMailMessageFormat(viewPdfDTO);
@@ -284,7 +284,16 @@ public class PdfServiceImpl implements PdfService {
 
             PdfPTable wordAmountTable = new PdfPTable(1);
             wordAmountTable.setWidthPercentage(90f);
-            long totalTaxableAmount = Math.round(salesOrderCompanyDTO.getTotalTaxableAmount());
+            double totalTaxableAmount = salesOrderCompanyDTO.getTotalTaxableAmount();
+
+            String stringValue = String.valueOf(totalTaxableAmount);
+
+            if (stringValue.matches(".*\\.5$")) {
+                totalTaxableAmount=Math.floor(totalTaxableAmount);
+            }else{
+                totalTaxableAmount=Math.round(totalTaxableAmount);
+            }
+
             String wordAmountText = "Amount Chargeable (in word)\n" + IndianNumberToWordsConverter.convertToWords(String.valueOf(totalTaxableAmount));
             Paragraph wordAmountParagraph = new Paragraph(wordAmountText, b_h_font);
             wordAmountParagraph.setFont(copyFont);
@@ -406,7 +415,6 @@ public class PdfServiceImpl implements PdfService {
 
         Document document = new Document();
         document.setMargins(0, 0, 0, 0);
-
         document.setPageSize(new Rectangle(600, 800));
 
         String pdf_name = "sample_report";
@@ -521,12 +529,10 @@ public class PdfServiceImpl implements PdfService {
 
 
     public static PdfPTable createProductDetailsTable(SalesOrderCompanyDTO salesOrderCompanyDTO, float[] columnSizeOfTable) {
-
         PdfPTable productDetailsData = new PdfPTable(columnSizeOfTable);
         productDetailsData.setWidthPercentage(90);
         productDetailsData.setSpacingAfter(-10f);
-//        float minheight[] = {334.5f, 321.5f, 308.f, 295.5f, 282.5f, 269.5f, 256.5f, 243.5f, 230.5f, 217.5f};
-//        float minHeight = minheight[salesOrderCompanyDTO.getSalesOrderProductDetailsDTOList().size() - 1];
+
         float minHeight = 334.5f;
         float minHeightTotal = 20f;
 
@@ -547,7 +553,6 @@ public class PdfServiceImpl implements PdfService {
         hsnCodeData.append("\n");
 
         for (int i = 0; i < salesOrderCompanyDTO.getSalesOrderProductDetailsDTOList().size(); i++) {
-
             SalesOrderProductDetailsDTO dto = salesOrderCompanyDTO.getSalesOrderProductDetailsDTOList().get(i);
 
             SNoData.append(i + 1).append("\n");
@@ -560,37 +565,43 @@ public class PdfServiceImpl implements PdfService {
         }
 
         String totalTaxableAmount = CommonConstant.extractDecimalPart(salesOrderCompanyDTO.getTotalTaxableAmount());
+        StringBuilder additionalData = new StringBuilder();
+
         if (salesOrderCompanyDTO.getGstType().equals(Constants.IGST18)) {
-//            if(Float.parseFloat(totalTaxableAmount)>0.50){
-//                productNameData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tIntegrated Tax\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND OFF");
-//                float roundOnAmount = 1 - Float.parseFloat(totalTaxableAmount);
-//                String formattedAmount=String.format("%.2f",roundOnAmount);
-//                totalData.append("\n").append(CommonConstant.extractDecimalPart(salesOrderCompanyDTO.getTotalTaxableAmount()));
-//            }else{
-//                productNameData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tIntegrated Tax\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND OFF");
-//            }
-            productNameData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tIntegrated Tax\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND OFF");
-            totalData.append("\n\n").append(String.format("%.2f", salesOrderCompanyDTO.getTotalTaxAmount()));
-            totalData.append("\n").append(CommonConstant.extractDecimalPart(salesOrderCompanyDTO.getTotalTaxableAmount()));
+            float taxableAmount = Float.parseFloat(totalTaxableAmount);
+            if (taxableAmount > 0.50) {
+                float roundOnAmount = 1 - Float.parseFloat(CommonConstant.extractDecimalPart(salesOrderCompanyDTO.getTotalTaxableAmount()));
+                String formattedAmount = String.format("%.2f", roundOnAmount);
+                additionalData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tIntegrated Tax\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND ON");
+                totalData.append("\n\n").append(String.format("%.2f", salesOrderCompanyDTO.getTotalTaxAmount()));
+                totalData.append("\n").append(formattedAmount);
+            } else {
+                additionalData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tIntegrated Tax\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND OFF");
+                totalData.append("\n\n").append(String.format("%.2f", salesOrderCompanyDTO.getTotalTaxAmount()));
+                totalData.append("\n").append(CommonConstant.extractDecimalPart(salesOrderCompanyDTO.getTotalTaxableAmount()));
+            }
         } else if (salesOrderCompanyDTO.getGstType().equals(Constants.LGST18)) {
-            productNameData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tCGST\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tSGST\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND OFF");
+            additionalData.append("\n\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tCGST\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tSGST\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tROUND OFF");
             totalData.append("\n\n").append(CommonConstant.formatIndianRupees(salesOrderCompanyDTO.getTotalTaxAmount() / 2));
             totalData.append("\n").append(CommonConstant.formatIndianRupees(salesOrderCompanyDTO.getTotalTaxAmount() / 2));
             totalData.append("\n").append(CommonConstant.extractDecimalPart(salesOrderCompanyDTO.getTotalTaxableAmount()));
         }
 
-        productDetailsData.addCell(PdfConfig.createCell("" + SNoData.toString(), Element.ALIGN_CENTER, minHeight, "detailsBody"));
-        productDetailsData.addCell(PdfConfig.createCell("" + productNameData.toString(), Element.ALIGN_LEFT, minHeight, "detailsBody"));
-        productDetailsData.addCell(PdfConfig.createCell("" + hsnCodeData.toString(), Element.ALIGN_CENTER, minHeight, "detailsBody"));
-        productDetailsData.addCell(PdfConfig.createCell("" + quantityData.toString(), Element.ALIGN_RIGHT, minHeight, "detailsBody"));
-        productDetailsData.addCell(PdfConfig.createCell("" + priceData.toString(), Element.ALIGN_RIGHT, minHeight, "detailsBody"));
-        productDetailsData.addCell(PdfConfig.createCell("" + productTypeData.toString(), Element.ALIGN_CENTER, minHeight, "detailsBody"));
-        productDetailsData.addCell(PdfConfig.createCell("" + totalData.toString(), Element.ALIGN_RIGHT, minHeight, "detailsBody"));
+        productNameData.append(additionalData);
+
+        productDetailsData.addCell(PdfConfig.createCell(SNoData.toString(), Element.ALIGN_CENTER, minHeight, "detailsBody"));
+        productDetailsData.addCell(PdfConfig.createCell(productNameData.toString(), Element.ALIGN_LEFT, minHeight, "detailsBody"));
+        productDetailsData.addCell(PdfConfig.createCell(hsnCodeData.toString(), Element.ALIGN_CENTER, minHeight, "detailsBody"));
+        productDetailsData.addCell(PdfConfig.createCell(quantityData.toString(), Element.ALIGN_RIGHT, minHeight, "detailsBody"));
+        productDetailsData.addCell(PdfConfig.createCell(priceData.toString(), Element.ALIGN_RIGHT, minHeight, "detailsBody"));
+        productDetailsData.addCell(PdfConfig.createCell(productTypeData.toString(), Element.ALIGN_CENTER, minHeight, "detailsBody"));
+        productDetailsData.addCell(PdfConfig.createCell(totalData.toString(), Element.ALIGN_RIGHT, minHeight, "detailsBody"));
 
         productNameData.setLength(0);
 
         return productDetailsData;
     }
+
 
     public static PdfPTable createProductDetailsFotterTable(SalesOrderCompanyDTO salesOrderCompanyDTO, float[] columnSizeOfTable) {
 

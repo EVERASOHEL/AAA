@@ -39,7 +39,7 @@ public class PdfConfig {
         Font font = PdfConfig.PdfFont(contentType.equals("detailsBody") ? 9f : 11f);
 
         Paragraph paragraph=null;
-        if (text.startsWith("Integrated Tax") || text.startsWith("CGST") || text.startsWith("SGST") || text.contains("ROUND OFF")) {
+        if (text.startsWith("Integrated Tax") || text.startsWith("CGST") || text.startsWith("SGST") || text.contains("ROUND OFF") || text.contains("ROUND ON")) {
             paragraph = new Paragraph(text, font);
             paragraph.setAlignment(Element.ALIGN_LEFT);
         }else{

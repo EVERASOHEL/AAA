@@ -48,15 +48,15 @@ public class CompanyMasterDTO extends AbstractAuditingEntity {
     public CompanyMasterDTO(Object[] list) {
 //        this.id = Objects.nonNull(list[0]) ? ((Integer) list[0]).longValue() : null;
 //        this.id=Long.parseLong(String.valueOf(list[0]));
-        this.id=Long.parseLong(list[0].toString());
-        this.companyName =(String) list[1];
-        this.address =(String) list[2];
-        this.phoneNo=(String) list[3];
-        this.stateName=(String) list[4];
-        this.companyGstNo=(String)list[6];
-        this.companyType=(String)list[7];
-        this.companyPanNumber=(String)list[8];
-        this.totalcount = Long.parseLong(list[9].toString());
+        this.id = Objects.nonNull(list[0]) ? Long.parseLong(list[0].toString()) : null;
+        this.companyName = Objects.nonNull(list[1]) ? list[1].toString() : null;
+        this.address = Objects.nonNull(list[2]) ? list[2].toString() : null;
+        this.phoneNo = Objects.nonNull(list[3]) ? list[3].toString() : null;
+        this.stateName = Objects.nonNull(list[4]) ? list[4].toString() : null;
+        this.companyGstNo = Objects.nonNull(list[6]) ? list[6].toString() : null;
+        this.companyType = Objects.nonNull(list[7]) ? list[7].toString() : null;
+        this.companyPanNumber = Objects.nonNull(list[8]) ? list[8].toString() : null;
+        this.totalcount = Objects.nonNull(list[9]) ? Long.parseLong(list[9].toString()) : null;
 //        this.totalcount = Objects.nonNull(list[5]) ? ((Integer) list[5]).longValue() : null;
     }
 }

@@ -24,4 +24,7 @@ public interface CompanyRepository extends JpaRepository<CompanyModel,Long> {
 
     @Query(nativeQuery=true,value = "select c.* from company c where (:companyType is null or companytype=:companyType)")
     List<CompanyModel> getAllCompanyByCompanyType(String companyType);
+
+    @Query(nativeQuery=true, value="select c.* from company c")
+    List<CompanyModel> getAllCompany();
 }

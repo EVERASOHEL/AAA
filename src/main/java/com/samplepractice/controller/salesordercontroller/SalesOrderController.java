@@ -26,6 +26,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = {"http://192.168.43.210:3000", "http://localhost:3000"})
 @RestController
@@ -70,10 +71,16 @@ public class SalesOrderController {
         }
     }
 
-    @GetMapping("/getSalesOrderList/{companyType}")
-    public ResponseEntity<?> productList(@PathVariable String companyType, Pageable pageable) {
+    @PostMapping("/getSalesOrderList")
+    public ResponseEntity<?> getSalesOrderList(
+            @RequestParam String companyType, // Query parameter for company type
+            @RequestParam int page,           // Query parameter for page
+            @RequestParam int size,           // Query parameter for size
+            @RequestBody(required = false) Map<String, String> filters, // Optional filters in the body
+            Pageable pageable
+    ) {
         try {
-            return CommonResponse.getData(salesOrderService.getAllSalesOrderList(pageable, companyType));
+            return CommonResponse.getData(salesOrderService.getAllSalesOrderList(pageable, companyType,filters));
         } catch (AppException ae) {
             return CommonResponse.exception(ae.getMessage());
         } catch (Exception e) {

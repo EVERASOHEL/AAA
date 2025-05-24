@@ -1,7 +1,6 @@
 package com.samplepractice.controller.companycontroller;
 
 import com.samplepractice.dto.companydto.CompanyMasterDTO;
-import com.samplepractice.model.companymodels.CompanyModel;
 import com.samplepractice.services.companyService.CompanyService;
 import com.samplepractice.util.Impl.CommonResponse;
 import com.samplepractice.validator.AppException;
@@ -10,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.Map;
 
 @RestController
@@ -33,10 +31,10 @@ public class CompanyController {
         }
     }
 
-    @GetMapping("/getCompanylist")
-    public ResponseEntity<?> getCompanylist(Pageable pageable) {
+    @PostMapping("/getCompanylist")
+    public ResponseEntity<?> getCompanylist(@RequestBody Map<String,String> filters,Pageable pageable) {
         try {
-            return CommonResponse.getData(companyService.getAllCompany(pageable));
+            return CommonResponse.getData(companyService.getAllCompany(filters,pageable));
         }catch (AppException ae) {
             return CommonResponse.exception(ae.getMessage());
         } catch (Exception e) {
@@ -70,6 +68,28 @@ public class CompanyController {
     public ResponseEntity<?> getAllCompanyNameByCompanyType(@PathVariable String companyType) {
         try {
             return CommonResponse.getData(companyService.getAllCompanyNameByCompanyType(companyType));
+        }catch (AppException ae) {
+            return CommonResponse.exception(ae.getMessage());
+        } catch (Exception e) {
+            return CommonResponse.somethingWentWrong(moduleName, e);
+        }
+    }
+
+    @GetMapping("/getAllTypeCompanyName")
+    public ResponseEntity<?> getAllTypeCompanyName() {
+        try {
+            return CommonResponse.getData(companyService.getAllTypeCompanyName());
+        }catch (AppException ae) {
+            return CommonResponse.exception(ae.getMessage());
+        } catch (Exception e) {
+            return CommonResponse.somethingWentWrong(moduleName, e);
+        }
+    }
+
+    @GetMapping("/getCompanyState/{companyName}")
+    public ResponseEntity<?> getCompanyState(@PathVariable String companyName) {
+        try {
+            return CommonResponse.getData(companyService.getCompanyStateByCompanyName(companyName));
         }catch (AppException ae) {
             return CommonResponse.exception(ae.getMessage());
         } catch (Exception e) {

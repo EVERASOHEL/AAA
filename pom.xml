@@ -30,6 +30,14 @@
         </dependency>
 
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -101,6 +109,12 @@
             <artifactId>hibernate-core</artifactId>
             <version>4.1.4.Final</version>
             <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hibernate.javax.persistence</groupId>
+                    <artifactId>hibernate-jpa-2.0-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
@@ -235,7 +249,6 @@
         <!--            <artifactId>itext</artifactId>-->
         <!--            <version>2.1.5</version>-->
         <!--        </dependency>-->
-
 
     </dependencies>
 

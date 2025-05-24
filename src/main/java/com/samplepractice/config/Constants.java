@@ -13,6 +13,9 @@ public class Constants {
     public static final String LGST18 = "LGST18[18%]";
     public static final String LGST28 = "LGST28[28%]";
 
+    public static final String CUSTOMER = "Customer";
+    public static final String VENDOR = "Vendor";
+
     public static final String STATUS_ACTIVE = "Active";
 
     public static final String LEAVE = "Leave";

@@ -1,13 +1,10 @@
 package com.samplepractice.controller.paymentcontroller;
 
-import com.samplepractice.dto.companydto.CompanyMasterDTO;
 import com.samplepractice.dto.paymentdto.PaymentDTO;
-import com.samplepractice.repository.paymentRepository.PaymentRepository;
 import com.samplepractice.services.paymentservice.PaymentService;
 import com.samplepractice.util.Impl.CommonResponse;
 import com.samplepractice.validator.AppException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

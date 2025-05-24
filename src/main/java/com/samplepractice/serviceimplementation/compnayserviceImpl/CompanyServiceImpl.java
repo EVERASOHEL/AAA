@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import com.samplepractice.dto.companydto.CompanyMasterDTO;
 import com.samplepractice.model.commondto.TitleValueDTO;
 import com.samplepractice.model.companymodels.CompanyModel;
-import com.samplepractice.model.companymodels.CompanyModelCount;
 import com.samplepractice.repository.companyRepository.CompanyRepository;
 import com.samplepractice.services.companyService.CompanyService;
 import com.samplepractice.validator.AppException;
@@ -53,15 +52,21 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     @Transactional
-    public Page<CompanyMasterDTO> getAllCompany(Pageable pageable) {
+    public Page<CompanyMasterDTO> getAllCompany(Map<String,String> filters, Pageable pageable) {
 
-        String queryString = "select cm.*,count(cm.id) over() as totalcount from company cm order by cm.createddate asc";
+        String companayName=filters.getOrDefault("companyName",null);
+
+        String queryString = "select cm.*,count(cm.id) over() as totalcount from company cm" +
+                " where (:companyName is null or cm.companyname=cast(:companyName as varchar))";
+
+        queryString = queryString + " order by cm.createddate desc";
 
         if (Objects.nonNull(pageable)) {
             queryString = queryString + " OFFSET :firstElement ROWS FETCH NEXT :maxElement ROWS ONLY";
         }
 
-        Query query = entityManager.createNativeQuery(queryString);
+        Query query = entityManager.createNativeQuery(queryString)
+                .setParameter("companyName", !Strings.isNullOrEmpty(companayName) ? companayName : null);
 
         if (Objects.nonNull(pageable)) {
             query.setParameter("firstElement", pageable.getPageNumber() * pageable.getPageSize());
@@ -70,7 +75,12 @@ public class CompanyServiceImpl implements CompanyService {
 
         List<Object[]> resultList = query.getResultList();
         List<CompanyMasterDTO> companyMasterDTOS = new ArrayList<>();
-        resultList.forEach(list -> companyMasterDTOS.add(new CompanyMasterDTO((Object[]) list)));
+        try {
+            resultList.forEach(list -> companyMasterDTOS.add(new CompanyMasterDTO((Object[]) list)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
 
         if (Objects.isNull(pageable)) {
             if (companyMasterDTOS.size() == 0) {
@@ -139,5 +149,20 @@ public class CompanyServiceImpl implements CompanyService {
         List<CompanyModel> allCompany = companyRepository.getAllCompanyByCompanyType(companyType);
         return allCompany.stream().map(companyModel -> new TitleValueDTO(String.valueOf(companyModel.getId()),companyModel.getCompanyName())).collect(Collectors.toList());
 
+    }
+
+    @Override
+    public List<TitleValueDTO> getAllTypeCompanyName() throws Exception {
+        List<CompanyModel> allCompany = companyRepository.getAllCompany();
+        return allCompany.stream().map(companyModel -> new TitleValueDTO(String.valueOf(companyModel.getId()),companyModel.getCompanyName())).collect(Collectors.toList());
+    }
+
+    @Override
+    public String getCompanyStateByCompanyName(String companyName) throws Exception {
+        CompanyModel companyModel = companyRepository.findByCompanyName(companyName);
+        if (Objects.nonNull(companyModel)) {
+            return companyModel.getStateName();
+        }
+        return "";
     }
 }
